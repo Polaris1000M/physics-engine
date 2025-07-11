@@ -2,11 +2,12 @@
 #include <cglm/cglm.h>
 #include <stdio.h>
 
-void cameraMouseInput(GLFWwindow *window, double xPos, double yPos) {
+// called whenever the cursor position changes
+void cameraCursorCallback(GLFWwindow *window, double xPos, double yPos) {
   Camera* c = glfwGetWindowUserPointer(window);
 
-  if(c->firstMouse) {
-    c->firstMouse = 0;
+  if(c->firstCursor) {
+    c->firstCursor = 0;
     c->lastX = (float) xPos;
     c->lastY = (float) yPos;
   }
@@ -16,8 +17,8 @@ void cameraMouseInput(GLFWwindow *window, double xPos, double yPos) {
   c->lastX = xPos;
   c->lastY = yPos;
 
-  xOffset *= c->mouseSensitivity;
-  yOffset *= c->mouseSensitivity;
+  xOffset *= c->cursorSensitivity;
+  yOffset *= c->cursorSensitivity;
   
   c->yaw += xOffset;
   c->pitch += yOffset;
@@ -26,6 +27,7 @@ void cameraMouseInput(GLFWwindow *window, double xPos, double yPos) {
   glm_normalize_to(direction, c->cameraFront);
 }
 
+// called whenever scroll input is received
 void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
   Camera* c = glfwGetWindowUserPointer(window);
 
@@ -42,43 +44,41 @@ void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
 void cameraInit(Camera* c, GLFWwindow* window) {
   c->cameraPos[0] = 0.0f;
   c->cameraPos[1] = 0.0f;
-  c->cameraPos[2] = 3.0f;
+  c->cameraPos[2] = 3.0f; // set camera along positive z axis
 
   c->cameraFront[0] = 0.0f;
   c->cameraFront[1] = 0.0f;
-  c->cameraFront[2] = -1.0f;
+  c->cameraFront[2] = -1.0f; // camera points towards negative z axis
 
   c->cameraUp[0] = 0.0f;
   c->cameraUp[1] = 1.0f;
   c->cameraUp[2] = 0.0f;
 
-  // keyboard configuration parameters
-  c->deltaTime = 0.0f;
   c->lastTime = 0.0f;
+
+  // keyboard configuration
   c->keySensitivity = 2.5f; 
 
-  // mouse configuration parameters
-  c->firstMouse = 1;
-  c->mouseSensitivity = 0.1f;
+  // mouse configuration
+  c->firstCursor = 1;
+  c->cursorSensitivity = 0.1f;
   c->fov = 45.0f;
   c->lastX = 400.0f;
   c->lastY = 300.0f;
   c->yaw = -90.0f;
   c->pitch = 0.0f;
   
-  glfwSetWindowUserPointer(window, c);
-
-  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  glfwSetCursorPosCallback(window, cameraMouseInput);
-  glfwSetScrollCallback(window, cameraScrollCallback);
+  glfwSetWindowUserPointer(window, c);                         // allows callbacks to access camera struct
+  glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // sets window input to the cursor
+  glfwSetCursorPosCallback(window, cameraCursorCallback);          // calls function whenever cursor position changes
+  glfwSetScrollCallback(window, cameraScrollCallback);         // called whenever camera scrolls
 }
 
-void cameraProcessKeys(Camera* c, GLFWwindow* window) {
-  // compute camera movements
-  c->deltaTime = glfwGetTime() - c->lastTime;
+void cameraKeyboardCallback(Camera* c, GLFWwindow* window) {
+  float deltaTime = glfwGetTime() - c->lastTime;
   c->lastTime = glfwGetTime();
 
-  const float cameraSpeed = c->deltaTime * c->keySensitivity;
+  const float cameraSpeed = deltaTime * c->keySensitivity;
 
   if(glfwGetKey(window, GLFW_KEY_W)) {
     vec3 mov;

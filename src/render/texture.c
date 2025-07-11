@@ -1,5 +1,4 @@
 #include "texture.h"
-
 #define STB_IMAGE_IMPLEMENTATION // modifies stb_image.h to only include relevant source code definitions
 #include "stb_image.h"
 #include <stdio.h>
@@ -22,7 +21,9 @@ void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource
   unsigned int texture;
   glGenTextures(1, &texture);
 
+  // defines which texture unit (i.e., one of multiple slots on GPU for shader program for textures) will be used
   glActiveTexture(textureUnit);
+
   glBindTexture(GL_TEXTURE_2D, texture);
 
   // set texture wrapping and filtering options
@@ -37,6 +38,7 @@ void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource
   else {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
   }
+
   glGenerateMipmap(GL_TEXTURE_2D);
 
   stbi_image_free(data);

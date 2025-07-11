@@ -74,7 +74,7 @@ void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
     printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s", infoLog);
   }
 
-  // link shaders into shader program
+  // attach and link shaders into shader program
   unsigned int shaderProgram;
   shaderProgram = glCreateProgram();
 
@@ -88,8 +88,8 @@ void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
     printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s", infoLog);
   }
 
+  // clean up
   glDeleteShader(vertexShader);
-
   glDeleteShader(fragmentShader);
   free(vertexShaderSource);
   free(fragmentShaderSource);
@@ -98,6 +98,7 @@ void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
 }
 
 void shaderUse(Shader* s) {
+  // adds the program to the current rendering state
   glUseProgram(s->ID);
 }
 
@@ -111,4 +112,8 @@ void shaderSetFloat(Shader* s, const char* name, float value) {
 
 void shaderSetMatrix(Shader* s, const char* name, mat4 mat) {
   glUniformMatrix4fv(glGetUniformLocation(s->ID, name), 1, GL_FALSE, (const float*) mat);
+}
+
+void shaderSetVec(Shader* s, const char* name, float v1, float v2, float v3) {
+  glUniform3f(glGetUniformLocation(s->ID, name), v1, v2, v3);
 }
