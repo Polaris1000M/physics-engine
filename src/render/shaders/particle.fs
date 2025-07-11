@@ -2,7 +2,7 @@
 out vec4 FragColor;
 
 uniform float radiusSquared;
-uniform float center;
+uniform vec3 center;
 uniform float aspectRatio;
 
 in vec3 pos;

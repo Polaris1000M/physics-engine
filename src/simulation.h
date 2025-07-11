@@ -11,14 +11,17 @@
 #define MAX_OBJECTS 100
 
 typedef struct Simulation {
+  GLFWwindow* window;
   unsigned int WINDOW_HEIGHT;
   unsigned int WINDOW_WIDTH;
+
   float gravity;
+  float lastTime; // last time render loop was called
+  float timeRatio; // multiplied by amount of real time passing to produce amount of simulation time passed
   
   Shader s;
   Shader particleShader;
   Camera c;
-  GLFWwindow* window;
 
   unsigned int n;
   Object objects[MAX_OBJECTS];

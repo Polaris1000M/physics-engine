@@ -6,6 +6,8 @@
 void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color, float radius) {
   // equilateral triangle which minimally circumscribes circle has side length 2 * radius * 3^0.5
 
+  shaderSetVector(&sim->particleShader, "center", position[0], position[1], position[2]);
+
   float halfSideLength = radius * 1.73205081f;
   float vertices[] = {
     position[0] - halfSideLength, position[1] - radius, position[2],

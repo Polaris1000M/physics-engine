@@ -4,16 +4,7 @@
 #include <stdio.h>
 
 void simulationInit(Simulation* sim, unsigned int n) {
-  sim->WINDOW_HEIGHT = 600;
-  sim->WINDOW_WIDTH = 800;
-  sim->n = n;
-
-  vec3 position = {0.0f, 0.0f, 0.0f};
-  vec3 color = {1.0f, 1.0f, 1.0f};
-  for(int i = 0; i < n; i++) {
-    objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.5f, 0.5f, position, color);
-  }
-
+  // OpenGL and GLFW boilerplate
   if (!glfwInit()) {
     return;
   }
@@ -26,7 +17,9 @@ void simulationInit(Simulation* sim, unsigned int n) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-  sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "LearnOpenGL", NULL, NULL);
+  sim->WINDOW_HEIGHT = 600;
+  sim->WINDOW_WIDTH = 800;
+  sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "ParticleSimulator", NULL, NULL);
   if(!sim->window) {
     glfwTerminate();
     return;
@@ -39,12 +32,30 @@ void simulationInit(Simulation* sim, unsigned int n) {
     return;
   }
 
+  sim->gravity = 9.8f;
+  sim->lastTime = 0.0f;
+  sim->timeRatio = 0.5f;
+
+  // initialize objects in simulation
+  vec3 position = {0.0f, 0.0f, 0.0f};
+  vec3 color = {1.0f, 1.0f, 1.0f};
+  sim->n = n;
+  for(int i = 0; i < n; i++) {
+    objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.5f, 0.5f, position, color);
+  }
+
+  // initialize shader programs
   shaderInit(&sim->s, "../src/render/shaders/simple.vs", "../src/render/shaders/simple.fs");
 
   shaderInit(&sim->particleShader, "../src/render/shaders/particle.vs", "../src/render/shaders/particle.fs");
+
+  cameraInit(&sim->c, sim->window);
 }
 
 void simulationUpdate(Simulation* sim, float deltaTime) {
+  for(int i = 0; i < sim->n; i++) {
+    sim->objects[i].position[1] -= deltaTime;
+  }
 }
 
 void simulationRender(Simulation* sim) {
@@ -62,7 +73,9 @@ void simulationStart(Simulation* sim) {
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // simulationUpdate(sim, 0.0f);
+    float currentTime = glfwGetTime();
+    simulationUpdate(sim, sim->timeRatio * (currentTime - sim->lastTime));
+    sim->lastTime = currentTime;
     simulationRender(sim);
 
     glfwSwapBuffers(sim->window);
