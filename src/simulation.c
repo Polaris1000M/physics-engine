@@ -37,22 +37,24 @@ void simulationInit(Simulation* sim, unsigned int n) {
   sim->timeRatio = 0.5f;
 
   // initialize objects in simulation
-  vec3 position = {-1.0f, 0.0f, 0.0f};
+  vec3 position = {0.0f, 0.0f, -1.0f};
   vec3 color = {1.0f, 1.0f, 1.0f};
   sim->n = n;
-  for(int i = 0; i < n; i++) {
-    position[0] = -0.75f + (float) i / (float) (n - 1) * 1.5f;
-    objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.05f, 0.5f, position, color);
-    printf("%f\n", sim->objects[i].position[0]);
-    printf("%f\n", position[0]);
-  }
+  // for(int i = 0; i < n; i++) {
+  //   position[0] = (float) i / (float) (n - 1) * 0.75f + 0.75f;
+  //   objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.1f, 0.5f, position, color);
+  // }
+  objectInit(&sim->objects[0], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {-0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
+  objectInit(&sim->objects[1], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
 
   // initialize shader programs
   shaderInit(&sim->s, "../src/render/shaders/simple.vs", "../src/render/shaders/simple.fs");
 
   shaderInit(&sim->particleShader, "../src/render/shaders/particle.vs", "../src/render/shaders/particle.fs");
 
+  // initialize camera
   cameraInit(&sim->c, sim->window);
+  glEnable(GL_DEPTH_TEST); // draws pixel if it is not behind another pixel
 }
 
 void simulationUpdate(Simulation* sim, float deltaTime) {
@@ -74,11 +76,19 @@ void simulationStart(Simulation* sim) {
       glfwSetWindowShouldClose(sim->window, 1);
     }
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    cameraKeyboardCallback(&sim->c, sim->window);
 
+    // printf("Pos: %f, %f, %f\n", sim->c.cameraPos[0], sim->c.cameraPos[1], sim->c.cameraPos[2]);
+    // printf("Front: %f, %f, %f\n", sim->c.cameraFront[0], sim->c.cameraFront[1], sim->c.cameraFront[2]);
+    // printf("Up: %f, %f, %f\n", sim->c.cameraUp[0], sim->c.cameraUp[1], sim->c.cameraUp[2]);
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // update particle positions
     float currentTime = glfwGetTime();
-    simulationUpdate(sim, sim->timeRatio * (currentTime - sim->lastTime));
+    // simulationUpdate(sim, sim->timeRatio * (currentTime - sim->lastTime));
     sim->lastTime = currentTime;
+
     simulationRender(sim);
 
     glfwSwapBuffers(sim->window);

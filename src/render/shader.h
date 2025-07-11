@@ -23,6 +23,6 @@ void shaderSetFloat(Shader* s, const char* name, float value);
 void shaderSetMatrix(Shader* s, const char* name, mat4 mat);
 
 // sets 3-dim vector uniform (3f)
-void shaderSetVector(Shader* s, const char* name, float v1, float v2, float v3);
+void shaderSetVector(Shader* s, const char* name, vec3 vec);
 
 #endif

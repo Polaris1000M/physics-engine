@@ -26,8 +26,11 @@ typedef struct Camera {
 // initializes camera
 void cameraInit(Camera* c, GLFWwindow* window);
 
-// processes user input
+// processes keyboard input
 void cameraKeyboardCallback(Camera* c, GLFWwindow *window);
+
+// passed into glfwSetCursorPosCallback for cursor movement callbacks
+void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos);
 
 // compute lookat matrix and stores in view
 void cameraLookAt(Camera* c, mat4 view);
