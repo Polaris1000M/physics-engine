@@ -86,7 +86,7 @@ void simulationStart(Simulation* sim) {
 
     // update particle positions
     float currentTime = glfwGetTime();
-    // simulationUpdate(sim, sim->timeRatio * (currentTime - sim->lastTime));
+    simulationUpdate(sim, sim->timeRatio * (currentTime - sim->lastTime));
     sim->lastTime = currentTime;
 
     simulationRender(sim);
