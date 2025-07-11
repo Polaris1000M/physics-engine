@@ -37,13 +37,6 @@ void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color
   mat4 model = GLM_MAT4_IDENTITY;
   shaderSetMatrix(&sim->particleShader, "model", model);
 
-  vec3 cameraDirection;
-  glm_vec3_negate_to(sim->c.cameraFront, cameraDirection);
-
-  vec3 cameraRight;
-  glm_vec3_crossn(sim->c.cameraUp, cameraDirection, cameraRight);
-
-
   mat4 view; // updates view to match where camera is currently pointing
   cameraLookAt(&sim->c, view);
   // for(int i = 0; i < 4; i++) {
@@ -61,6 +54,8 @@ void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color
 
   shaderUse(&sim->particleShader);
 
+  glDepthMask(GL_FALSE);
+
   glBindVertexArray(VAO);
   glDrawArrays(GL_TRIANGLES, 0, 3);
 
@@ -69,6 +64,8 @@ void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color
 
   glDeleteVertexArrays(1, &VAO);
   glDeleteBuffers(1, &VBO);
+
+  glDepthMask(GL_TRUE);
 }
 
 void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color) {

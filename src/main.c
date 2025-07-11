@@ -1,7 +1,14 @@
 #include "simulation.h"
+#include <stdlib.h>
 
-int main() {
+int main(int argc, char* argv[]) {
   Simulation sim;
-  simulationInit(&sim, 2);
+
+  if(argc > 1) {
+    simulationInit(&sim, atoi(argv[1]));
+  }
+  else {
+    simulationInit(&sim, 2);
+  }
   simulationStart(&sim);
 }

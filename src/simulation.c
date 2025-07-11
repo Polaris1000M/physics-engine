@@ -40,12 +40,13 @@ void simulationInit(Simulation* sim, unsigned int n) {
   vec3 position = {0.0f, 0.0f, -1.0f};
   vec3 color = {1.0f, 1.0f, 1.0f};
   sim->n = n;
-  // for(int i = 0; i < n; i++) {
-  //   position[0] = (float) i / (float) (n - 1) * 0.75f + 0.75f;
-  //   objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.1f, 0.5f, position, color);
-  // }
-  objectInit(&sim->objects[0], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {-0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
-  objectInit(&sim->objects[1], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
+  for(int i = 0; i < n; i++) {
+    position[0] = (float) i / (float) (n - 1) * 2.0f - 1.0f;
+    objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.1f, 0.5f, position, color);
+  }
+
+  // objectInit(&sim->objects[0], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {-0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
+  // objectInit(&sim->objects[1], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
 
   // initialize shader programs
   shaderInit(&sim->s, "../src/render/shaders/simple.vs", "../src/render/shaders/simple.fs");
@@ -55,6 +56,8 @@ void simulationInit(Simulation* sim, unsigned int n) {
   // initialize camera
   cameraInit(&sim->c, sim->window);
   glEnable(GL_DEPTH_TEST); // draws pixel if it is not behind another pixel
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void simulationUpdate(Simulation* sim, float deltaTime) {
