@@ -37,11 +37,14 @@ void simulationInit(Simulation* sim, unsigned int n) {
   sim->timeRatio = 0.5f;
 
   // initialize objects in simulation
-  vec3 position = {0.0f, 0.0f, 0.0f};
+  vec3 position = {-1.0f, 0.0f, 0.0f};
   vec3 color = {1.0f, 1.0f, 1.0f};
   sim->n = n;
   for(int i = 0; i < n; i++) {
-    objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.5f, 0.5f, position, color);
+    position[0] = -0.75f + (float) i / (float) (n - 1) * 1.5f;
+    objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.05f, 0.5f, position, color);
+    printf("%f\n", sim->objects[i].position[0]);
+    printf("%f\n", position[0]);
   }
 
   // initialize shader programs

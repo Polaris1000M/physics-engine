@@ -2,6 +2,6 @@
 
 int main() {
   Simulation sim;
-  simulationInit(&sim, 2);
+  simulationInit(&sim, 5);
   simulationStart(&sim);
 }

@@ -36,16 +36,22 @@ void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color
   shaderUse(&sim->particleShader);
   glBindVertexArray(VAO);
   glDrawArrays(GL_TRIANGLES, 0, 3);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0); 
+  glBindVertexArray(0);
+
+  glDeleteVertexArrays(1, &VAO);
+  glDeleteBuffers(1, &VBO);
 }
 
 void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color) {
   o->type = type;
   o->size = size;
   o->mass = mass;
-  glm_vec3_copy(o->position, position);
-  glm_vec3_copy(o->color, color);
-  glm_vec3_copy(o->velocity, GLM_VEC3_ZERO);
-  glm_vec3_copy(o->orientation, GLM_VEC3_ZERO);
+  glm_vec3_copy(position, o->position);
+  glm_vec3_copy(color, o->color);
+  glm_vec3_copy(GLM_VEC3_ZERO, o->velocity);
+  glm_vec3_copy(GLM_VEC3_ZERO, o->orientation);
 
   switch(type) {
     case OBJECT_PARTICLE:
