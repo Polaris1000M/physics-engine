@@ -13,36 +13,7 @@ void simulationInit(Simulation* sim, unsigned int n) {
   for(int i = 0; i < n; i++) {
     objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.5f, 0.5f, position, color);
   }
-}
 
-void simulationUpdate(Simulation* sim, float deltaTime) {
-}
-
-void simulationRenderObject(Object* o) {
-  float vertices[] = {
-    -0.5f, -0.5f, -1.0f,
-    0.0f, 0.5f, -1.0f,
-    0.5f, -0.5f, -1.0f
-  };
-
-  // buffer object to store vertices on GPU
-  unsigned int VBO;
-  glGenBuffers(1, &VBO);
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  glVertexPointer(3, GL_FLOAT, 0, NULL);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glDrawArrays(GL_TRIANGLES, 0, 1);
-}
-
-void simulationRender(Simulation* sim) {
-  for(int i = 0; i < sim->n; i++) {
-    simulationRenderObject(sim->objects + i);
-  }
-}
-
-void simulationStart(Simulation* sim) {
   if (!glfwInit()) {
     return;
   }
@@ -55,37 +26,45 @@ void simulationStart(Simulation* sim) {
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-  GLFWwindow* window;
-
-
-  window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "LearnOpenGL", NULL, NULL);
-  if (!window) {
+  sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "LearnOpenGL", NULL, NULL);
+  if(!sim->window) {
     glfwTerminate();
     return;
   }
 
-  glfwMakeContextCurrent(window);
+  glfwMakeContextCurrent(sim->window);
 
   // load OpenGL function pointers
-  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+  if(!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
     return;
   }
 
-  Shader s;
-  shaderInit(&s, "../src/render/shaders/simple.vs", "../src/render/shaders/simple.fs");
-  shaderUse(&s);
+  shaderInit(&sim->s, "../src/render/shaders/simple.vs", "../src/render/shaders/simple.fs");
+  shaderUse(&sim->s);
+}
 
-  while (!glfwWindowShouldClose(window)) {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-      glfwSetWindowShouldClose(window, 1);
+void simulationUpdate(Simulation* sim, float deltaTime) {
+}
+
+void simulationRender(Simulation* sim) {
+  for(int i = 0; i < sim->n; i++) {
+    Object* o = sim->objects + i;
+    o->render(sim, o->position, o->orientation, o->color, o->size);
+  }
+}
+
+void simulationStart(Simulation* sim) {
+  while(!glfwWindowShouldClose(sim->window)) {
+    if(glfwGetKey(sim->window, GLFW_KEY_ESCAPE)) {
+      glfwSetWindowShouldClose(sim->window, 1);
     }
 
     glClear(GL_COLOR_BUFFER_BIT);
 
-    simulationUpdate(sim, 0.0f);
+    // simulationUpdate(sim, 0.0f);
     simulationRender(sim);
 
-    glfwSwapBuffers(window);
+    glfwSwapBuffers(sim->window);
 
     glfwPollEvents();
   }
