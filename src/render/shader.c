@@ -114,6 +114,6 @@ void shaderSetMatrix(Shader* s, const char* name, mat4 mat) {
   glUniformMatrix4fv(glGetUniformLocation(s->ID, name), 1, GL_FALSE, (const float*) mat);
 }
 
-void shaderSetVec(Shader* s, const char* name, float v1, float v2, float v3) {
+void shaderSetVector(Shader* s, const char* name, float v1, float v2, float v3) {
   glUniform3f(glGetUniformLocation(s->ID, name), v1, v2, v3);
 }

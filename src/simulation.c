@@ -40,7 +40,8 @@ void simulationInit(Simulation* sim, unsigned int n) {
   }
 
   shaderInit(&sim->s, "../src/render/shaders/simple.vs", "../src/render/shaders/simple.fs");
-  shaderUse(&sim->s);
+
+  shaderInit(&sim->particleShader, "../src/render/shaders/particle.vs", "../src/render/shaders/particle.fs");
 }
 
 void simulationUpdate(Simulation* sim, float deltaTime) {

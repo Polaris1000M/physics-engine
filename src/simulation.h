@@ -16,6 +16,7 @@ typedef struct Simulation {
   float gravity;
   
   Shader s;
+  Shader particleShader;
   Camera c;
   GLFWwindow* window;
 

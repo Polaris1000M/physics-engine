@@ -3,11 +3,14 @@
 #include <cglm/cglm.h>
 #include "../simulation.h"
 
-void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color, float size) {
+void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color, float radius) {
+  // equilateral triangle which minimally circumscribes circle has side length 2 * radius * 3^0.5
+
+  float halfSideLength = radius * 1.73205081f;
   float vertices[] = {
-    -0.5f, -0.5f, -1.0f,
-    0.0f, 0.5f, -1.0f,
-    0.5f, -0.5f, -1.0f
+    position[0] - halfSideLength, position[1] - radius, position[2],
+    position[0], position[1] + 2.0f * radius, position[2],
+    position[0] + halfSideLength, position[1] - radius, position[2]
   };
 
   unsigned int VBO, VAO;
@@ -25,7 +28,10 @@ void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color
   glBindBuffer(GL_ARRAY_BUFFER, 0); 
   glBindVertexArray(0);
 
-  shaderUse(&sim->s);
+  shaderSetFloat(&sim->particleShader, "aspectRatio", (float) sim->WINDOW_WIDTH / (float) sim->WINDOW_HEIGHT);
+  shaderSetFloat(&sim->particleShader, "radiusSquared", radius * radius);
+  shaderSetVector(&sim->particleShader, "center", position[0], position[1], position[2]);
+  shaderUse(&sim->particleShader);
   glBindVertexArray(VAO);
   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
