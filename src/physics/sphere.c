@@ -14,7 +14,7 @@ void sphereInit(Sphere* s, float radius, unsigned int sectors, unsigned int stac
   s->n = 36 * sectors * stacks;
 }
 
-float* sphereVertices(Sphere* s) {
+float* sphereVertices(Sphere* s, vec3 position) {
   float* vertices = malloc(sizeof(float) * s->n);
 
   float deltaStack = M_PI / (float) s->stacks;
@@ -39,9 +39,9 @@ float* sphereVertices(Sphere* s) {
         for(unsigned int j = 0; j < 2; j++)
         {
           int idx = i * 2 + j;
-          x[idx] = s->radius * cos(stackAngles[i]) * sin(sectorAngles[j]);
-          y[idx] = s->radius * sin(stackAngles[i]);
-          z[idx] = s->radius * cos(stackAngles[i]) * cos(sectorAngles[j]);
+          x[idx] = position[0] + s->radius * cos(stackAngles[i]) * sin(sectorAngles[j]);
+          y[idx] = position[1] + s->radius * sin(stackAngles[i]);
+          z[idx] = position[2] + s->radius * cos(stackAngles[i]) * cos(sectorAngles[j]);
         }
       }
       
@@ -102,7 +102,7 @@ void renderSphere(Simulation* sim, vec3 position, vec3 orientation, vec3 color, 
   Sphere s;
   sphereInit(&s, radius, 10, 10);
 
-  float* vertices = sphereVertices(&s);
+  float* vertices = sphereVertices(&s, position);
 
   unsigned int VBO, VAO;
   glGenVertexArrays(1, &VAO);
