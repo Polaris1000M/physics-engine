@@ -23,6 +23,7 @@ add_executable(ParticleSimulator
   src/render/camera.c
   src/physics/object.c
   src/physics/particle.c
+  src/physics/sphere.c
 )
 target_include_directories(ParticleSimulator PRIVATE include)
 

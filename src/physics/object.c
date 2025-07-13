@@ -2,71 +2,8 @@
 #include <stdlib.h>
 #include <cglm/cglm.h>
 #include "../simulation.h"
-
-void renderParticle(Simulation* sim, vec3 position, vec3 orientation, vec3 color, float radius) {
-
-  shaderSetVector(&sim->particleShader, "center", position);
-
-  // equilateral triangle which minimally circumscribes circle has side length 2 * radius * 3^0.5
-  float halfSideLength = radius * 1.73205081f;
-  float vertices[] = {
-    position[0] - halfSideLength, position[1] - radius, position[2],
-    position[0], position[1] + 2.0f * radius, position[2],
-    position[0] + halfSideLength, position[1] - radius, position[2]
-  };
-
-  unsigned int VBO, VAO;
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
-
-  glBindVertexArray(VAO);
-
-  // store data in buffer
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-  // indicate data layout
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
-  glEnableVertexAttribArray(0);
-
-  // set uniforms
-  shaderSetFloat(&sim->particleShader, "radiusSquared", radius * radius);
-  shaderSetVector(&sim->particleShader, "center", position);
-
-  // update matrix uniforms
-  mat4 model = GLM_MAT4_IDENTITY;
-  shaderSetMatrix(&sim->particleShader, "model", model);
-
-  mat4 view; // updates view to match where camera is currently pointing
-  cameraLookAt(&sim->c, view);
-  // for(int i = 0; i < 4; i++) {
-  //   for(int j = 0; j < 4; j++) {
-  //     printf("%f ", view[i][j]);
-  //   }
-  //   printf("\n");
-  // }
-  // printf("\n");
-  shaderSetMatrix(&sim->particleShader, "view", view);
-
-  mat4 projection = GLM_MAT4_IDENTITY; // creates perspective
-  glm_perspective(glm_rad(sim->c.fov), (float) sim->WINDOW_WIDTH / (float) sim->WINDOW_HEIGHT, 0.1f, 100.0f, projection);
-  shaderSetMatrix(&sim->particleShader, "projection", projection);
-
-  shaderUse(&sim->particleShader);
-
-  glDepthMask(GL_FALSE);
-
-  glBindVertexArray(VAO);
-  glDrawArrays(GL_TRIANGLES, 0, 3);
-
-  glBindBuffer(GL_ARRAY_BUFFER, 0); 
-  glBindVertexArray(0);
-
-  glDeleteVertexArrays(1, &VAO);
-  glDeleteBuffers(1, &VBO);
-
-  glDepthMask(GL_TRUE);
-}
+#include "particle.h"
+#include "sphere.h"
 
 void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color) {
   o->type = type;
@@ -80,6 +17,9 @@ void objectInit(Object* o, ObjectType type, float size, float mass, vec3 positio
   switch(type) {
     case OBJECT_PARTICLE:
       o->render = renderParticle;
+      break;
+    case OBJECT_SPHERE:
+      o->render = renderSphere;
       break;
     case OBJECT_CUBE:
       break;

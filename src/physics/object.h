@@ -7,6 +7,7 @@
 
 typedef enum {
   OBJECT_PARTICLE,
+  OBJECT_SPHERE,
   OBJECT_CUBE,
   OBJECT_TRIANGLE
 } ObjectType;

@@ -42,14 +42,12 @@ void simulationInit(Simulation* sim, unsigned int n) {
   sim->n = n;
   for(int i = 0; i < n; i++) {
     position[0] = (float) i / (float) (n - 1) * 2.0f - 1.0f;
-    objectInit(&sim->objects[i], OBJECT_PARTICLE, 0.1f, 0.5f, position, color);
+    position[2] = -1.0f - (float) i * 0.5f;
+    objectInit(&sim->objects[i], OBJECT_SPHERE, 0.5f, 0.5f, position, color);
   }
 
-  // objectInit(&sim->objects[0], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {-0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
-  // objectInit(&sim->objects[1], OBJECT_PARTICLE, 0.1f, 0.5f, (vec3) {0.5f, 0.0f, 0.0f}, (vec3) {1.0f, 1.0f, 1.0f});
-
   // initialize shader programs
-  shaderInit(&sim->s, "../src/render/shaders/simple.vs", "../src/render/shaders/simple.fs");
+  shaderInit(&sim->s, "../src/render/shaders/sphere.vs", "../src/render/shaders/sphere.fs");
 
   shaderInit(&sim->particleShader, "../src/render/shaders/particle.vs", "../src/render/shaders/particle.fs");
 
@@ -81,15 +79,11 @@ void simulationStart(Simulation* sim) {
 
     cameraKeyboardCallback(&sim->c, sim->window);
 
-    // printf("Pos: %f, %f, %f\n", sim->c.cameraPos[0], sim->c.cameraPos[1], sim->c.cameraPos[2]);
-    // printf("Front: %f, %f, %f\n", sim->c.cameraFront[0], sim->c.cameraFront[1], sim->c.cameraFront[2]);
-    // printf("Up: %f, %f, %f\n", sim->c.cameraUp[0], sim->c.cameraUp[1], sim->c.cameraUp[2]);
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // update particle positions
     float currentTime = glfwGetTime();
-    simulationUpdate(sim, sim->timeRatio * (currentTime - sim->lastTime));
+    // simulationUpdate(sim, sim->timeRatio * (currentTime - sim->lastTime));
     sim->lastTime = currentTime;
 
     simulationRender(sim);
