@@ -7,14 +7,12 @@
 
 typedef enum
 {
-  OBJECT_PARTICLE,
-  OBJECT_SPHERE,
-  OBJECT_CUBE,
-  OBJECT_TRIANGLE
+  SPHERE,
+  CUBE,
+  PYRAMID 
 } ObjectType;
 
-typedef struct Simulation Simulation;
-
+// represents an object in the simulation
 typedef struct Object
 {
   ObjectType type;
@@ -22,11 +20,7 @@ typedef struct Object
   float mass;
   vec3 position;
   vec3 color;
-  vec3 velocity;
-  vec3 orientation;
-
-  void (*render)(Simulation*, vec3, vec3, vec3, float);
-
+  vec3 orientation; // euler angles representing rotation
 } Object;
 
 void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color);

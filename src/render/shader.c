@@ -1,58 +1,21 @@
 #include "shader.h"
+#include "../utils/parse.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <glad/glad.h>
 #include <cglm/cglm.h>
 
-// reads shader specified by filepath into C-string
-char* readShader(const char* shaderPath)
-{
-  FILE* fp;
-  char* buffer;
-  
-  fp = fopen(shaderPath, "rb");
-  if(!fp)
-  {
-    printf("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: %s\n", shaderPath);
-    buffer = 0; 
-    return buffer;
-  }
-
-  // find length of file
-  fseek(fp, 0L, SEEK_END);
-  long shaderSize = ftell(fp);
-  rewind(fp);
-
-  buffer = calloc(1, shaderSize + 1);
-
-  if(!buffer)
-  {
-    printf("ERROR::SHADER::FAILED_TO_ALLOCATE_BUFFER: %s\n", shaderPath);
-    buffer = 0;
-    return buffer;
-  }
-
-  if(fread(buffer, shaderSize, 1, fp) != 1)
-  {
-    printf("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: %s\n", shaderPath);
-    buffer = 0; 
-    return buffer;
-  }
-
-  return buffer;
-}
-
 void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath)
 {
   // read vertex shader source
-  char* vertexShaderSource = readShader(vertexPath);
+  char* vertexShaderSource = parseFile(vertexPath, "SHADER");
   if(!vertexShaderSource)
   {
     return;
   }
 
   // read fragment shader source
-  char* fragmentShaderSource = readShader(fragmentPath);
+  char* fragmentShaderSource = parseFile(fragmentPath, "SHADER");
   if(!fragmentShaderSource)
   {
     return;

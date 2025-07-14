@@ -48,6 +48,9 @@ void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 
 void cameraInit(Camera* c, GLFWwindow* window)
 {
+  c->WINDOW_WIDTH = 800;
+  c->WINDOW_HEIGHT = 600;
+
   c->cameraPos[0] = 0.0f;
   c->cameraPos[1] = 0.0f;
   c->cameraPos[2] = 3.0f; // set camera along positive z axis
@@ -161,4 +164,14 @@ void cameraCustomLookAt(Camera* c, mat4 view)
     {0.0f, 0.0f, 0.0f, 1.0f}
   };
   glm_mat4_mul(basis, translate, view);
+}
+
+void cameraView(Camera* c, mat4 view)
+{
+  cameraLookAt(c, view);
+}
+
+void cameraProjection(Camera* c, mat4 projection)
+{
+  glm_perspective(glm_rad(c->fov), (float) c->WINDOW_WIDTH / (float) c->WINDOW_HEIGHT, 0.1f, 100.0f, projection);
 }

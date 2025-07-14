@@ -6,6 +6,9 @@
 
 typedef struct Camera
 {
+  unsigned int WINDOW_WIDTH;
+  unsigned int WINDOW_HEIGHT;
+
   float lastTime; // last time render loop was called
 
   float keySensitivity; // controls how sensitive movement is during key presses
@@ -33,11 +36,11 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow *window);
 // passed into glfwSetCursorPosCallback for cursor movement callbacks
 void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos);
 
-// compute lookat matrix and stores in view
-void cameraLookAt(Camera* c, mat4 view);
+// creates view matrix
+void cameraView(Camera* c, mat4 view);
 
-// computes lookat matrix with custom mathematics instead of built-in cglm method
-void cameraCustomLookAt(Camera* c, mat4 view);
+// create projection matrix
+void cameraProjection(Camera* c, mat4 projection);
 
 #endif
 

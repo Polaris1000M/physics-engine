@@ -11,12 +11,6 @@
 #include "render/shader.h"
 #include "render/camera.h"
 
-#define MAX_OBJECTS 100
-
-typedef struct Sphere Sphere;
-typedef struct Cube Cube;
-typedef struct Pyramid Pyramid;
-
 typedef struct Simulation {
   GLFWwindow* window;
   unsigned int WINDOW_HEIGHT;
@@ -27,41 +21,31 @@ typedef struct Simulation {
   float timeRatio; // multiplied by amount of real time passing to produce amount of simulation time passed
   
   Shader shader;
-  Shader particleShader;
   Camera camera;
 
-  unsigned int n;
-  Object objects[MAX_OBJECTS];
-
   // the number of each type of object
-  unsigned int sphereCount;
-  unsigned int cubeCount;
-  unsigned int pyramidCount;
+  unsigned int counts[OBJECT_TYPES];
 
   // arrays holding all objects
-  Sphere* spheres;
-  Cube* cubes;
-  Pyramid* pyramids;
+  Object* objects[OBJECT_TYPES];
 
-  unsigned int sphereVertexCount;
-  unsigned int cubeVertexCount;
-  unsigned int pyramidVertexCount;
+  // the number of vertices stored on the VBOs of each object 
+  unsigned int vertexCounts[OBJECT_TYPES];
 
-  // arrays holding vertices
-  float* sphereVertices;
-  float* cubeVertices;
-  float* pyramidVertices;
+  // buffer with all the vertices of the objects
+  float* vertices[OBJECT_TYPES];
 
-  unsigned int sphereVAO;
-  unsigned int cubeVAO;
-  unsigned int pyramidVAO;
-  unsigned int sphereVBO;
-  unsigned int cubeVBO;
-  unsigned int pyramidVBO;
+  // methods to generate vertices
+  void (*generateVertices[OBJECT_TYPES])(float*, Object*);
+
+  unsigned int VAOs[OBJECT_TYPES];
+  unsigned int VBOs[OBJECT_TYPES];
+  unsigned int UBOs[OBJECT_TYPES];
+
 } Simulation;
 
 // initialize the simulation
-void simulationInit(Simulation* sim, const char* configPath);
+int simulationInit(Simulation* sim, const char* configPath);
 
 // updates the positions of the objects in the simulation based on time passed
 void simulationUpdate(Simulation* sim, float deltaTime);
