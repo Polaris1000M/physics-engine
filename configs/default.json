@@ -14,7 +14,7 @@
       "type": "sphere",
       "size": 0.75,
       "mass": 0.5,
-      "distribution": "uniform",
+      "distribution": "random",
       "range": [[-10, 10], [0, 0], [0, 0]],
       "color": [0, 1, 0],
       "count": 5

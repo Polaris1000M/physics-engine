@@ -8,6 +8,8 @@
 // initializes OpenGL and GLFW boilerplate
 int openglInit(Simulation* sim)
 {
+  const char* openglInitErrorMessage = "ERROR::OPENGL::INITIALIZATION_ERROR: failed to initialize OpenGL and GLFW\n";
+
   if (!glfwInit())
   {
     return 1;
@@ -21,10 +23,13 @@ int openglInit(Simulation* sim)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+  sim->WINDOW_WIDTH = 800;
+  sim->WINDOW_HEIGHT = 600;
   sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "ParticleSimulator", NULL, NULL);
   if(!sim->window)
   {
     glfwTerminate();
+    printf("%s", openglInitErrorMessage);
     return 1;
   }
 
@@ -32,6 +37,7 @@ int openglInit(Simulation* sim)
 
   if(!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
   {
+    printf("%s", openglInitErrorMessage);
     return 1;
   }
 
@@ -128,4 +134,19 @@ void simulationStart(Simulation* sim)
   }
 
   glfwTerminate();
+}
+
+void simulationPrint(Simulation* sim)
+{
+  for(int i = 0; i < OBJECT_TYPES; i++)
+  {
+    printf("%s\n", OBJECT_NAMES[i]);
+
+    for(int j = 0; j < sim->counts[i]; j++)
+    {
+      objectPrint(&sim->objects[i][j]);
+      printf("\n");
+    }
+    printf("\n");
+  }
 }

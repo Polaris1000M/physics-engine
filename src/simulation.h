@@ -56,4 +56,7 @@ void simulationRender(Simulation* sim);
 // starts the simulation
 void simulationStart(Simulation* sim);
 
+// prints the contents of the simulation for debugging
+void simulationPrint(Simulation* sim);
+
 #endif

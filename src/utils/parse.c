@@ -5,9 +5,25 @@ int parseConfigObject(cJSON* object, ConfigObject* configObject)
 {
   // parse type
   const cJSON* configType = cJSON_GetObjectItemCaseSensitive(object, "type");
+  const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"pyramid\" for type of object\n";
   if(!cJSON_IsString(configType))
   {
-    printf("ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"pyramid\" for type of object\n");
+    printf("%s", typeErrorMessage);
+    return 1;
+  }
+
+  int match = 0;
+  for(int i = 0; i < OBJECT_TYPES; i++)
+  {
+    if(!strcmp(configType->valuestring, OBJECT_NAMES[i]))
+    {
+      match = 1;
+      break;
+    }
+  }
+  if(!match)
+  {
+    printf("%s", typeErrorMessage);
     return 1;
   }
 
@@ -110,10 +126,9 @@ int parseConfigObject(cJSON* object, ConfigObject* configObject)
   // only populate config object after all fields have been verified
 
   // populate type
-  const char* objectTypes[] = {"sphere", "cube", "pyramid"};
   for(int i = 0; i < 3; i++)
   {
-    if(!strcmp(configType->valuestring, objectTypes[i]))
+    if(!strcmp(configType->valuestring, OBJECT_NAMES[i]))
     {
       configObject->type = i;
       break;

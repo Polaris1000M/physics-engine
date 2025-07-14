@@ -5,6 +5,8 @@
 
 #define OBJECT_TYPES 3
 
+extern const char* OBJECT_NAMES[3];
+
 typedef enum
 {
   SPHERE,
@@ -23,6 +25,10 @@ typedef struct Object
   vec3 orientation; // euler angles representing rotation
 } Object;
 
+// initializes an object
 void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color);
+
+// prints an object
+void objectPrint(Object* o);
 
 #endif
