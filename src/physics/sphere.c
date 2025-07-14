@@ -2,8 +2,10 @@
 #include <math.h>
 #include <stdlib.h>
 
-void sphereInit(Sphere* s, float radius, unsigned int sectors, unsigned int stacks) {
+void sphereInit(Sphere* s, float radius, float mass, vec3 position, unsigned int sectors, unsigned int stacks) {
   s->radius = radius;
+  s->mass = mass;
+  glm_vec3_copy(position, s->position);
   s->sectors = sectors;
   s->stacks = stacks;
 
@@ -14,7 +16,8 @@ void sphereInit(Sphere* s, float radius, unsigned int sectors, unsigned int stac
   s->n = 36 * sectors * stacks;
 }
 
-float* sphereVertices(Sphere* s, vec3 position) {
+float* sphereVertices(Sphere* s, vec3 position)
+{
   float* vertices = malloc(sizeof(float) * s->n);
 
   float deltaStack = M_PI / (float) s->stacks;
@@ -75,7 +78,8 @@ float* sphereVertices(Sphere* s, vec3 position) {
         }
       }
 
-      if(stack == 0) {
+      if(stack == 0)
+      {
         for(int j = 0; j < 3; j++)
         {
           vertices[idx + j * floatsPerVertex] = x[1 + j];
@@ -83,7 +87,8 @@ float* sphereVertices(Sphere* s, vec3 position) {
           vertices[idx + j * floatsPerVertex + 2] = z[1 + j];
         }
       }
-      else if(stack == s->stacks - 1) {
+      else if(stack == s->stacks - 1)
+      {
         for(int j = 0; j < 3; j++)
         {
           vertices[idx + j * floatsPerVertex] = x[j];
@@ -99,52 +104,48 @@ float* sphereVertices(Sphere* s, vec3 position) {
 
 void renderSphere(Simulation* sim, vec3 position, vec3 orientation, vec3 color, float radius)
 {
-  Sphere s;
-  sphereInit(&s, radius, 10, 10);
+  // Sphere s;
+  // sphereInit(&s, radius, 20, 20);
 
-  float* vertices = sphereVertices(&s, position);
+  // float* vertices = sphereVertices(&s, position);
 
-  unsigned int VBO, VAO;
-  glGenVertexArrays(1, &VAO);
-  glGenBuffers(1, &VBO);
+  // unsigned int VBO, VAO;
+  // glGenVertexArrays(1, &VAO);
+  // glGenBuffers(1, &VBO);
 
-  glBindVertexArray(VAO);
+  // glBindVertexArray(VAO);
 
-  // store data in buffer
-  glBindBuffer(GL_ARRAY_BUFFER, VBO);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * s.n, vertices, GL_STATIC_DRAW);
+  // // store data in buffer
+  // glBindBuffer(GL_ARRAY_BUFFER, VBO);
+  // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * s.n, vertices, GL_STATIC_DRAW);
 
-  // indicate data layout
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) 0);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3 * sizeof(float)));
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
+  // // indicate data layout
+  // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) 0);
+  // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3 * sizeof(float)));
+  // glEnableVertexAttribArray(0);
+  // glEnableVertexAttribArray(1);
 
-  // set uniforms
-  shaderSetFloat(&sim->s, "radiusSquared", radius * radius);
-  shaderSetVector(&sim->s, "center", position);
+  // // update matrix uniforms
+  // mat4 model = GLM_MAT4_IDENTITY;
+  // shaderSetMatrix(&sim->shader, "model", model);
 
-  // update matrix uniforms
-  mat4 model = GLM_MAT4_IDENTITY;
-  shaderSetMatrix(&sim->s, "model", model);
+  // // updates view to match where camera is currently pointing
+  // mat4 view;
+  // cameraLookAt(&sim->camera, view);
+  // shaderSetMatrix(&sim->shader, "view", view);
 
-  // updates view to match where camera is currently pointing
-  mat4 view;
-  cameraLookAt(&sim->c, view);
-  shaderSetMatrix(&sim->s, "view", view);
+  // // creates perspective
+  // mat4 projection = GLM_MAT4_IDENTITY;
+  // glm_perspective(glm_rad(sim->camera.fov), (float) sim->WINDOW_WIDTH / (float) sim->WINDOW_HEIGHT, 0.1f, 100.0f, projection);
+  // shaderSetMatrix(&sim->shader, "projection", projection);
 
-  // creates perspective
-  mat4 projection = GLM_MAT4_IDENTITY;
-  glm_perspective(glm_rad(sim->c.fov), (float) sim->WINDOW_WIDTH / (float) sim->WINDOW_HEIGHT, 0.1f, 100.0f, projection);
-  shaderSetMatrix(&sim->s, "projection", projection);
+  // shaderUse(&sim->shader);
 
-  shaderUse(&sim->s);
+  // glDrawArrays(GL_TRIANGLES, 0, 6 * s.stacks * s.sectors);
 
-  glDrawArrays(GL_TRIANGLES, 0, 6 * s.stacks * s.sectors);
+  // glBindBuffer(GL_ARRAY_BUFFER, 0); 
+  // glBindVertexArray(0);
 
-  glBindBuffer(GL_ARRAY_BUFFER, 0); 
-  glBindVertexArray(0);
-
-  glDeleteVertexArrays(1, &VAO);
-  glDeleteBuffers(1, &VBO);
+  // glDeleteVertexArrays(1, &VAO);
+  // glDeleteBuffers(1, &VBO);
 }

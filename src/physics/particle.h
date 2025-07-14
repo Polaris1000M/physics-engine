@@ -4,7 +4,8 @@
 #include <cglm/cglm.h>
 #include "../simulation.h"
 
-typedef struct Particle {
+typedef struct Particle
+{
   float radius;
 } Particle;
 

@@ -4,7 +4,8 @@
 #include <stdio.h>
 #include <glad/glad.h>
 
-void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource, int flip, int transparent) {
+void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource, int flip, int transparent)
+{
   int width;
   int height;
   int nrChannels;
@@ -13,7 +14,8 @@ void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource
 
   unsigned char* data = stbi_load(textureSource, &width, &height, &nrChannels, 0);
 
-  if(!data) {
+  if(!data)
+  {
     printf("Failed to load texture: %s\n", textureSource);
     return;
   }
@@ -32,10 +34,12 @@ void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-  if(transparent) {
+  if(transparent)
+  {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
   }
-  else {
+  else
+  {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
   }
 

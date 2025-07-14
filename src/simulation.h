@@ -5,10 +5,17 @@
 #include <GLFW/glfw3.h>
 #include <cglm/cglm.h>
 #include "physics/object.h"
+#include "physics/sphere.h"
+#include "physics/cube.h"
+#include "physics/pyramid.h"
 #include "render/shader.h"
 #include "render/camera.h"
 
 #define MAX_OBJECTS 100
+
+typedef struct Sphere Sphere;
+typedef struct Cube Cube;
+typedef struct Pyramid Pyramid;
 
 typedef struct Simulation {
   GLFWwindow* window;
@@ -19,16 +26,32 @@ typedef struct Simulation {
   float lastTime; // last time render loop was called
   float timeRatio; // multiplied by amount of real time passing to produce amount of simulation time passed
   
-  Shader s;
+  Shader shader;
   Shader particleShader;
-  Camera c;
+  Camera camera;
 
   unsigned int n;
   Object objects[MAX_OBJECTS];
+
+  // the number of each type of object
+  unsigned int sphereCount;
+  unsigned int cubeCount;
+  unsigned int pyramidCount;
+
+  // arrays holding all objects
+  Sphere* spheres;
+  Cube* cubes;
+  Pyramid* pyramids;
+
+  // arrays holding vertices
+  float* sphereVertices;
+  float* cubeVertices;
+  float* pyramidVertices;
+
 } Simulation;
 
 // initialize the simulation
-void simulationInit(Simulation* sim, unsigned int n);
+void simulationInit(Simulation* sim, const char* configPath);
 
 // updates the positions of the objects in the simulation based on time passed
 void simulationUpdate(Simulation* sim, float deltaTime);

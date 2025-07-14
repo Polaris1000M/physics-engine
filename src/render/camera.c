@@ -3,10 +3,12 @@
 #include <stdio.h>
 
 // called whenever the cursor position changes
-void cameraCursorCallback(GLFWwindow *window, double xPos, double yPos) {
+void cameraCursorCallback(GLFWwindow *window, double xPos, double yPos)
+{
   Camera* c = glfwGetWindowUserPointer(window);
 
-  if(c->firstCursor) {
+  if(c->firstCursor)
+  {
     c->firstCursor = 0;
     c->lastX = (float) xPos;
     c->lastY = (float) yPos;
@@ -28,20 +30,24 @@ void cameraCursorCallback(GLFWwindow *window, double xPos, double yPos) {
 }
 
 // called whenever scroll input is received
-void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset) {
+void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
+{
   Camera* c = glfwGetWindowUserPointer(window);
 
   c->fov -= (float) yOffset;
-  if(c->fov < 1.0f) {
+  if(c->fov < 1.0f)
+  {
     c->fov = 1.0f;
   }
 
-  if(c->fov > 45.0f) {
+  if(c->fov > 45.0f)
+  {
     c->fov = 45.0f;
   }
 }
 
-void cameraInit(Camera* c, GLFWwindow* window) {
+void cameraInit(Camera* c, GLFWwindow* window)
+{
   c->cameraPos[0] = 0.0f;
   c->cameraPos[1] = 0.0f;
   c->cameraPos[2] = 3.0f; // set camera along positive z axis
@@ -74,13 +80,15 @@ void cameraInit(Camera* c, GLFWwindow* window) {
   glfwSetScrollCallback(window, cameraScrollCallback);         // called whenever camera scrolls
 }
 
-void cameraKeyboardCallback(Camera* c, GLFWwindow* window) {
+void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
+{
   float deltaTime = glfwGetTime() - c->lastTime;
   c->lastTime = glfwGetTime();
 
   const float cameraSpeed = deltaTime * c->keySensitivity;
 
-  if(glfwGetKey(window, GLFW_KEY_W)) {
+  if(glfwGetKey(window, GLFW_KEY_W))
+  {
     vec3 mov;
     glm_vec3_scale(c->cameraFront, cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
@@ -92,40 +100,46 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window) {
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 
-  if(glfwGetKey(window, GLFW_KEY_A)) {
+  if(glfwGetKey(window, GLFW_KEY_A))
+  {
     vec3 mov;
     glm_vec3_crossn(c->cameraFront, c->cameraUp, mov);
     glm_vec3_scale(mov, -cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 
-  if(glfwGetKey(window, GLFW_KEY_D)) {
+  if(glfwGetKey(window, GLFW_KEY_D))
+  {
     vec3 mov;
     glm_vec3_crossn(c->cameraFront, c->cameraUp, mov);
     glm_vec3_scale(mov, cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 
-  if(glfwGetKey(window, GLFW_KEY_SPACE)) {
+  if(glfwGetKey(window, GLFW_KEY_SPACE))
+  {
     vec3 mov;
     glm_vec3_scale(c->cameraUp, cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 
-  if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)) {
+  if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
+  {
     vec3 mov;
     glm_vec3_scale(c->cameraUp, -cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 }
 
-void cameraLookAt(Camera* c, mat4 view) {
+void cameraLookAt(Camera* c, mat4 view)
+{
   vec3 cameraTarget;
   glm_vec3_add(c->cameraPos, c->cameraFront, cameraTarget);
   glm_lookat(c->cameraPos, cameraTarget, c->cameraUp, view);
 }
 
-void cameraCustomLookAt(Camera* c, mat4 view) {
+void cameraCustomLookAt(Camera* c, mat4 view)
+{
   vec3 cameraDirection;
   glm_vec3_negate_to(c->cameraFront, cameraDirection);
 
@@ -139,7 +153,8 @@ void cameraCustomLookAt(Camera* c, mat4 view) {
   vec3 negatePos;
   glm_vec3_negate_to(c->cameraPos, negatePos);
   glm_translate_make(translate, negatePos);
-  mat4 basis = {
+  mat4 basis =
+  {
     {cameraRight[0], cameraUp[0], cameraDirection[0], 0.0f},
     {cameraRight[1], cameraUp[1], cameraDirection[1], 0.0f},
     {cameraRight[2], cameraUp[2], cameraDirection[2], 0.0f},

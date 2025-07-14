@@ -24,6 +24,7 @@ add_executable(ParticleSimulator
   src/physics/object.c
   src/physics/particle.c
   src/physics/sphere.c
+  src/external/cJSON.c
 )
 target_include_directories(ParticleSimulator PRIVATE include)
 

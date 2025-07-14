@@ -3,7 +3,8 @@
 
 #include <cglm/cglm.h>
 
-typedef struct Shader {
+typedef struct Shader
+{
   unsigned int ID;
 } Shader;
 

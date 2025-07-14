@@ -4,7 +4,8 @@
 #include <cglm/cglm.h>
 #include <GLFW/glfw3.h>
 
-typedef struct Camera {
+typedef struct Camera
+{
   float lastTime; // last time render loop was called
 
   float keySensitivity; // controls how sensitive movement is during key presses

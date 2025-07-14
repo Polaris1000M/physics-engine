@@ -5,7 +5,8 @@
 
 #define OBJECT_TYPES 3
 
-typedef enum {
+typedef enum
+{
   OBJECT_PARTICLE,
   OBJECT_SPHERE,
   OBJECT_CUBE,
@@ -14,7 +15,8 @@ typedef enum {
 
 typedef struct Simulation Simulation;
 
-typedef struct Object {
+typedef struct Object
+{
   ObjectType type;
   float size;
   float mass;

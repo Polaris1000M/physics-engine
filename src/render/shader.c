@@ -5,12 +5,14 @@
 #include <cglm/cglm.h>
 
 // reads shader specified by filepath into C-string
-char* readShader(const char* shaderPath) {
+char* readShader(const char* shaderPath)
+{
   FILE* fp;
   char* buffer;
   
   fp = fopen(shaderPath, "rb");
-  if(!fp) {
+  if(!fp)
+  {
     printf("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: %s\n", shaderPath);
     buffer = 0; 
     return buffer;
@@ -23,13 +25,15 @@ char* readShader(const char* shaderPath) {
 
   buffer = calloc(1, shaderSize + 1);
 
-  if(!buffer) {
+  if(!buffer)
+  {
     printf("ERROR::SHADER::FAILED_TO_ALLOCATE_BUFFER: %s\n", shaderPath);
     buffer = 0;
     return buffer;
   }
 
-  if(fread(buffer, shaderSize, 1, fp) != 1) {
+  if(fread(buffer, shaderSize, 1, fp) != 1)
+  {
     printf("ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ: %s\n", shaderPath);
     buffer = 0; 
     return buffer;
@@ -38,16 +42,19 @@ char* readShader(const char* shaderPath) {
   return buffer;
 }
 
-void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
+void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath)
+{
   // read vertex shader source
   char* vertexShaderSource = readShader(vertexPath);
-  if(!vertexShaderSource) {
+  if(!vertexShaderSource)
+  {
     return;
   }
 
   // read fragment shader source
   char* fragmentShaderSource = readShader(fragmentPath);
-  if(!fragmentShaderSource) {
+  if(!fragmentShaderSource)
+  {
     return;
   }
 
@@ -59,7 +66,8 @@ void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
   int success;
   char infoLog[512];
   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if(!success) {
+  if(!success)
+  {
     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
     printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s", infoLog);
   }
@@ -69,7 +77,8 @@ void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
   glCompileShader(fragmentShader);
 
   glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-  if(!success) {
+  if(!success)
+  {
     glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
     printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s", infoLog);
   }
@@ -83,7 +92,8 @@ void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
   glLinkProgram(shaderProgram);
 
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-  if(!success) {
+  if(!success)
+  {
     glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
     printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s", infoLog);
   }
@@ -97,23 +107,28 @@ void shaderInit(Shader* s, const char* vertexPath, const char* fragmentPath) {
   s->ID = shaderProgram;
 }
 
-void shaderUse(Shader* s) {
+void shaderUse(Shader* s)
+{
   // adds the program to the current rendering state
   glUseProgram(s->ID);
 }
 
-void shaderSetInt(Shader* s, const char* name, int value) {
+void shaderSetInt(Shader* s, const char* name, int value)
+{
   glUniform1i(glGetUniformLocation(s->ID, name), value); 
 }
 
-void shaderSetFloat(Shader* s, const char* name, float value) {
+void shaderSetFloat(Shader* s, const char* name, float value)
+{
   glUniform1f(glGetUniformLocation(s->ID, name), value); 
 }
 
-void shaderSetMatrix(Shader* s, const char* name, mat4 mat) {
+void shaderSetMatrix(Shader* s, const char* name, mat4 mat)
+{
   glUniformMatrix4fv(glGetUniformLocation(s->ID, name), 1, GL_FALSE, (const float*) mat);
 }
 
-void shaderSetVector(Shader* s, const char* name, vec3 vec) {
+void shaderSetVector(Shader* s, const char* name, vec3 vec)
+{
   glUniform3f(glGetUniformLocation(s->ID, name), vec[0], vec[1], vec[2]);
 }

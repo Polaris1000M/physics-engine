@@ -1,7 +1,8 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H
 
-typedef struct Texture {
+typedef struct Texture
+{
   unsigned int ID;
   unsigned int textureUnit; // location of texture on GPU
 } Texture;
