@@ -152,7 +152,7 @@ int parseObject(Simulation* sim, cJSON* object, unsigned int idx, unsigned int s
           }
           else
           {
-            currentPosition[j] = (positionRanges[j][1] - positionRanges[j][0]) / (count->valuedouble - 1.0f) * (float) sphereIdx;
+            currentPosition[j] = (positionRanges[j][1] - positionRanges[j][0]) / (count->valuedouble - 1.0f) * (float) i + positionRanges[j][0];
           }
         }
       }
@@ -174,6 +174,19 @@ int parseObject(Simulation* sim, cJSON* object, unsigned int idx, unsigned int s
   }
 
   return 0;
+}
+
+void simulationUpdateCamera(Simulation* sim)
+{
+  // updates view to match where camera is currently pointing
+  mat4 view;
+  cameraLookAt(&sim->camera, view);
+  shaderSetMatrix(&sim->shader, "view", view);
+
+  // creates perspective
+  mat4 projection = GLM_MAT4_IDENTITY;
+  glm_perspective(glm_rad(sim->camera.fov), (float) sim->WINDOW_WIDTH / (float) sim->WINDOW_HEIGHT, 0.1f, 100.0f, projection);
+  shaderSetMatrix(&sim->shader, "projection", projection);
 }
 
 void simulationInit(Simulation* sim, const char* configPath)
@@ -210,7 +223,6 @@ void simulationInit(Simulation* sim, const char* configPath)
   }
 
   sim->n = 0;
-
 
   // parse config file
   srand(time(NULL));
@@ -283,7 +295,6 @@ void simulationInit(Simulation* sim, const char* configPath)
     }
   }
 
-
   sim->spheres = malloc(sim->sphereCount * sizeof(Sphere));
   sim->cubes = malloc(sim->cubeCount * sizeof(Cube));
   sim->pyramids = malloc(sim->pyramidCount * sizeof(Pyramid));
@@ -331,12 +342,50 @@ void simulationInit(Simulation* sim, const char* configPath)
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  // for(int i = 0; i < sim->sphereCount; i++)
-  // {
-  //   printf("%f %f\n", sim->spheres[i].radius, sim->spheres[i].mass);
-  //   printf("%f %f %f\n", sim->spheres[i].position[0], sim->spheres[i].position[1], sim->spheres[i].position[2]);
-  //   printf("%d %d\n\n", sim->spheres[i].stacks, sim->spheres[i].sectors);
-  // }
+  for(int i = 0; i < sim->sphereCount; i++)
+  {
+    printf("%f %f\n", sim->spheres[i].radius, sim->spheres[i].mass);
+    printf("%f %f %f\n", sim->spheres[i].position[0], sim->spheres[i].position[1], sim->spheres[i].position[2]);
+    printf("%d %d\n\n", sim->spheres[i].stacks, sim->spheres[i].sectors);
+  }
+
+  sim->n += sim->sphereCount + sim->cubeCount + sim->pyramidCount;
+
+  // initalize vertex data
+  sim->sphereVertexCount = sim->sphereCount * sim->spheres[0].n;
+  sim->sphereVertices = malloc(sphereVertexCount * sizeof(float));
+
+  for(int i = 0, vertexStart = 0; i < sim->sphereCount; i++, vertexStart += sim->spheres[0].n)
+  {
+    memcpy(sim->sphereVertices + vertexStart, sphereVertices(sim->spheres + i), sim->spheres[0].n); 
+  }
+
+  // set up OpenGL backend for each of the object types
+  glGenVertexArrays(1, &sim->sphereVAO);
+  glGenBuffers(1, &sim->sphereVBO); 
+  
+  glBindVertexArray(sim->sphereVAO);
+
+  // store data in buffer
+  glBindBuffer(GL_ARRAY_BUFFER, sim->sphereVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(float) * sim->sphereVertexCount, sim->sphereVertices, GL_STATIC_DRAW);
+
+  // indicate data layout
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) 0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3 * sizeof(float)));
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+
+
+  shaderUse(&sim->shader);
+
+  glDrawArrays(GL_TRIANGLES, 0, 6 * s.stacks * s.sectors);
+
+  glBindBuffer(GL_ARRAY_BUFFER, 0); 
+  glBindVertexArray(0);
+
+  glDeleteVertexArrays(1, &VAO);
+  glDeleteBuffers(1, &VBO);
 }
 
 void simulationUpdate(Simulation* sim, float deltaTime)
@@ -349,6 +398,12 @@ void simulationUpdate(Simulation* sim, float deltaTime)
 
 void simulationRender(Simulation* sim)
 {
+  // update matrix uniforms
+  mat4 model = GLM_MAT4_IDENTITY;
+  shaderSetMatrix(&sim->shader, "model", model);
+
+  simulationUpdateCamera(sim);
+
   for(int i = 0; i < sim->n; i++)
   {
     Object* o = sim->objects + i;

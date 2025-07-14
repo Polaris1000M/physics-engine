@@ -16,7 +16,7 @@ void sphereInit(Sphere* s, float radius, float mass, vec3 position, unsigned int
   s->n = 36 * sectors * stacks;
 }
 
-float* sphereVertices(Sphere* s, vec3 position)
+float* sphereVertices(Sphere* s)
 {
   float* vertices = malloc(sizeof(float) * s->n);
 
@@ -42,9 +42,9 @@ float* sphereVertices(Sphere* s, vec3 position)
         for(unsigned int j = 0; j < 2; j++)
         {
           int idx = i * 2 + j;
-          x[idx] = position[0] + s->radius * cos(stackAngles[i]) * sin(sectorAngles[j]);
-          y[idx] = position[1] + s->radius * sin(stackAngles[i]);
-          z[idx] = position[2] + s->radius * cos(stackAngles[i]) * cos(sectorAngles[j]);
+          x[idx] = s->radius * cos(stackAngles[i]) * sin(sectorAngles[j]);
+          y[idx] = s->radius * sin(stackAngles[i]);
+          z[idx] = s->radius * cos(stackAngles[i]) * cos(sectorAngles[j]);
         }
       }
       

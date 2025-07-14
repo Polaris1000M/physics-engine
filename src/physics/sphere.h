@@ -18,7 +18,7 @@ typedef struct Sphere
 void sphereInit(Sphere* s, float radius, float mass, vec3 position, unsigned int sectors, unsigned int stacks);
 
 // return a pointer to an array of sphere vertices
-float* sphereVertices(Sphere* s, vec3 position);
+float* sphereVertices(Sphere* s);
 
 void renderSphere(Simulation* sim, vec3 position, vec3 orientation, vec3 color, float radius);
 

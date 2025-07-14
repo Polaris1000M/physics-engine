@@ -43,11 +43,21 @@ typedef struct Simulation {
   Cube* cubes;
   Pyramid* pyramids;
 
+  unsigned int sphereVertexCount;
+  unsigned int cubeVertexCount;
+  unsigned int pyramidVertexCount;
+
   // arrays holding vertices
   float* sphereVertices;
   float* cubeVertices;
   float* pyramidVertices;
 
+  unsigned int sphereVAO;
+  unsigned int cubeVAO;
+  unsigned int pyramidVAO;
+  unsigned int sphereVBO;
+  unsigned int cubeVBO;
+  unsigned int pyramidVBO;
 } Simulation;
 
 // initialize the simulation
