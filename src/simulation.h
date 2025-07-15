@@ -32,6 +32,9 @@ typedef struct Simulation {
   // the number of vertices stored on the VBOs of each object 
   unsigned int vertexCounts[OBJECT_TYPES];
 
+  // the number of floats in a single instance of the object
+  unsigned int singleVertexCounts[OBJECT_TYPES];
+
   // buffer with all the vertices of the objects
   float* vertices[OBJECT_TYPES];
 

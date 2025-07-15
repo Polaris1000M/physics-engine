@@ -44,14 +44,9 @@ int openglInit(Simulation* sim)
   return 0;
 }
 
-int simulationInit(Simulation* sim, const char* configPath)
+// initializes object data based on config
+int objectsInit(Simulation* sim, const char* configPath)
 {
-  // OpenGL boilerplate
-  if(openglInit(sim))
-  {
-    return 1;
-  }
-
   // parse config file
   char* configData = parseFile(configPath, "CONFIG");
   if(!configData)
@@ -76,6 +71,52 @@ int simulationInit(Simulation* sim, const char* configPath)
   }
   unsigned int numConfigObjects = cJSON_GetArraySize(rawObjects);
   convertConfigObjectsToObjects(numConfigObjects, configObjects, sim->counts, sim->objects);
+  
+  return 0;
+}
+
+// initalizes and binds vertex buffers
+int buffersInit(Simulation* sim)
+{
+  void (*generateVertices[OBJECT_TYPES])(float*, Object*); 
+  generateVertices[SPHERE] = sphereVertices;
+  generateVertices[CUBE] = cubeVertices;
+  generateVertices[PYRAMID] = pyramidVertices;
+
+  sim->singleVertexCounts[SPHERE] = sphereVertexCount();
+  sim->singleVertexCounts[CUBE] = cubeVertexCount();
+  sim->singleVertexCounts[PYRAMID] = pyramidVertexCount();
+
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    sim->vertexCounts[type] = sim->counts[type] * sim->singleVertexCounts[type];
+    sim->vertices[type] = malloc(sim->vertexCounts[type] * sizeof(float));
+
+    int idx = 0; // the index to generate new vertices in the vertices array
+
+    for(int i = 0; i < sim->counts[type]; i++)
+    {
+      generateVertices[type](sim->vertices[type] + idx, sim->objects[type] + i);
+      idx += sim->singleVertexCounts[type];
+    }
+  }
+
+  return 0;
+}
+
+int simulationInit(Simulation* sim, const char* configPath)
+{
+  // OpenGL boilerplate
+  if(openglInit(sim))
+  {
+    return 1;
+  }
+
+  // initialize objects
+  if(objectsInit(sim, configPath))
+  {
+    return 1;
+  }
 
   sim->lastTime = 0.0f;
   sim->timeRatio = 0.5f;
@@ -89,7 +130,10 @@ int simulationInit(Simulation* sim, const char* configPath)
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-  shaderUse(&sim->shader);
+  // initalize vertex and bind
+  buffersInit(sim);  
+
+  // shaderUse(&sim->shader);
 
   return 0;
 }
@@ -138,15 +182,53 @@ void simulationStart(Simulation* sim)
 
 void simulationPrint(Simulation* sim)
 {
-  for(int i = 0; i < OBJECT_TYPES; i++)
+  printf("OBJECTS\n");
+  printf("Object Counts\n");
+  for(int type = 0; type < OBJECT_TYPES; type++)
   {
-    printf("%s\n", OBJECT_NAMES[i]);
+    printf("%s: %d\n", OBJECT_NAMES[type], sim->counts[type]);
+  }
+  printf("\n");
 
-    for(int j = 0; j < sim->counts[i]; j++)
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    printf("%s\n", OBJECT_NAMES[type]);
+
+    for(int i = 0; i < sim->counts[type]; i++)
     {
-      objectPrint(&sim->objects[i][j]);
+      objectPrint(sim->objects[type] + i);
       printf("\n");
     }
     printf("\n");
+  }
+
+  printf("VERTICES\n");
+  printf("Single Vertex Counts\n");
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    printf("%s: %d\n", OBJECT_NAMES[type], sim->singleVertexCounts[type]);
+  }
+  printf("\n");
+
+  printf("Vertex Counts\n");
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    printf("%s: %d\n", OBJECT_NAMES[type], sim->vertexCounts[type]);
+  }
+  printf("\n");
+
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    printf("%s\n", OBJECT_NAMES[type]);
+    // print all vertices in a single object
+    for(int i = 0; i < sim->vertexCounts[type]; i += 3)
+    {
+      printf("(%f, %f, %f)\n", sim->vertices[type][i], sim->vertices[type][i + 1], sim->vertices[type][i + 2]);
+      // // iterate over all groups of 3 vertices in the current object
+      // for(int j = 0; j < i * sim->singleVertexCounts[type]; j += 3)
+      // {
+      //   printf("(%f, %f, %f)\n", sim->vertices[type][j], sim->vertices[type][j + 1], sim->vertices[type][j + 2]);
+      // }
+    }
   }
 }

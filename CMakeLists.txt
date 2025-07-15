@@ -23,9 +23,15 @@ add_executable(ParticleSimulator
   src/render/camera.c
   src/physics/object.c
   src/physics/sphere.c
+  src/physics/cube.c
+  src/physics/pyramid.c
   src/utils/cJSON.c
   src/utils/parse.c
 )
+
+target_compile_options(ParticleSimulator PRIVATE -fsanitize=address -g)
+target_link_options(ParticleSimulator PRIVATE -fsanitize=address)
+
 target_include_directories(ParticleSimulator PRIVATE include)
 
 target_include_directories(ParticleSimulator PRIVATE ${CMAKE_SOURCE_DIR}/src)

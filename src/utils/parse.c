@@ -251,7 +251,8 @@ void convertConfigObjectToObjects(ConfigObject* configObject, Object* objects)
 
 void convertConfigObjectsToObjects(int numConfigObjects, ConfigObject* configObjects, unsigned int* objectCounts, Object** objects)
 {
-  objectCounts[0] = objectCounts[1] = objectCounts[2] = 0;
+  memset(objectCounts, 0, OBJECT_TYPES * sizeof(unsigned int));
+
   for(int i = 0; i < numConfigObjects; i++)
   {
     objectCounts[configObjects[i].type] += configObjects[i].count;

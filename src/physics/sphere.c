@@ -88,3 +88,11 @@ void sphereVertices(float* vertices, Object* s)
   }
 }
 
+unsigned int sphereVertexCount()
+{
+  // stacks * sectors rectangles in total
+  // 2 triangles per rectangle
+  // 9 coordinates per triangle
+  // 9 color coordinates per triangle
+  return STACKS * SECTORS * 36;
+}
