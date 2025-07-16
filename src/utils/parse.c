@@ -1,8 +1,12 @@
 #include "parse.h"
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 int parseConfigObject(cJSON* object, ConfigObject* configObject)
 {
+  srand(time(NULL));
+
   // parse type
   const cJSON* configType = cJSON_GetObjectItemCaseSensitive(object, "type");
   const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"pyramid\" for type of object\n";

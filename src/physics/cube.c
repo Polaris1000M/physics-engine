@@ -6,9 +6,8 @@ void cubeMesh(float* vertices)
 
 unsigned int cubeMeshSize()
 {
-  return 216;
-}
-
-unsigned int cubeBindMesh(float* vertices)
-{
+  // 6 faces
+  // 2 triangles per face
+  // 9 coordinates triangle
+  return 108;
 }

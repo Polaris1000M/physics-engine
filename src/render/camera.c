@@ -55,8 +55,10 @@ void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 
 void cameraInit(Camera* c, GLFWwindow* window)
 {
-  c->WINDOW_WIDTH = 800;
-  c->WINDOW_HEIGHT = 600;
+  int width, height;
+  glfwGetWindowSize(window, &width, &height);
+  c->WINDOW_WIDTH = width; 
+  c->WINDOW_HEIGHT = height;
 
   c->cameraPos[0] = 0.0f;
   c->cameraPos[1] = 0.0f;

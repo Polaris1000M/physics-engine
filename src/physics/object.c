@@ -36,7 +36,14 @@ void objectVertices(Object* o, float* vertices)
       int idx = i * 4 + j;
       if(j == i)
       {
-        vertices[idx] = o->size / 0.5f;
+        if(i == 3)
+        {
+          vertices[idx] = 1.0f;
+        }
+        else
+        {
+          vertices[idx] = o->size / 0.5f;
+        }
       }
       else
       {
@@ -48,10 +55,15 @@ void objectVertices(Object* o, float* vertices)
   vertices[12] = o->position[0];
   vertices[13] = o->position[1];
   vertices[14] = o->position[2];
+
+  for(int i = 16; i < 19; i++)
+  {
+    vertices[i] = o->color[i - 16];
+  }
 }
 
 unsigned int objectVerticesSize()
 {
   // 4x4 float matrix and 3 floats for color
-  return 16;
+  return 19;
 }

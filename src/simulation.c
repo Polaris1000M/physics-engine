@@ -23,8 +23,12 @@ int openglInit(Simulation* sim)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-  sim->WINDOW_WIDTH = 800;
-  sim->WINDOW_HEIGHT = 600;
+  GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+  const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+
+  sim->WINDOW_WIDTH = mode->width;
+  sim->WINDOW_HEIGHT = mode->height;
   sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "ParticleSimulator", NULL, NULL);
   if(!sim->window)
   {
@@ -180,6 +184,9 @@ void simulationRender(Simulation* sim)
       glVertexAttribPointer(i + 1, 4, GL_FLOAT, GL_FALSE, objectVerticesSize() * sizeof(float), (void*) (i * 4 * sizeof(float)));
       glVertexAttribDivisor(i + 1, 1);
     }
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, objectVerticesSize() * sizeof(float), (void*) (16 * sizeof(float)));
+    glVertexAttribDivisor(5, 1);
 
     glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 3, sim->objectCounts[type]);
 
@@ -212,7 +219,7 @@ void simulationStart(Simulation* sim)
     sim->lastTime = currentTime;
 
     simulationRender(sim);
-    simulationPrint(sim);
+    // simulationPrint(sim);
 
     glfwSwapBuffers(sim->window);
 
