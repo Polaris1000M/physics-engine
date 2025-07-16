@@ -29,25 +29,29 @@ void objectPrint(Object* o)
 
 void objectVertices(Object* o, float* vertices)
 {
-  for(unsigned int i = 0; i < 4; i++)
+  for(int i = 0; i < 4; i++)
   {
-    for(unsigned int j = 0; j < 4; j++)
+    for(int j = 0; j < 4; j++)
     {
+      int idx = i * 4 + j;
       if(j == i)
       {
-        vertices[i * 4 + j] = 1.0f;
+        vertices[idx] = o->size / 0.5f;
       }
       else
       {
-        vertices[i * 4 + j] = 0.0f;
+        vertices[idx] = 0.0f;
       }
     }
   }
-  glm_vec3_copy(GLM_VEC3_ONE, vertices + 16);
+
+  vertices[12] = o->position[0];
+  vertices[13] = o->position[1];
+  vertices[14] = o->position[2];
 }
 
 unsigned int objectVerticesSize()
 {
   // 4x4 float matrix and 3 floats for color
-  return 19;
+  return 16;
 }

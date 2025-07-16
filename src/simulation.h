@@ -44,6 +44,9 @@ typedef struct Simulation {
   // VBOs for each of the object meshes
   unsigned int VBOs[OBJECT_TYPES];
 
+  // VBOs for per instance data
+  unsigned int instanceVBOs[OBJECT_TYPES];
+
   // VAOs for each of the object meshes
   unsigned int VAOs[OBJECT_TYPES];
 
