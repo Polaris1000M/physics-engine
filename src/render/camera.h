@@ -1,3 +1,10 @@
+/*
+ * camera.h
+ *
+ * Handles generation of view and projection matrices
+ * Allows 3D traversal of simulation
+ */
+
 #ifndef CAMERA_H
 #define CAMERA_H
 

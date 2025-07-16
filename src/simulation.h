@@ -1,3 +1,9 @@
+/*
+ * simulation.h
+ *
+ * Core simulation struct which manages objects, object interactions, and object rendering
+ */
+
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
@@ -24,26 +30,27 @@ typedef struct Simulation {
   Camera camera;
 
   // the number of each type of object
-  unsigned int counts[OBJECT_TYPES];
+  unsigned int objectCounts[OBJECT_TYPES];
 
   // arrays holding all objects
   Object* objects[OBJECT_TYPES];
 
-  // the number of vertices stored on the VBOs of each object 
-  unsigned int vertexCounts[OBJECT_TYPES];
+  // default meshes for each object type
+  float* meshes[OBJECT_TYPES];
 
   // the number of floats in a single instance of the object
-  unsigned int singleVertexCounts[OBJECT_TYPES];
+  unsigned int meshSizes[OBJECT_TYPES];
 
-  // buffer with all the vertices of the objects
-  float* vertices[OBJECT_TYPES];
-
-  // methods to generate vertices
-  void (*generateVertices[OBJECT_TYPES])(float*, Object*);
-
-  unsigned int VAOs[OBJECT_TYPES];
+  // VBOs for each of the object meshes
   unsigned int VBOs[OBJECT_TYPES];
-  unsigned int UBOs[OBJECT_TYPES];
+
+  // VAOs for each of the object meshes
+  unsigned int VAOs[OBJECT_TYPES];
+
+  unsigned int vertexCounts[OBJECT_TYPES];
+
+  // buffer with additional per instance rendering data (model matrix and color)
+  float* vertices[OBJECT_TYPES];
 
 } Simulation;
 

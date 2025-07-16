@@ -26,3 +26,28 @@ void objectPrint(Object* o)
   printf("color: (%f, %f, %f)\n", o->color[0], o->color[1], o->color[2]);
   printf("orientation: (%f, %f, %f)\n", o->orientation[0], o->orientation[1], o->orientation[2]);
 }
+
+void objectVertices(Object* o, float* vertices)
+{
+  for(unsigned int i = 0; i < 4; i++)
+  {
+    for(unsigned int j = 0; j < 4; j++)
+    {
+      if(j == i)
+      {
+        vertices[i * 4 + j] = 1.0f;
+      }
+      else
+      {
+        vertices[i * 4 + j] = 0.0f;
+      }
+    }
+  }
+  glm_vec3_copy(GLM_VEC3_ONE, vertices + 16);
+}
+
+unsigned int objectVerticesSize()
+{
+  // 4x4 float matrix and 3 floats for color
+  return 19;
+}

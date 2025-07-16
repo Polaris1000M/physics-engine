@@ -1,10 +1,14 @@
 #include "pyramid.h"
 
-void pyramidVertices(float* vertices, Object* p)
+void pyramidMesh(float* vertices)
 {
 }
 
-unsigned int pyramidVertexCount()
+unsigned int pyramidMeshSize()
 {
   return 72;
+}
+
+unsigned int pyramidBindMesh(float* vertices)
+{
 }

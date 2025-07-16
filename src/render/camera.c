@@ -29,6 +29,13 @@ void cameraCursorCallback(GLFWwindow *window, double xPos, double yPos)
   glm_normalize_to(direction, c->cameraFront);
 }
 
+void framebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+    Camera* c = glfwGetWindowUserPointer(window);
+    c->WINDOW_HEIGHT = height;
+    c->WINDOW_WIDTH = width;
+}
+
 // called whenever scroll input is received
 void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
@@ -81,6 +88,7 @@ void cameraInit(Camera* c, GLFWwindow* window)
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // sets window input to the cursor
   glfwSetCursorPosCallback(window, cameraCursorCallback);          // calls function whenever cursor position changes
   glfwSetScrollCallback(window, cameraScrollCallback);         // called whenever camera scrolls
+  glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 }
 
 void cameraKeyboardCallback(Camera* c, GLFWwindow* window)

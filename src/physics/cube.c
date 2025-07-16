@@ -1,10 +1,14 @@
 #include "cube.h"
 
-void cubeVertices(float* vertices, Object* c)
+void cubeMesh(float* vertices)
 {
 }
 
-unsigned int cubeVertexCount()
+unsigned int cubeMeshSize()
 {
   return 216;
+}
+
+unsigned int cubeBindMesh(float* vertices)
+{
 }

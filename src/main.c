@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     return 1;
   }
 
-  simulationPrint(&sim);
+  // simulationPrint(&sim);
 
-  // simulationStart(&sim);
+  simulationStart(&sim);
 }

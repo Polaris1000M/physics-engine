@@ -1,3 +1,9 @@
+/*
+ * parse.h
+ *
+ * Helper methods for parsing JSON config file into simulation struct
+ */ 
+
 #ifndef PARSE_H
 #define PARSE_H
 

@@ -10,9 +10,12 @@
 #define CUBE_VERTEX_COUNT 216
 
 // fills array with vertices assuming object is a cube 
-void cubeVertices(float* vertices, Object* c);
+void cubeMesh(float* vertices);
 
 // computes the number of vertices in a single cube object
-unsigned int cubeVertexCount();
+unsigned int cubeMeshSize();
+
+// creates VAO from sphere mesh data
+unsigned int cubeBindMesh(float* vertices);
 
 #endif

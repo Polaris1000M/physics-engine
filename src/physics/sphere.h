@@ -3,10 +3,12 @@
 
 #include "object.h"
 
-// fills array with vertex data assuming object is a sphere
-void sphereVertices(float* vertices, Object* s);
+// generates the default mesh for a sphere
+void sphereMesh(float* vertices);
 
-// computes the number of vertices in a single sphere object
-unsigned int sphereVertexCount();
+// computes the number of vertices in the sphere mesh
+unsigned int sphereMeshSize();
+
+void sphereBindMesh(unsigned int VAO, float* vertices);
 
 #endif
