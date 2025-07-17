@@ -1,9 +1,9 @@
-#include "pyramid.h"
+#include "tetrahedron.h"
 #include <math.h>
 #include <cglm/cglm.h>
 #include <string.h>
 
-void pyramidMesh(float* vertices)
+void tetrahedronMesh(float* vertices)
 {
   float coords[4][3];
 
@@ -45,7 +45,7 @@ void pyramidMesh(float* vertices)
   }
 }
 
-unsigned int pyramidMeshSize()
+unsigned int tetrahedronMeshSize()
 {
   // 4 triangles
   // 9 coordinates per triangle

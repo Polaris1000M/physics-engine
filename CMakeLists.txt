@@ -24,7 +24,7 @@ add_executable(PhysicsEngine
   src/physics/object.c
   src/physics/sphere.c
   src/physics/cube.c
-  src/physics/pyramid.c
+  src/physics/tetrahedron.c
   src/utils/cJSON.c
   src/utils/parse.c
 )

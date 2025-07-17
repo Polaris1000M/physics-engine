@@ -84,12 +84,12 @@ int buffersInit(Simulation* sim)
 {
   sim->meshSizes[SPHERE] = sphereMeshSize();
   sim->meshSizes[CUBE] = cubeMeshSize();
-  sim->meshSizes[PYRAMID] = pyramidMeshSize();
+  sim->meshSizes[TETRAHEDRON] = tetrahedronMeshSize();
 
   void (*generateMesh[OBJECT_TYPES])(float*); 
   generateMesh[SPHERE] = sphereMesh;
   generateMesh[CUBE] = cubeMesh;
-  generateMesh[PYRAMID] = pyramidMesh;
+  generateMesh[TETRAHEDRON] = tetrahedronMesh;
 
   glGenVertexArrays(OBJECT_TYPES, sim->VAOs);
   glGenBuffers(OBJECT_TYPES, sim->VBOs);

@@ -24,7 +24,7 @@ typedef enum
 {
   SPHERE,
   CUBE,
-  PYRAMID 
+  TETRAHEDRON
 } ObjectType;
 
 // represents an object in the simulation

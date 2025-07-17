@@ -13,7 +13,7 @@
 #include "physics/object.h"
 #include "physics/sphere.h"
 #include "physics/cube.h"
-#include "physics/pyramid.h"
+#include "physics/tetrahedron.h"
 #include "render/shader.h"
 #include "render/camera.h"
 
