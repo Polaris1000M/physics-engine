@@ -8,8 +8,9 @@ void pyramidMesh(float* vertices)
   float coords[4][3];
 
   const float defaultSize = 0.5f;
-  coords[0][0] = cos(M_PI / 6.0f);
-  coords[0][1] = -sin(M_PI / 6.0f);
+  const float angleDown = 0.339836909454f;
+  coords[0][0] = defaultSize * cos(angleDown);
+  coords[0][1] = defaultSize * -sin(angleDown);
   coords[0][2] = 0.0f;
 
   // create other points on the base of the pyramid by rotating prior point 120 degrees about the y axis

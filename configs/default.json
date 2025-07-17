@@ -35,6 +35,87 @@
       "range": [[0, 0], [0, 0], [0, 0]],
       "color": [1, 1, 1],
       "count": 1
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[-1, 1], [-1, 1], [0, 0]],
+      "color": [1, 1, 1],
+      "count": 2 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[1, 1], [-1, -1], [0, 0]],
+      "color": [1, 1, 1],
+      "count": 1 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[-1, -1], [1, 1], [0, 0]],
+      "color": [1, 1, 1],
+      "count": 1 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[0, 0], [-1, 1], [-1, 1]],
+      "color": [1, 1, 1],
+      "count": 2 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[0, 0], [-1, -1], [1, 1]],
+      "color": [1, 1, 1],
+      "count": 1 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[0, 0], [1, 1], [-1, -1]],
+      "color": [1, 1, 1],
+      "count": 1 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[-1, 1], [0, 0], [-1, 1]],
+      "color": [1, 1, 1],
+      "count": 2 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[-1, -1], [0, 0], [1, 1]],
+      "color": [1, 1, 1],
+      "count": 1 
+    },
+    {
+      "type": "cube",
+      "size": 0.1,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[1, 1], [0, 0], [-1, -1]],
+      "color": [1, 1, 1],
+      "count": 1 
     }
   ]
 }

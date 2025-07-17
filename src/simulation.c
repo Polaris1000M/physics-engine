@@ -219,7 +219,7 @@ void simulationStart(Simulation* sim)
     sim->lastTime = currentTime;
 
     simulationRender(sim);
-    simulationPrint(sim);
+    // simulationPrint(sim);
 
     glfwSwapBuffers(sim->window);
 

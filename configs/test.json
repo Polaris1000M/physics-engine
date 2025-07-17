@@ -1,0 +1,33 @@
+{
+  "gravity": 9.8,
+  "objects": [
+    {
+      "type": "sphere",
+      "size": 0.5,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[0, 0], [0, 0], [0, 0]],
+      "color": [1, 1, 1],
+      "count": 1 
+    },
+    {
+      "type": "cube",
+      "size": 0.5,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[0, 0], [0, 0], [0, 0]],
+      "color": [1, 1, 1],
+      "count": 1 
+    },
+    {
+      "type": "pyramid",
+      "size": 0.5,
+      "mass": 0.5,
+      "distribution": "uniform",
+      "range": [[0, 0], [0, 0], [0, 0]],
+      "color": [1, 1, 1],
+      "count": 1 
+    }
+  ]
+}
+
