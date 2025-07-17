@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(ParticleSimulator)
+project(PhysicsEngine)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -15,7 +15,7 @@ set_target_properties(glfw PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/libs
 )
 
-add_executable(ParticleSimulator
+add_executable(PhysicsEngine
   src/main.c
   src/simulation.c
   src/render/shader.c
@@ -29,20 +29,20 @@ add_executable(ParticleSimulator
   src/utils/parse.c
 )
 
-target_compile_options(ParticleSimulator PRIVATE -fsanitize=address -g)
-target_link_options(ParticleSimulator PRIVATE -fsanitize=address)
+target_compile_options(PhysicsEngine PRIVATE -fsanitize=address -g)
+target_link_options(PhysicsEngine PRIVATE -fsanitize=address)
 
-target_include_directories(ParticleSimulator PRIVATE include)
+target_include_directories(PhysicsEngine PRIVATE include)
 
-target_include_directories(ParticleSimulator PRIVATE ${CMAKE_SOURCE_DIR}/src)
+target_include_directories(PhysicsEngine PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
-target_link_libraries(ParticleSimulator PRIVATE glad glfw ${CMAKE_DL_LIBS})
+target_link_libraries(PhysicsEngine PRIVATE glad glfw ${CMAKE_DL_LIBS})
 
 if(APPLE)
   find_library(COCOA_LIBRARY Cocoa)
   find_library(IOKIT_LIBRARY IOKit)
   find_library(COREVIDEO_LIBRARY CoreVideo)
-  target_link_libraries(ParticleSimulator PRIVATE
+  target_link_libraries(PhysicsEngine PRIVATE
     ${COCOA_LIBRARY}
     ${IOKIT_LIBRARY}
     ${COREVIDEO_LIBRARY}

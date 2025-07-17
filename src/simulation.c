@@ -29,7 +29,7 @@ int openglInit(Simulation* sim)
 
   sim->WINDOW_WIDTH = mode->width;
   sim->WINDOW_HEIGHT = mode->height;
-  sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "ParticleSimulator", NULL, NULL);
+  sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "PhysicsEngine", NULL, NULL);
   if(!sim->window)
   {
     glfwTerminate();
