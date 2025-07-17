@@ -3,12 +3,12 @@
 
 void cubeMesh(float* vertices)
 {
-  float defaultSize = 0.5f;
+  const float defaultSize = 0.5f;
 
   // half of a side length of the square
   // all points in the cube have coordinates either positive or negative half
   // multiplied by square root of 3
-  float half = defaultSize / 1.73205081f;
+  const float half = defaultSize / 1.73205081f;
   
   const float sign[2] = {-1.0f, 1.0f};
   const int floatsPerTriangle = 9;

@@ -9,9 +9,9 @@
 
 void sphereMesh(float* vertices)
 {
-  float deltaStack = M_PI / (float) STACKS;
-  float deltaSector = M_PI * 2.0f / (float) SECTORS;
-  float defaultSize = 0.5f;
+  const float deltaStack = M_PI / (float) STACKS;
+  const float deltaSector = M_PI * 2.0f / (float) SECTORS;
+  const float defaultSize = 0.5f;
 
   for(unsigned int stack = 0; stack < STACKS; stack++)
   {
