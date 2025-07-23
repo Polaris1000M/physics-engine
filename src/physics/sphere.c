@@ -8,7 +8,9 @@
 
 #define STACKS 10 // number of stacks in a sphere
 #define SECTORS 10 // number of sectors in a sphere
-#define RECUR 5 // number of recursive levels for a sphere
+#define RECUR 3 // number of recursive levels for a sphere
+
+unsigned int count;
 
 void sphereUVMesh(float* vertices)
 {
@@ -111,11 +113,16 @@ void populateIcoMesh(float* vertices, unsigned int* idx, IcosphereFace* face)
 
   for(int i = 0; i < 3; i++)
   {
-    printf("(%f, %f, %f)\n", face->vertices[i][0], face->vertices[i][1], face->vertices[i][2]);
+    // printf("(%f, %f, %f)\n", face->vertices[i][0], face->vertices[i][1], face->vertices[i][2]);
 
     glm_vec3_copy(face->vertices[i], vertices + *idx);
     *idx += 3;
+
+    vertices[*idx] = count;
+    *idx += 1;
   }
+
+  count++;
 }
 
 void subdivideIcoFace(IcosphereFace* face, float defaultSize)
@@ -254,7 +261,7 @@ void sphereIcoMesh(float* vertices)
   idx = 0;
   for(int i = 0; i < 20; i++)
   {
-    printf("%d\n", idx);
+    // printf("%d\n", idx);
     populateIcoMesh(vertices, &idx, icosphere + i);
   }
 }
@@ -271,7 +278,7 @@ unsigned int sphereIcoMeshSize()
   }
 
   // each triangle has 3 vertices and 3 floats per vertex
-  result *= 3 * 3;
+  result *= 3 * 4;
 
   return result;
 }

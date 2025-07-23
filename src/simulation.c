@@ -105,14 +105,32 @@ int buffersInit(Simulation* sim)
     glBindBuffer(GL_ARRAY_BUFFER, sim->VBOs[type]);
 
     glBufferData(GL_ARRAY_BUFFER, sim->meshSizes[type] * sizeof(float), sim->meshes[type], GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) 0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(6, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) (3 * sizeof(float)));
+    glEnableVertexAttribArray(6);
 
     sim->vertexCounts[type] = sim->objectCounts[type] * objectVerticesSize();
     sim->vertices[type] = malloc(sim->vertexCounts[type] * sizeof(float));
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+  }
+
+  printf("%d\n", sim->meshSizes[SPHERE]);
+  for(int i = 0; i < sim->meshSizes[SPHERE]; i += 4)
+  {
+    printf("(");
+    for(int j = 0; j < 4; j++)
+    {
+      printf("%f", sim->meshes[SPHERE][i + j]);
+      if(j != 3)
+      {
+        printf(", ");
+      }
+    }
+    printf(")\n");
   }
 
   return 0;
