@@ -3,11 +3,14 @@
 #include <stdlib.h>
 #include <glad/glad.h>
 #include <string.h>
+#include <cglm/cglm.h>
+#include <stdio.h>
 
 #define STACKS 10 // number of stacks in a sphere
 #define SECTORS 10 // number of sectors in a sphere
+#define RECUR 0 // number of recursive levels for a sphere
 
-void sphereMesh(float* vertices)
+void sphereUVMesh(float* vertices)
 {
   const float deltaStack = M_PI / (float) STACKS;
   const float deltaSector = M_PI * 2.0f / (float) SECTORS;
@@ -77,11 +80,137 @@ void sphereMesh(float* vertices)
   }
 }
 
-unsigned int sphereMeshSize()
+unsigned int sphereUVMeshSize()
 {
   // stacks * sectors rectangles in total
   // 2 triangles per rectangle
   // 9 coordinates per triangle
   // 9 color coordinates per triangle
   return STACKS * SECTORS * 18;
+}
+
+typedef struct IcosphereFace IcosphereFace;
+
+struct IcosphereFace
+{
+  vec3 vertices[3];
+  IcosphereFace* next[4];
+};
+
+void populateIcoMesh(float* vertices, unsigned int* idx, IcosphereFace* face)
+{
+  if(face->next[0])
+  {
+    for(int i = 0; i < 4; i++)
+    {
+      populateIcoMesh(vertices, idx, face->next[i]);
+    }
+
+    return;
+  }
+
+  for(int i = 0; i < 3; i++)
+  {
+    printf("(%f, %f, %f)\n", face->vertices[i][0], face->vertices[i][1], face->vertices[i][2]);
+
+    glm_vec3_copy(face->vertices[i], vertices + *idx);
+    *idx += 3;
+  }
+}
+
+void sphereIcoMesh(float* vertices)
+{
+  // generate icosphere circumscribed in sphere of radius 0.5
+
+  float goldenRatio = 1.61803398875f;
+  float radiusToSideRatio = sqrt(goldenRatio * goldenRatio + 1.0f) / 2.0f;
+  radiusToSideRatio = 1.0f / radiusToSideRatio;
+  const float defaultSize = 0.5f;
+  float sideLength = radiusToSideRatio * defaultSize;
+
+  float topBase[5][3], bottomBase[5][3];
+  topBase[0][0] = 0.0f;
+  topBase[0][1] = sideLength * 0.5f;
+  topBase[0][2] = sqrt(0.5f * 0.5f + topBase[0][1] * topBase[0][1]);
+
+  mat4 rot = GLM_MAT4_IDENTITY;
+  glm_rotate_y(rot, glm_rad(72.0f), rot);
+  for(int i = 1; i < 5; i++)
+  {
+    glm_mat4_mulv3(rot, topBase[i - 1], 1.0f, topBase[i]);
+  }
+
+  glm_mat4_identity(rot);
+  glm_rotate_y(rot, glm_rad(36.0f), rot);
+  for(int i = 0; i < 5; i++)
+  {
+    glm_mat4_mulv3(rot, topBase[i], 1.0f, bottomBase[i]);
+    bottomBase[i][1] = -topBase[i][1];
+  }
+
+  IcosphereFace icosphere[20];
+  for(int i = 0; i < 20; i++)
+  {
+    for(int j = 0; j < 4; j++)
+    {
+      icosphere[i].next[j] = NULL;
+    }
+  }
+
+  // populate upper pentagonal pyramid
+  float top[3] = {0.0f, defaultSize, 0.0f};
+  for(int i = 0; i < 5; i++)
+  {
+    glm_vec3_copy(top, icosphere[i].vertices[0]);
+    glm_vec3_copy(topBase[i], icosphere[i].vertices[1]);
+    glm_vec3_copy(topBase[(i + 1) % 5], icosphere[i].vertices[2]);
+  }
+
+  // populate lower pentagonal pyramid
+  float bottom[3] = {0.0f, -defaultSize, 0.0f};
+  for(int i = 0; i < 5; i++)
+  {
+    glm_vec3_copy(bottom, icosphere[i + 5].vertices[0]);
+    glm_vec3_copy(bottomBase[i], icosphere[i + 5].vertices[1]);
+    glm_vec3_copy(bottomBase[(i + 1) % 5], icosphere[i + 5].vertices[2]);
+  }
+
+  // populate middle faces
+  unsigned int idx = 10;
+  for(int i = 0; i < 5; i++)
+  {
+    glm_vec3_copy(topBase[i], icosphere[idx].vertices[0]);
+    glm_vec3_copy(bottomBase[(i + 4) % 5], icosphere[idx].vertices[1]);
+    glm_vec3_copy(bottomBase[i], icosphere[idx].vertices[2]);
+    idx++;
+
+    glm_vec3_copy(topBase[i], icosphere[idx].vertices[0]);
+    glm_vec3_copy(topBase[(i + 1) % 5], icosphere[idx].vertices[1]);
+    glm_vec3_copy(bottomBase[i], icosphere[idx].vertices[2]);
+    idx++;
+  }
+
+  idx = 0;
+  for(int i = 0; i < 20; i++)
+  {
+    printf("%d\n", idx);
+    populateIcoMesh(vertices, &idx, icosphere + i);
+  }
+}
+
+unsigned int sphereIcoMeshSize()
+{
+  // original icosahedron has 20 triangles
+  unsigned int result = 20;
+
+  // each subdivision results in four times more triangles
+  for(int i = 0; i < RECUR; i++)
+  {
+    result *= 4;
+  }
+
+  // each triangle has 3 vertices and 3 floats per vertex
+  result *= 3 * 3;
+
+  return result;
 }

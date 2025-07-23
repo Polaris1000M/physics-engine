@@ -3,10 +3,16 @@
 
 #include "object.h"
 
-// generates the default mesh for a sphere
-void sphereMesh(float* vertices);
+// generates the UV mesh for a sphere
+void sphereUVMesh(float* vertices);
 
-// computes the number of vertices in the sphere mesh
-unsigned int sphereMeshSize();
+// computes the number of floats in the UV sphere mesh
+unsigned int sphereUVMeshSize();
+
+// generate mesh for icosphere
+void sphereIcoMesh(float* vertices);
+
+// computes number of floats in icosphere
+unsigned int sphereIcoMeshSize();
 
 #endif

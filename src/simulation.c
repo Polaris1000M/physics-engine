@@ -82,12 +82,12 @@ int objectsInit(Simulation* sim, const char* configPath)
 // initalizes and binds default meshes
 int buffersInit(Simulation* sim)
 {
-  sim->meshSizes[SPHERE] = sphereMeshSize();
+  sim->meshSizes[SPHERE] = sphereIcoMeshSize();
   sim->meshSizes[CUBE] = cubeMeshSize();
   sim->meshSizes[TETRAHEDRON] = tetrahedronMeshSize();
 
   void (*generateMesh[OBJECT_TYPES])(float*); 
-  generateMesh[SPHERE] = sphereMesh;
+  generateMesh[SPHERE] = sphereIcoMesh;
   generateMesh[CUBE] = cubeMesh;
   generateMesh[TETRAHEDRON] = tetrahedronMesh;
 
