@@ -8,7 +8,7 @@
 
 #define STACKS 10 // number of stacks in a sphere
 #define SECTORS 10 // number of sectors in a sphere
-#define RECUR 0 // number of recursive levels for a sphere
+#define RECUR 5 // number of recursive levels for a sphere
 
 void sphereUVMesh(float* vertices)
 {
@@ -118,6 +118,59 @@ void populateIcoMesh(float* vertices, unsigned int* idx, IcosphereFace* face)
   }
 }
 
+void subdivideIcoFace(IcosphereFace* face, float defaultSize)
+{
+  if(face->next[0])
+  {
+    for(int i = 0; i < 4; i++)
+    {
+      subdivideIcoFace(face->next[i], defaultSize);
+    }
+
+    return;
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    face->next[i] = malloc(sizeof(IcosphereFace));
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    IcosphereFace* nextFace = face->next[i];
+    for(int j = 0; j < 4; j++)
+    {
+      nextFace->next[j] = NULL;
+    }
+  }
+
+  float midpoints[3][3];
+  glm_vec3_add(face->vertices[0], face->vertices[1], midpoints[0]);
+  glm_vec3_add(face->vertices[0], face->vertices[2], midpoints[1]);
+  glm_vec3_add(face->vertices[1], face->vertices[2], midpoints[2]);
+
+  for(int i = 0; i < 3; i++)
+  {
+    glm_vec3_scale_as(midpoints[i], defaultSize, midpoints[i]);
+  }
+
+  glm_vec3_copy(face->vertices[0], face->next[0]->vertices[0]);
+  glm_vec3_copy(midpoints[0], face->next[0]->vertices[1]);
+  glm_vec3_copy(midpoints[1], face->next[0]->vertices[2]);
+
+  glm_vec3_copy(midpoints[0], face->next[1]->vertices[0]);
+  glm_vec3_copy(face->vertices[1], face->next[1]->vertices[1]);
+  glm_vec3_copy(midpoints[2], face->next[1]->vertices[2]);
+
+  glm_vec3_copy(midpoints[1], face->next[2]->vertices[0]);
+  glm_vec3_copy(midpoints[2], face->next[2]->vertices[1]);
+  glm_vec3_copy(face->vertices[2], face->next[2]->vertices[2]);
+
+  glm_vec3_copy(midpoints[2], face->next[3]->vertices[0]);
+  glm_vec3_copy(midpoints[1], face->next[3]->vertices[1]);
+  glm_vec3_copy(midpoints[0], face->next[3]->vertices[2]);
+}
+
 void sphereIcoMesh(float* vertices)
 {
   // generate icosphere circumscribed in sphere of radius 0.5
@@ -184,10 +237,18 @@ void sphereIcoMesh(float* vertices)
     glm_vec3_copy(bottomBase[i], icosphere[idx].vertices[2]);
     idx++;
 
-    glm_vec3_copy(topBase[i], icosphere[idx].vertices[0]);
-    glm_vec3_copy(topBase[(i + 1) % 5], icosphere[idx].vertices[1]);
-    glm_vec3_copy(bottomBase[i], icosphere[idx].vertices[2]);
+    glm_vec3_copy(bottomBase[i], icosphere[idx].vertices[0]);
+    glm_vec3_copy(topBase[i], icosphere[idx].vertices[1]);
+    glm_vec3_copy(topBase[(i + 1) % 5], icosphere[idx].vertices[2]);
     idx++;
+  }
+
+  for(int i = 0; i < RECUR; i++)
+  {
+    for(int j = 0; j < 20; j++)
+    {
+      subdivideIcoFace(icosphere + j, defaultSize);
+    }
   }
 
   idx = 0;
