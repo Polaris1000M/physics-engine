@@ -131,7 +131,7 @@ void sphereIcoMesh(float* vertices)
   float topBase[5][3], bottomBase[5][3];
   topBase[0][0] = 0.0f;
   topBase[0][1] = sideLength * 0.5f;
-  topBase[0][2] = sqrt(0.5f * 0.5f + topBase[0][1] * topBase[0][1]);
+  topBase[0][2] = sqrt(0.5f * 0.5f - topBase[0][1] * topBase[0][1]);
 
   mat4 rot = GLM_MAT4_IDENTITY;
   glm_rotate_y(rot, glm_rad(72.0f), rot);
