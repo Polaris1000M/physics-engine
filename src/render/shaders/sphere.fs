@@ -13,8 +13,6 @@ vec3 hashColor(float id) {
 
 void main()
 {
-  vec3 testColor = vec3(0.0, 0.0, 0.0);
-  testColor[int(ID) % 3] = 1.0;
   FragColor = vec4(hashColor(ID), 1.0);
 }
 

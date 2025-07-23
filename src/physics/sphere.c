@@ -8,7 +8,7 @@
 
 #define STACKS 10 // number of stacks in a sphere
 #define SECTORS 10 // number of sectors in a sphere
-#define RECUR 3 // number of recursive levels for a sphere
+#define RECUR 4 // number of recursive levels for a sphere
 
 unsigned int count;
 
@@ -231,8 +231,8 @@ void sphereIcoMesh(float* vertices)
   for(int i = 0; i < 5; i++)
   {
     glm_vec3_copy(bottom, icosphere[i + 5].vertices[0]);
-    glm_vec3_copy(bottomBase[i], icosphere[i + 5].vertices[1]);
-    glm_vec3_copy(bottomBase[(i + 1) % 5], icosphere[i + 5].vertices[2]);
+    glm_vec3_copy(bottomBase[(i + 1) % 5], icosphere[i + 5].vertices[1]);
+    glm_vec3_copy(bottomBase[i], icosphere[i + 5].vertices[2]);
   }
 
   // populate middle faces
@@ -245,8 +245,8 @@ void sphereIcoMesh(float* vertices)
     idx++;
 
     glm_vec3_copy(bottomBase[i], icosphere[idx].vertices[0]);
-    glm_vec3_copy(topBase[i], icosphere[idx].vertices[1]);
-    glm_vec3_copy(topBase[(i + 1) % 5], icosphere[idx].vertices[2]);
+    glm_vec3_copy(topBase[(i + 1) % 5], icosphere[idx].vertices[1]);
+    glm_vec3_copy(topBase[i], icosphere[idx].vertices[2]);
     idx++;
   }
 
@@ -261,9 +261,9 @@ void sphereIcoMesh(float* vertices)
   idx = 0;
   for(int i = 0; i < 20; i++)
   {
-    // printf("%d\n", idx);
     populateIcoMesh(vertices, &idx, icosphere + i);
   }
+  printf("%d\n", idx);
 }
 
 unsigned int sphereIcoMeshSize()

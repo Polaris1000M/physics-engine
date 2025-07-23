@@ -117,22 +117,7 @@ int buffersInit(Simulation* sim)
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
   }
-
-  printf("%d\n", sim->meshSizes[SPHERE]);
-  for(int i = 0; i < sim->meshSizes[SPHERE]; i += 4)
-  {
-    printf("(");
-    for(int j = 0; j < 4; j++)
-    {
-      printf("%f", sim->meshes[SPHERE][i + j]);
-      if(j != 3)
-      {
-        printf(", ");
-      }
-    }
-    printf(")\n");
-  }
-
+  
   return 0;
 }
 
@@ -206,7 +191,7 @@ void simulationRender(Simulation* sim)
     glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, objectVerticesSize() * sizeof(float), (void*) (16 * sizeof(float)));
     glVertexAttribDivisor(5, 1);
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 3, sim->objectCounts[type]);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 4, sim->objectCounts[type]);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -280,23 +265,23 @@ void simulationPrint(Simulation* sim)
     printf("\n");
   }
 
-  printf("VERTICES\n");
-  for(int type = 0; type < OBJECT_TYPES; type++)
-  {
-    printf("%s: %d\n", OBJECT_NAMES[type], sim->vertexCounts[type]);
-  }
-  for(int type = 0; type < OBJECT_TYPES; type++)
-  {
-    for(int i = 0; i < sim->objectCounts[type]; i++)
-    {
-      for(int j = 0; j < objectVerticesSize(); j++)
-      {
-        printf("%f ", sim->vertices[type][i * objectVerticesSize() + j]);
-      }
-      printf("\n");
-    }
-    printf("\n");
-  }
+  // printf("VERTICES\n");
+  // for(int type = 0; type < OBJECT_TYPES; type++)
+  // {
+  //   printf("%s: %d\n", OBJECT_NAMES[type], sim->vertexCounts[type]);
+  // }
+  // for(int type = 0; type < OBJECT_TYPES; type++)
+  // {
+  //   for(int i = 0; i < sim->objectCounts[type]; i++)
+  //   {
+  //     for(int j = 0; j < objectVerticesSize(); j++)
+  //     {
+  //       printf("%f ", sim->vertices[type][i * objectVerticesSize() + j]);
+  //     }
+  //     printf("\n");
+  //   }
+  //   printf("\n");
+  // }
 
   // printf("Single Vertex Counts\n");
   // for(int type = 0; type < OBJECT_TYPES; type++)
