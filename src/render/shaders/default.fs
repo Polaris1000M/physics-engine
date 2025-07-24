@@ -11,7 +11,7 @@ in vec3 FragPos;
 
 void main()
 {
-  float ambientStrength = 0.1;
+  float ambientStrength = 0.3;
   vec3 ambient = ambientStrength * lightColor;
 
   vec3 norm = normalize(normal);

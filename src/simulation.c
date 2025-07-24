@@ -215,6 +215,7 @@ void simulationStart(Simulation* sim)
     cameraKeyboardCallback(&sim->camera, sim->window);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     // update particle positions
     float currentTime = glfwGetTime();
