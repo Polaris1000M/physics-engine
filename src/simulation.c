@@ -173,6 +173,7 @@ void simulationRender(Simulation* sim)
   shaderSetVector(&sim->shader, "lightPos", lightPos);
   vec3 lightColor = {1.0f, 1.0f, 1.0f};
   shaderSetVector(&sim->shader, "lightColor", lightColor);
+  shaderSetVector(&sim->shader, "viewPos", sim->camera.cameraPos);
 
   for(unsigned int type = 0; type < OBJECT_TYPES; type++)
   {

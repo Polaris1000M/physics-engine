@@ -7,7 +7,7 @@
 
 #define STACKS 10 // number of stacks in a sphere
 #define SECTORS 10 // number of sectors in a sphere
-#define RECUR 8 // number of recursive levels for a sphere
+#define RECUR 5 // number of recursive levels for a sphere
 
 // represents a vertex in the icosphere 
 // all indices represent indices into central parent icosphere vertex array
