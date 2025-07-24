@@ -105,8 +105,10 @@ int buffersInit(Simulation* sim)
     glBindBuffer(GL_ARRAY_BUFFER, sim->VBOs[type]);
 
     glBufferData(GL_ARRAY_BUFFER, sim->meshSizes[type] * sizeof(float), sim->meshes[type], GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*) 0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) 0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3 * sizeof(float)));
+    glEnableVertexAttribArray(6);
 
     sim->vertexCounts[type] = sim->objectCounts[type] * objectVerticesSize();
     sim->vertices[type] = malloc(sim->vertexCounts[type] * sizeof(float));
@@ -167,6 +169,11 @@ void simulationRender(Simulation* sim)
   shaderSetMatrix(&sim->shader, "view", view);
   shaderSetMatrix(&sim->shader, "projection", projection);
 
+  vec3 lightPos = {100.0f, 100.0f, 100.0f};
+  shaderSetVector(&sim->shader, "lightPos", lightPos);
+  vec3 lightColor = {1.0f, 1.0f, 1.0f};
+  shaderSetVector(&sim->shader, "lightColor", lightColor);
+
   for(unsigned int type = 0; type < OBJECT_TYPES; type++)
   {
     glBindVertexArray(sim->VAOs[type]);
@@ -188,7 +195,7 @@ void simulationRender(Simulation* sim)
     glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, objectVerticesSize() * sizeof(float), (void*) (16 * sizeof(float)));
     glVertexAttribDivisor(5, 1);
 
-    glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 3, sim->objectCounts[type]);
+    glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 6, sim->objectCounts[type]);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);

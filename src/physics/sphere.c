@@ -7,18 +7,7 @@
 
 #define STACKS 10 // number of stacks in a sphere
 #define SECTORS 10 // number of sectors in a sphere
-#define RECUR 1 // number of recursive levels for a sphere
-
-// the initial count of vertices
-static unsigned int icoVertexCount = 20;
-
-// represents a triangular face of the icosphere 
-typedef struct IcoFace IcoFace;
-struct IcoFace
-{
-  unsigned int indices[3]; // indices of the 3 vertices of the triangle
-  IcoFace* next[4];        // next 4 triangles created from a subdivision of the current triangle
-};
+#define RECUR 8 // number of recursive levels for a sphere
 
 // represents a vertex in the icosphere 
 // all indices represent indices into central parent icosphere vertex array
@@ -29,14 +18,9 @@ typedef struct IcoVertex
   float coords[3];           // coordinates of this vertex
 } IcoVertex;
 
-void icoFacePrint(IcoFace* face)
-{
-  printf("(%d, %d, %d)\n\n", face->indices[0], face->indices[1], face->indices[2]);
-}
-
 void icoVertexPrint(IcoVertex *vertex)
 {
-  printf("(%d, %d, %d)\n\n", vertex->coords[0], face->coords[1], face->coords[2]);
+  printf("(%f, %f, %f)\n", vertex->coords[0], vertex->coords[1], vertex->coords[2]);
   printf("(");
   for(int neighbor = 0; neighbor < 6; neighbor++)
   {
@@ -46,14 +30,13 @@ void icoVertexPrint(IcoVertex *vertex)
       printf(", ");
     }
   }
-  printf(")\n");
+  printf(")\n\n");
 }
 
 // returns index of the target neighbor in the provided vertex
 // returns -1 if the index is not found
-int icoVertexFindNeighbor(IcoVertex* vertex, int target)
+int icoVertexFind(IcoVertex* vertex, int target)
 {
-  icoVertexPrint(vertex);
   for(int i = 0; i < 6; i++)
   {
     if(vertex->neighbors[i] == target)
@@ -65,24 +48,11 @@ int icoVertexFindNeighbor(IcoVertex* vertex, int target)
   return -1;
 }
 
-// replaces the target neighbor in the vertex with -1
-void icoVertexRemove(IcoVertex* vertex, int target)
-{
-  for(int i = 0; i < 6; i++)
-  {
-    if(vertex->neighbors[i] == target)
-    {
-      vertex->neighbors[i] = -1;
-      return;
-    }
-  }
-}
-
 // replaces a default -1 value with the target value
 // does nothing if the target already exists in the vertex or there are no more default values
-void icoVertexAddNeighbor(IcoVertex* vertex, int neighbor)
+void icoVertexAdd(IcoVertex* vertex, int neighbor)
 {
-  if(icoVertexFindNeighbor(vertex, neighbor) != -1)
+  if(icoVertexFind(vertex, neighbor) != -1)
   {
     return;
   }
@@ -99,7 +69,7 @@ void icoVertexAddNeighbor(IcoVertex* vertex, int neighbor)
 
 // replaces one of the neighbors of an icosphere vertex
 // used in subdivision algorithm
-void icoVertexReplaceNeighbor(IcoVertex* vertex, int cur, int next)
+void icoVertexReplace(IcoVertex* vertex, int cur, int next)
 {
   for(int i = 0; i < 6; i++)
   {
@@ -112,25 +82,17 @@ void icoVertexReplaceNeighbor(IcoVertex* vertex, int cur, int next)
   }
 }
 
-// populate default icosphere face data
-void icoFaceDefault(IcoFace* face)
-{
-  memset(face->vertices, 0, sizeof(face->vertices));
-  memset(face->indices, -1, sizeof(face->indices));
-  memset(face->next, 0, sizeof(face->next));
-}
-
 // populate default icosphere vertex data
 void icoVertexDefault(IcoVertex* vertex)
 {
-  vertex->idx = -1;
   memset(vertex->neighbors, -1, sizeof(vertex->neighbors));
   memset(vertex->normal, 0, sizeof(vertex->normal));
 }
 
-// finds which vertex index is neighbors to both provided indices
-int icoVertexFindIntersection(IcoVertex* icoVertices, unsigned int vertexOne, unsigned int vertexTwo)
+// checks if a midpoint already exists between the two provided points
+int icoVertexMidpoint(IcoVertex* icoVertices, unsigned int vertexOne, unsigned int vertexTwo, vec3 target)
 {
+  const float EPS = 0.000000001f;
   for(int i = 0; i < 6; i++)
   {
     if(icoVertices[vertexOne].neighbors[i] == -1)
@@ -142,28 +104,49 @@ int icoVertexFindIntersection(IcoVertex* icoVertices, unsigned int vertexOne, un
     {
       if(icoVertices[vertexOne].neighbors[i] == icoVertices[vertexTwo].neighbors[j])
       {
-        return icoVertices[vertexOne].neighbors[i];
+        vec3 diff;
+        unsigned int cur = icoVertices[vertexOne].neighbors[i];
+        glm_vec3_sub(icoVertices[cur].coords, target, diff);
+        if(glm_vec3_dot(diff, diff) < EPS)
+        {
+          return cur;
+        }
       }
     }
   }
 
   return -1;
 }
+ 
+// represents a triangular face of the icosphere 
+typedef struct IcoFace IcoFace;
+struct IcoFace
+{
+  unsigned int indices[3]; // indices of the 3 vertices of the triangle
+  IcoFace* next[4];        // next 4 triangles created from a subdivision of the current triangle
+};
+
+void icoFacePrint(IcoFace* face)
+{
+  printf("(%d, %d, %d)\n\n", face->indices[0], face->indices[1], face->indices[2]);
+}
+
+// populate default icosphere face data
+void icoFaceDefault(IcoFace* face)
+{
+  memset(face->indices, -1, sizeof(face->indices));
+  memset(face->next, 0, sizeof(face->next));
+}
 
 // creates edges between all the vertices in an icosphere face
 void icoFaceConnect(IcoFace* face, IcoVertex* vertices)
 {
-  for(int vertex = 0; vertex < 3; vertex++)
+  for(int i = 0; i < 3; i++)
   {
-    for(int neighbor = 0; neighbor < 3; neighbor++)
+    for(int j = 0; j < 3; j++)
     {
-      if(vertex == neighbor)
-      {
-        continue;
-      }
-
-      icoFacePrint(face);
-      icoVertexAddNeighbor(vertices + face->indices[vertex], face->indices[neighbor]);
+      icoVertexAdd(vertices + face->indices[i], face->indices[j]);
+      icoVertexAdd(vertices + face->indices[j], face->indices[i]);
     }
   }
 }
@@ -203,62 +186,50 @@ static const unsigned int midpointPattern[3][2] =
   {1, 2}
 };
 
-void icoFaceSubdivide(IcoFace* face, float defaultSize, IcoVertex* icoVertices, unsigned int* vertexIdx)
+void icoFaceSubdivide(IcoFace* face, IcoVertex* icoVertices, float defaultSize, unsigned int* vertexIdx)
 {
   // continual traversing tree if current face already subdivided
   if(face->next[0])
   {
     for(int i = 0; i < 4; i++)
     {
-      icoFaceSubdivide(face->next[i], defaultSize, icoVertices, vertexIdx);
+      icoFaceSubdivide(face->next[i], icoVertices, defaultSize, vertexIdx);
     }
 
     return;
   }
 
-  // populate midpoint vertex metadata
-  float midpointVertices[3][3]; // stores the coordinates of the midpoints
-  unsigned int midpointIndices[3]; // stores the indices of the midpoints
+  // create new midpoint vertices if needed
+  unsigned int midpointIndices[3];
   for(int midpoint = 0; midpoint < 3; midpoint++)
   {
-    // the two face indices which form the edge the current midpoint is on
-    unsigned int parentIdxOne = midpointPattern[midpoint][0];
-    unsigned int parentIdxTwo = midpointPattern[midpoint][1];
-    unsigned int parentVertexOne = face->indices[parentIdxOne];
-    unsigned int parentVertexTwo = face->indices[parentIdxTwo];
+    unsigned int idxOne = face->indices[midpointPattern[midpoint][0]];
+    unsigned int idxTwo = face->indices[midpointPattern[midpoint][1]];
 
-    glm_vec3_add(face->vertices[parentIdxOne], face->vertices[parentIdxTwo], midpointVertices[midpoint]);
-    glm_vec3_scale_as(midpointVertices[midpoint], defaultSize, midpointVertices[midpoint]);
-
-    // if the parent vertices are still adjacent, the midpoint has not yet been created
-    if(icoVertexFindNeighbor(icoVertices + parentVertexOne, parentVertexTwo) != -1)
+    vec3 target;
+    glm_vec3_add(icoVertices[idxOne].coords, icoVertices[idxTwo].coords, target);
+    glm_vec3_scale_as(target, defaultSize, target);
+    midpointIndices[midpoint] = icoVertexMidpoint(icoVertices, idxOne, idxTwo, target);
+    if(midpointIndices[midpoint] == -1)
     {
-      // replace previous connections with new midpoint vertex
-      icoVertexReplaceNeighbor(icoVertices + parentVertexOne, parentVertexTwo, *vertexIdx);
-      icoVertexReplaceNeighbor(icoVertices + parentVertexTwo, parentVertexOne, *vertexIdx);
-
-      // create new midpoint vertex data
-      icoVertexDefault(icoVertices + *vertexIdx);
-      icoVertices[*vertexIdx].idx = *vertexIdx;
-      icoVertexAddNeighbor(icoVertices + *vertexIdx, parentVertexOne);
-      icoVertexAddNeighbor(icoVertices + *vertexIdx, parentVertexTwo);
+      // printf("%d %d %d\n", *vertexIdx, idxOne, idxTwo);
+      // printf("(%f, %f, %f)\n\n", target[0], target[1], target[2]);
       midpointIndices[midpoint] = *vertexIdx;
+      icoVertexReplace(icoVertices + idxOne, idxTwo, *vertexIdx);
+      icoVertexReplace(icoVertices + idxTwo, idxOne, *vertexIdx);
+      glm_vec3_copy(target, icoVertices[*vertexIdx].coords);
       (*vertexIdx)++;
-    }
-    else // the midpoint has already been created and is adjacent to both parent vertices
-    {
-      // find which midpoint lies in the intersection of both face verices
-      midpointIndices[midpoint] = icoVertexFindIntersection(icoVertices, parentVertexOne, parentVertexTwo);
     }
   }
 
-  // populate next four sub faces
+  // create the new subfaces
   for(int subFace = 0; subFace < 4; subFace++)
   {
     face->next[subFace] = malloc(sizeof(IcoFace));
     icoFaceDefault(face->next[subFace]);
     IcoFace* nextFace = face->next[subFace];
 
+    // update the indices of the new subface
     for(int vertex = 0; vertex < 3; vertex++)
     {
       unsigned int loc = divisionPattern[subFace][vertex][0];
@@ -266,12 +237,10 @@ void icoFaceSubdivide(IcoFace* face, float defaultSize, IcoVertex* icoVertices, 
 
       if(loc == 0) // parent's vertex
       {
-        glm_vec3_copy(face->vertices[idx], nextFace->vertices[vertex]);
         nextFace->indices[vertex] = face->indices[idx];
       }
       else // new midpoint vertex
       {
-        glm_vec3_copy(midpointVertices[idx], nextFace->vertices[vertex]);
         nextFace->indices[vertex] = midpointIndices[idx];
       }
     }
@@ -280,13 +249,35 @@ void icoFaceSubdivide(IcoFace* face, float defaultSize, IcoVertex* icoVertices, 
   }
 }
 
-void icoMeshPopulate(float* vertices, IcoFace* face, unsigned int* faceIdx)
+void icoFaceComputeNormals(IcoFace* face, IcoVertex* icoVertices)
 {
   if(face->next[0])
   {
     for(int i = 0; i < 4; i++)
     {
-      icoMeshPopulate(vertices, face->next[i], faceIdx);
+      icoFaceComputeNormals(face->next[i], icoVertices);
+    }
+
+    return;
+  }
+
+  vec3 v1, v2, normal;
+  glm_vec3_sub(icoVertices[face->indices[1]].coords, icoVertices[face->indices[0]].coords, v1);
+  glm_vec3_sub(icoVertices[face->indices[2]].coords, icoVertices[face->indices[0]].coords, v2);
+  glm_vec3_cross(v1, v2, normal);
+  for(int i = 0; i < 3; i++)
+  {
+    glm_vec3_add(icoVertices[face->indices[i]].normal, normal, icoVertices[face->indices[i]].normal);
+  }
+}
+
+void icoFacePopulate(IcoFace* face, IcoVertex* icoVertices, float* vertices, unsigned int* faceIdx)
+{
+  if(face->next[0])
+  {
+    for(int i = 0; i < 4; i++)
+    {
+      icoFacePopulate(face->next[i], icoVertices, vertices, faceIdx);
     }
 
     return;
@@ -294,16 +285,14 @@ void icoMeshPopulate(float* vertices, IcoFace* face, unsigned int* faceIdx)
 
   for(int i = 0; i < 3; i++)
   {
-    glm_vec3_copy(face->vertices[i], vertices + *faceIdx);
-    (*faceIdx) += 3;
+    glm_vec3_copy(icoVertices[face->indices[i]].coords, vertices + *faceIdx);
+    glm_vec3_copy(icoVertices[face->indices[i]].normal, vertices + *faceIdx + 3);
+    (*faceIdx) += 6;
   }
-
-  printf("%d\n", *faceIdx);
-  icoFacePrint(face);
 }
 
 // the number of vertices in the finished icosphere
-unsigned int sphereIcoMeshVertexCount()
+unsigned int icoVertexCount()
 {
   unsigned int result = 12;
 
@@ -311,7 +300,7 @@ unsigned int sphereIcoMeshVertexCount()
   // 6 new vertices for each vertex, but each new vertex is counted twice
   for(int i = 0; i < RECUR; i++)
   {
-    result *= 3;
+    result *= 5;
   }
 
   return result;
@@ -328,8 +317,8 @@ unsigned int sphereIcoMeshSize()
     result *= 4;
   }
 
-  // each triangle has 3 vertices and 3 floats per vertex
-  result *= 3 * 3;
+  // each triangle has 3 vertices and 6 floats per vertex
+  result *= 3 * 6;
 
   return result;
 }
@@ -337,46 +326,47 @@ unsigned int sphereIcoMeshSize()
 void sphereIcoMesh(float* vertices)
 {
   // generate icosphere circumscribed in sphere of default radius
-  float goldenRatio = 1.61803398875f;
-  float radiusToSideRatio = sqrt(goldenRatio * goldenRatio + 1.0f) / 2.0f;
-  radiusToSideRatio = 1.0f / radiusToSideRatio;
+  const float goldenRatio = 1.61803398875f;
+  const float radiusToSideRatio = 1.0f / (sqrt(goldenRatio * goldenRatio + 1.0f) / 2.0f);
   const float defaultSize = 0.5f;
-  float sideLength = radiusToSideRatio * defaultSize;
+  const float sideLength = radiusToSideRatio * defaultSize;
+
+  // initial icosahedron layout
+  // 0 = top
+  // 1-5 = top base
+  // 6 = bottom
+  // 7-11 = bottom base
+  IcoVertex* icoVertices = malloc(icoVertexCount() * sizeof(IcoVertex));
+  for(int i = 0; i < icoVertexCount(); i++)
+  {
+    icoVertexDefault(icoVertices + i);
+  }
 
   // upper pentagonal base
-  float top[3] = {0.0f, defaultSize, 0.0f};
-  float topBase[5][3];
-  topBase[0][0] = 0.0f;
-  topBase[0][1] = sideLength * 0.5f;
-  topBase[0][2] = sqrt(0.5f * 0.5f - topBase[0][1] * topBase[0][1]);
+  icoVertices[0].coords[0] = 0.0f;
+  icoVertices[0].coords[1] = defaultSize;
+  icoVertices[0].coords[2] = 0.0f;
+  icoVertices[1].coords[0] = 0.0f;
+  icoVertices[1].coords[1] = sideLength * 0.5f;
+  icoVertices[1].coords[2] = sqrt(0.5f * 0.5f - (sideLength * 0.5f) * (sideLength * 0.5f));
   mat4 rot = GLM_MAT4_IDENTITY;
   glm_rotate_y(rot, glm_rad(72.0f), rot);
-  for(int i = 1; i < 5; i++)
+  for(int i = 2; i <= 5; i++)
   {
-    glm_mat4_mulv3(rot, topBase[i - 1], 1.0f, topBase[i]);
+    glm_mat4_mulv3(rot, icoVertices[i - 1].coords, 1.0f, icoVertices[i].coords);
   }
   
   // lower pentagonal base
-  float bottom[3] = {0.0f, -defaultSize, 0.0f};
-  float bottomBase[5][3];
+  icoVertices[6].coords[0] = 0.0f;
+  icoVertices[6].coords[1] = -defaultSize;
+  icoVertices[6].coords[2] = 0.0f;
   glm_mat4_identity(rot);
   glm_rotate_y(rot, glm_rad(36.0f), rot);
-  for(int i = 0; i < 5; i++)
+  for(int i = 7; i <= 11; i++)
   {
-    glm_mat4_mulv3(rot, topBase[i], 1.0f, bottomBase[i]);
-    bottomBase[i][1] = -topBase[i][1];
+    glm_mat4_mulv3(rot, icoVertices[i - 6].coords, 1.0f, icoVertices[i].coords);
+    icoVertices[i].coords[1] = -sideLength * 0.5f;
   }
-
-  // indices corresponding to icosahedron
-  unsigned int topIdx = 0;
-  float topIndices[5];
-  float bottomIndices[5];
-  for(int i = 0; i < 5; i++)
-  {
-    topIndices[i] = i + 1;
-    bottomIndices[i] = i + 6;
-  }
-  unsigned int bottomIdx = 11;
 
   // populate default array of icosphere faces
   IcoFace icoFaces[20];
@@ -385,67 +375,36 @@ void sphereIcoMesh(float* vertices)
     icoFaceDefault(icoFaces + i);
   }
 
-  // populate default array of icosphere vertices
-  IcoVertex icoVertices[sphereIcoMeshVertexCount()];
-  for(int i = 0; i < sphereIcoMeshVertexCount(); i++)
-  {
-    icoVertexDefault(icoVertices + i);
-  }
-
   // populate initial icosahedron data
+  unsigned int topOffset = 1;
+  unsigned int bottomOffset = 7;
   for(int face = 0; face < 5; face++)
   {
     // upper pentagonal pyramid
-    const float* curTopVertices[3] = {top, topBase[face], topBase[(face + 1) % 5]};
-    const unsigned int curTopIndices[3] = {topIdx, topIndices[face], topIndices[(face + 1) % 5]};
+    const unsigned int curTopIndices[3] = {0, face + topOffset, (face + 1) % 5 + topOffset};
 
     // lower pentagonal pyramid
-    const float* curBottomVertices[3] = {bottom, bottomBase[(face + 1) % 5], bottomBase[face]};
-    const unsigned int curBottomIndices[3] = {bottomIdx, bottomIndices[(face + 1) % 5], bottomIndices[face]};
+    const unsigned int curBottomIndices[3] = {6, (face + 1) % 5 + bottomOffset, face + bottomOffset};
 
-    // up (triangle is right side up) middle faces
-    const float* curUpVertices[3] = {topBase[face], bottomBase[(face + 4) % 5], bottomBase[face]};
-    const unsigned int curUpIndices[3] = {topIndices[face], bottomIndices[(face + 4) % 5], bottomIndices[face]};
+    // right side up middle faces
+    const unsigned int curUpIndices[3] = {face + topOffset, (face + 4) % 5 + bottomOffset, face + bottomOffset};
 
-    // down (triangle is upside down) middle faces
-    const float* curDownVertices[3] = {bottomBase[face], topBase[(face + 1) % 5], topBase[face]};
-    const unsigned int curDownIndices[3] = {bottomIndices[face], topIndices[(face + 1) % 5], topIndices[face]};
+    // upside down middle faces
+    const unsigned int curDownIndices[3] = {face + bottomOffset, (face + 1) % 5 + topOffset, face + topOffset};
 
     for(int vertex = 0; vertex < 3; vertex++)
     {
-      // copy coordinate data
-      glm_vec3_copy((float*) curTopVertices[vertex], icoFaces[face].vertices[vertex]);
-      glm_vec3_copy((float*) curBottomVertices[vertex], icoFaces[face + 5].vertices[vertex]);
-      glm_vec3_copy((float*) curUpVertices[vertex], icoFaces[face + 10].vertices[vertex]);
-      glm_vec3_copy((float*) curDownVertices[vertex], icoFaces[face + 15].vertices[vertex]);
-
       // update current face to include index
       icoFaces[face].indices[vertex] = curTopIndices[vertex];
       icoFaces[face + 5].indices[vertex] = curBottomIndices[vertex];
       icoFaces[face + 10].indices[vertex] = curUpIndices[vertex];
       icoFaces[face + 15].indices[vertex] = curDownIndices[vertex];
-
-      // update vertex index data
-      icoVertices[curTopIndices[vertex]].idx = curTopIndices[vertex];
-      icoVertices[curBottomIndices[vertex]].idx = curBottomIndices[vertex];
-      icoVertices[curUpIndices[vertex]].idx = curUpIndices[vertex];
-      icoVertices[curDownIndices[vertex]].idx = curDownIndices[vertex];
-
-      // update neighbor adjacency data
-      for(int neighbor = 0; neighbor < 3; neighbor++)
-      {
-        if(vertex == neighbor)
-        {
-          continue;
-        }
-
-        // create edges between vertices
-        icoVertexAddNeighbor(icoVertices + curTopIndices[vertex], curTopIndices[neighbor]);
-        icoVertexAddNeighbor(icoVertices + curBottomIndices[vertex], curBottomIndices[neighbor]);
-        icoVertexAddNeighbor(icoVertices + curUpIndices[vertex], curUpIndices[neighbor]);
-        icoVertexAddNeighbor(icoVertices + curDownIndices[vertex], curDownIndices[neighbor]);
-      }
     }
+
+    icoFaceConnect(icoFaces + face, icoVertices);
+    icoFaceConnect(icoFaces + face + 5, icoVertices);
+    icoFaceConnect(icoFaces + face + 10, icoVertices);
+    icoFaceConnect(icoFaces + face + 15, icoVertices);
   }
 
   // begin subdivisions
@@ -454,24 +413,26 @@ void sphereIcoMesh(float* vertices)
   {
     for(int j = 0; j < 20; j++)
     {
-      icoFaceSubdivide(icoFaces + j, defaultSize, icoVertices, &vertexIdx);
+      icoFaceSubdivide(icoFaces + j, icoVertices, defaultSize, &vertexIdx);
     }
   }
 
-  printf("FACES\n");
+  // compute normals
+  for(int i = 0; i < 20; i++)
+  {
+    icoFaceComputeNormals(icoFaces + i, icoVertices);
+  }
+  for(int i = 0; i < vertexIdx; i++)
+  {
+    glm_vec3_scale_as(icoVertices[i].coords, defaultSize, icoVertices[i].coords);
+    glm_vec3_normalize(icoVertices[i].normal);
+  }
+
   // populate resulting data into vertex buffer
   unsigned int faceIdx = 0; // the index the current face will have in the vertex buffer
   for(int i = 0; i < 20; i++)
   {
-    icoMeshPopulate(vertices, icoFaces + i, &faceIdx);
-  }
-
-  printf("VERTICES\n");
-  for(int i = 0; i < vertexIdx; i++)
-  {
-    printf("%d\n", icoVertices[i].idx);
-    icoVertexPrint(icoVertices + i);
-    printf("\n");
+    icoFacePopulate(icoFaces + i, icoVertices, vertices, &faceIdx);
   }
 }
 
