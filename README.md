@@ -1,6 +1,9 @@
-<img src="assets/phong-icosphere.jpg" alt="Phong Icosphere" width="75" align="right">
+<h1 align="center">
+   <img src="assets/text.png" height="60" hspace="20">
+  <img src="assets/phong-icosphere.png" height="75" hspace="10">
+  <img src="assets/colored-icosphere.png" height="75">
+</h1>
 
-# Physics Engine
 Building a performant physics simulator from scratch in C with OpenGL, GLAD, GLFW, and cglm.
 - Traverse through the scene with keyboard and cursor controls
 - Allow users to save and load previous configurations
