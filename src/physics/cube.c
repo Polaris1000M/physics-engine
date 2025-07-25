@@ -11,8 +11,8 @@ void cubeMesh(float* vertices)
   const float half = defaultSize / 1.73205081f;
   
   const float sign[2] = {-1.0f, 1.0f};
-  const int floatsPerTriangle = 9;
-  const int floatsPerVertex = 3;
+  const int floatsPerVertex = 6;
+  const int floatsPerTriangle = 3 * floatsPerVertex;
   const float signs[4][2] =
   {
     {-1.0f, 1.0f},
@@ -38,13 +38,15 @@ void cubeMesh(float* vertices)
         face[sign][(fixed + 2) % 3] = signs[sign][1] * half;
       }
 
+      vec3 normal = {0.0f, 0.0f, 0.0f};
+      normal[fixed] = sign[fixedSign];
       for(int i = 0; i < 2; i++)
       {
         for(int j = 0; j < 3; j++)
         {
           int idx = fixed * 4 * floatsPerTriangle + fixedSign * 2 * floatsPerTriangle + i * floatsPerTriangle + j * floatsPerVertex;
-
-          memcpy(vertices + idx, face[i + j], 3 * sizeof(float));
+          glm_vec3_copy(face[i + j], vertices + idx);
+          glm_vec3_copy(normal, vertices + idx + 3);
         }
       }
     }
@@ -55,6 +57,6 @@ unsigned int cubeMeshSize()
 {
   // 6 faces
   // 2 triangles per face
-  // 9 coordinates triangle
-  return 108;
+  // 18 coordinates triangle
+  return 216;
 }

@@ -1,121 +1,33 @@
 {
   "gravity": 9.8,
-  "objects": [
+  "objects":
+  [
     {
       "type": "sphere",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[-1, 1], [0, 0], [0, 0]],
-      "color": [1, 0, 0],
-      "count": 2 
-    },
-    {
-      "type": "sphere",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[0, 0], [-1, 1], [0, 0]],
-      "color": [0, 1, 0],
-      "count": 2 
-    },
-    {
-      "type": "sphere",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[0, 0], [0, 0], [-1, 1]],
-      "color": [0, 0, 1],
-      "count": 2 
-    },
-    {"type": "pyramid",
-      "size": 0.1,
+      "size": 1,
       "mass": 0.5,
       "distribution": "uniform",
       "range": [[0, 0], [0, 0], [0, 0]],
-      "color": [1, 1, 1],
+      "color": [0.8, 0.8, 0.8],
       "count": 1
     },
     {
       "type": "cube",
-      "size": 0.1,
+      "size": 1,
       "mass": 0.5,
       "distribution": "uniform",
-      "range": [[-1, 1], [-1, 1], [0, 0]],
-      "color": [1, 1, 1],
-      "count": 2 
+      "range": [[-2, -2], [0, 0], [0, 0]],
+      "color": [0.8, 0.8, 0.8],
+      "count": 1
     },
     {
-      "type": "cube",
-      "size": 0.1,
+      "type": "tetrahedron",
+      "size": 1,
       "mass": 0.5,
       "distribution": "uniform",
-      "range": [[1, 1], [-1, -1], [0, 0]],
-      "color": [1, 1, 1],
-      "count": 1 
-    },
-    {
-      "type": "cube",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[-1, -1], [1, 1], [0, 0]],
-      "color": [1, 1, 1],
-      "count": 1 
-    },
-    {
-      "type": "cube",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[0, 0], [-1, 1], [-1, 1]],
-      "color": [1, 1, 1],
-      "count": 2 
-    },
-    {
-      "type": "cube",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[0, 0], [-1, -1], [1, 1]],
-      "color": [1, 1, 1],
-      "count": 1 
-    },
-    {
-      "type": "cube",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[0, 0], [1, 1], [-1, -1]],
-      "color": [1, 1, 1],
-      "count": 1 
-    },
-    {
-      "type": "cube",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[-1, 1], [0, 0], [-1, 1]],
-      "color": [1, 1, 1],
-      "count": 2 
-    },
-    {
-      "type": "cube",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[-1, -1], [0, 0], [1, 1]],
-      "color": [1, 1, 1],
-      "count": 1 
-    },
-    {
-      "type": "cube",
-      "size": 0.1,
-      "mass": 0.5,
-      "distribution": "uniform",
-      "range": [[1, 1], [0, 0], [-1, -1]],
-      "color": [1, 1, 1],
-      "count": 1 
+      "range": [[2, 2], [-0.3, -0.3], [0, 0]],
+      "color": [0.8, 0.8, 0.8],
+      "count": 1
     }
   ]
 }

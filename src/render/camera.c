@@ -136,12 +136,12 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 
-  // if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
-  // {
-  //   vec3 mov;
-  //   glm_vec3_scale(c->cameraUp, -cameraSpeed, mov);
-  //   glm_vec3_add(c->cameraPos, mov, c->cameraPos);
-  // }
+  if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
+  {
+    vec3 mov;
+    glm_vec3_scale(c->cameraUp, -cameraSpeed, mov);
+    glm_vec3_add(c->cameraPos, mov, c->cameraPos);
+  }
 }
 
 void cameraLookAt(Camera* c, mat4 view)

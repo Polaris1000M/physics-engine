@@ -7,14 +7,13 @@
 
 #define STACKS 10 // number of stacks in a sphere
 #define SECTORS 10 // number of sectors in a sphere
-#define RECUR 5 // number of recursive levels for a sphere
+#define RECUR 3 // number of recursive levels for a sphere
 
 // represents a vertex in the icosphere 
 // all indices represent indices into central parent icosphere vertex array
 typedef struct IcoVertex
 {
   unsigned int neighbors[6]; // the six adjacent vertices to the current one
-  float normal[3];           // normal vector of the current vertex
   float coords[3];           // coordinates of this vertex
 } IcoVertex;
 
@@ -86,7 +85,6 @@ void icoVertexReplace(IcoVertex* vertex, int cur, int next)
 void icoVertexDefault(IcoVertex* vertex)
 {
   memset(vertex->neighbors, -1, sizeof(vertex->neighbors));
-  memset(vertex->normal, 0, sizeof(vertex->normal));
 }
 
 // checks if a midpoint already exists between the two provided points
@@ -249,28 +247,6 @@ void icoFaceSubdivide(IcoFace* face, IcoVertex* icoVertices, float defaultSize, 
   }
 }
 
-void icoFaceComputeNormals(IcoFace* face, IcoVertex* icoVertices)
-{
-  if(face->next[0])
-  {
-    for(int i = 0; i < 4; i++)
-    {
-      icoFaceComputeNormals(face->next[i], icoVertices);
-    }
-
-    return;
-  }
-
-  vec3 v1, v2, normal;
-  glm_vec3_sub(icoVertices[face->indices[1]].coords, icoVertices[face->indices[0]].coords, v1);
-  glm_vec3_sub(icoVertices[face->indices[2]].coords, icoVertices[face->indices[0]].coords, v2);
-  glm_vec3_cross(v1, v2, normal);
-  for(int i = 0; i < 3; i++)
-  {
-    glm_vec3_add(icoVertices[face->indices[i]].normal, normal, icoVertices[face->indices[i]].normal);
-  }
-}
-
 void icoFacePopulate(IcoFace* face, IcoVertex* icoVertices, float* vertices, unsigned int* faceIdx)
 {
   if(face->next[0])
@@ -286,7 +262,7 @@ void icoFacePopulate(IcoFace* face, IcoVertex* icoVertices, float* vertices, uns
   for(int i = 0; i < 3; i++)
   {
     glm_vec3_copy(icoVertices[face->indices[i]].coords, vertices + *faceIdx);
-    glm_vec3_copy(icoVertices[face->indices[i]].normal, vertices + *faceIdx + 3);
+    glm_normalize_to(icoVertices[face->indices[i]].coords, vertices + *faceIdx + 3);
     (*faceIdx) += 6;
   }
 }
@@ -415,17 +391,6 @@ void sphereIcoMesh(float* vertices)
     {
       icoFaceSubdivide(icoFaces + j, icoVertices, defaultSize, &vertexIdx);
     }
-  }
-
-  // compute normals
-  for(int i = 0; i < 20; i++)
-  {
-    icoFaceComputeNormals(icoFaces + i, icoVertices);
-  }
-  for(int i = 0; i < vertexIdx; i++)
-  {
-    glm_vec3_scale_as(icoVertices[i].coords, defaultSize, icoVertices[i].coords);
-    glm_vec3_normalize(icoVertices[i].normal);
   }
 
   // populate resulting data into vertex buffer

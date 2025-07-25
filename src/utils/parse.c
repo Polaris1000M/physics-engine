@@ -9,7 +9,7 @@ int parseConfigObject(cJSON* object, ConfigObject* configObject)
 
   // parse type
   const cJSON* configType = cJSON_GetObjectItemCaseSensitive(object, "type");
-  const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"pyramid\" for type of object\n";
+  const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"tetrahedron\" for type of object\n";
   if(!cJSON_IsString(configType))
   {
     printf("%s", typeErrorMessage);

@@ -25,29 +25,38 @@ void tetrahedronMesh(float* vertices)
   coords[3][1] = defaultSize;
   coords[3][2] = 0.0f;
 
-  const unsigned int floatsPerTriangle = 9;
-  const unsigned int floatsPerVertex = 3;
-  for(int removed = 0; removed < 4; removed++)
+  const unsigned int floatsPerVertex = 6;
+  const unsigned int floatsPerTriangle = floatsPerVertex * 3;
+
+  for(int face = 0; face < 3; face++)
   {
-    int ct = 0;
-    for(int coord = 0; coord < 4; coord++)
+    const unsigned int indices[3] = {3, face, (face + 1) % 3};
+    vec3 e1, e2, normal;
+    glm_vec3_sub(coords[face], coords[3], e1);
+    glm_vec3_sub(coords[(face + 1) % 3], coords[3], e2);
+    glm_vec3_crossn(e1, e2, normal);
+
+    unsigned int idx = face * floatsPerTriangle;
+    for(int i = 0; i < 3; i++)
     {
-      if(coord == removed)
-      {
-        continue;
-      }
-
-      int idx = removed * floatsPerTriangle + ct * floatsPerVertex;
-      ct++;
-
-      memcpy(vertices + idx, coords[coord], 3 * sizeof(float));
+      glm_vec3_copy(coords[indices[i]], vertices + idx);
+      glm_vec3_copy(normal, vertices + idx + 3);
+      idx += floatsPerVertex;
     }
+  }
+
+  vec3 normal = {0.0f, -1.0f, 0.0f};
+  for(int i = 0; i < 3; i++)
+  {
+    unsigned int idx = 3 * floatsPerTriangle + i * floatsPerVertex;
+    glm_vec3_copy(coords[i], vertices + idx);
+    glm_vec3_copy(normal, vertices + idx + 3);
   }
 }
 
 unsigned int tetrahedronMeshSize()
 {
   // 4 triangles
-  // 9 coordinates per triangle
-  return 36;
+  // 18 floats per triangle
+  return 72;
 }
