@@ -61,8 +61,8 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->WINDOW_HEIGHT = height;
 
   c->cameraPos[0] = 0.0f;
-  c->cameraPos[1] = 0.0f;
-  c->cameraPos[2] = 3.0f; // set camera along positive z axis
+  c->cameraPos[1] = 2.0f;
+  c->cameraPos[2] = 5.0f; // set camera along positive z axis
 
   c->cameraFront[0] = 0.0f;
   c->cameraFront[1] = 0.0f;
@@ -75,7 +75,7 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->lastTime = 0.0f;
 
   // keyboard configuration
-  c->keySensitivity = 2.5f; 
+  c->keySensitivity = 4.0f; 
 
   // mouse configuration
   c->firstCursor = 1;

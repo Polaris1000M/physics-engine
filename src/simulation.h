@@ -30,6 +30,11 @@ typedef struct Simulation {
   Shader shader;
   Camera camera;
 
+  unsigned int floorVAO;
+  unsigned int floorVBO;
+  float floorMesh[36];
+  Shader floorShader;
+
   // the number of each type of object
   unsigned int objectCounts[OBJECT_TYPES];
 

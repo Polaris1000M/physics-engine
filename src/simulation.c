@@ -99,9 +99,50 @@ int objectsInit(Simulation* sim, const char* configPath)
   return 0;
 }
 
+// creates the floor of the simulation
+void floorInit(Simulation* sim)
+{
+  // create floor
+  const float signs[4][2] = 
+  {
+    {-1.0f, -1.0f},
+    {-1.0f, 1.0f},
+    {1.0f, -1.0f},
+    {1.0f, 1.0f}
+  };
+  const float side = 10.0f;
+  const unsigned int floatsPerVertex = 6;
+  const unsigned int floatsPerTriangle = 3 * floatsPerVertex;
+  vec3 normal = {0.0f, 1.0f, 0.0f};
+  for(int i = 0; i < 2; i++)
+  {
+    for(int j = 0; j < 3; j++)
+    {
+      int idx = i * floatsPerTriangle + j * floatsPerVertex;
+      vec3 coord = {signs[i + j][0] * side, 0.0f, signs[i + j][1] * side};
+      glm_vec3_copy(coord, sim->floorMesh + idx);
+      glm_vec3_copy(normal, sim->floorMesh + idx + 3);
+    }
+  }
+
+  glGenVertexArrays(1, &sim->floorVAO);
+  glGenBuffers(1, &sim->floorVBO);
+  glBindVertexArray(sim->floorVAO);
+  glBindBuffer(GL_ARRAY_BUFFER, sim->floorVBO);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(sim->floorMesh), sim->floorMesh, GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) 0);
+  glEnableVertexAttribArray(0);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3 * sizeof(float)));
+  glEnableVertexAttribArray(1);
+
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 // initalizes and binds default meshes
 int buffersInit(Simulation* sim)
 {
+  floorInit(sim);
   sim->meshSizes[SPHERE] = sphereIcoMeshSize();
   sim->meshSizes[CUBE] = cubeMeshSize();
   sim->meshSizes[TETRAHEDRON] = tetrahedronMeshSize();
@@ -159,6 +200,7 @@ int simulationInit(Simulation* sim, const char* configPath)
 
   // initialize shader programs
   shaderInit(&sim->shader, "../src/render/shaders/default.vs", "../src/render/shaders/default.fs");
+  shaderInit(&sim->floorShader, "../src/render/shaders/floor.vs", "../src/render/shaders/floor.fs");
 
   // initialize camera
   cameraInit(&sim->camera, sim->window);
@@ -179,8 +221,24 @@ void simulationUpdate(Simulation* sim, float deltaTime)
 
 }
 
+void floorRender(Simulation* sim)
+{
+  shaderUse(&sim->floorShader);
+  mat4 view, projection;
+  cameraView(&sim->camera, view);
+  cameraProjection(&sim->camera, projection);
+  shaderSetMatrix(&sim->floorShader, "view", view);
+  shaderSetMatrix(&sim->floorShader, "projection", projection);
+
+  glBindVertexArray(sim->floorVAO);
+  glDrawArrays(GL_TRIANGLES, 0, 6);
+  glBindVertexArray(0);
+}
+
 void simulationRender(Simulation* sim)
 {
+  floorRender(sim);
+
   shaderUse(&sim->shader);
 
   mat4 view, projection;
@@ -336,4 +394,10 @@ void simulationPrint(Simulation* sim)
   //     // }
   //   }
   // }
+
+  printf("FLOOR\n");
+  for(int i = 0; i < 36; i += 3)
+  {
+    printf("(%f, %f, %f)\n", sim->floorMesh[i], sim->floorMesh[i + 1], sim->floorMesh[i + 2]);
+  }
 }

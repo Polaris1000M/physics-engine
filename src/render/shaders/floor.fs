@@ -1,17 +1,17 @@
 #version 330 core
 out vec4 FragColor;
 
-uniform vec3 lightColor;
-uniform vec3 lightPos;
 uniform vec3 viewPos;
 
-in vec3 color;
 in vec3 normal;
 in vec3 FragPos;
 
 void main()
 {
-  float ambientStrength = 0.4;
+  vec3 color = vec3(0.8, 0.8, 0.8);
+  vec3 lightPos = vec3(5.0, 5.0, 5.0);
+  vec3 lightColor = vec3(1.0, 1.0, 1.0);
+  float ambientStrength = 0.25;
   vec3 ambient = ambientStrength * lightColor;
 
   vec3 norm = normalize(normal);
@@ -27,4 +27,3 @@ void main()
   vec3 result = (ambient + diffuse + specular) * color;
   FragColor = vec4(result, 1.0);
 }
-
