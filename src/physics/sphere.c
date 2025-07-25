@@ -304,7 +304,7 @@ void sphereIcoMesh(float* vertices)
   // generate icosphere circumscribed in sphere of default radius
   const float goldenRatio = 1.61803398875f;
   const float radiusToSideRatio = 1.0f / (sqrt(goldenRatio * goldenRatio + 1.0f) / 2.0f);
-  const float defaultSize = 0.5f;
+  const float defaultSize = 1.0f;
   const float sideLength = radiusToSideRatio * defaultSize;
 
   // initial icosahedron layout
@@ -324,7 +324,7 @@ void sphereIcoMesh(float* vertices)
   icoVertices[0].coords[2] = 0.0f;
   icoVertices[1].coords[0] = 0.0f;
   icoVertices[1].coords[1] = sideLength * 0.5f;
-  icoVertices[1].coords[2] = sqrt(0.5f * 0.5f - (sideLength * 0.5f) * (sideLength * 0.5f));
+  icoVertices[1].coords[2] = sqrt(defaultSize * defaultSize - (sideLength * 0.5f) * (sideLength * 0.5f));
   mat4 rot = GLM_MAT4_IDENTITY;
   glm_rotate_y(rot, glm_rad(72.0f), rot);
   for(int i = 2; i <= 5; i++)
@@ -405,7 +405,7 @@ void sphereUVMesh(float* vertices)
 {
   const float deltaStack = M_PI / (float) STACKS;
   const float deltaSector = M_PI * 2.0f / (float) SECTORS;
-  const float defaultSize = 0.5f;
+  const float defaultSize = 1.0f;
 
   for(unsigned int stack = 0; stack < STACKS; stack++)
   {

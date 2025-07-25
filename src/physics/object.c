@@ -42,7 +42,7 @@ void objectVertices(Object* o, float* vertices)
         }
         else
         {
-          vertices[idx] = o->size / 0.5f;
+          vertices[idx] = o->size;
         }
       }
       else

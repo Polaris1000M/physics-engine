@@ -3,7 +3,7 @@
 
 void cubeMesh(float* vertices)
 {
-  const float defaultSize = 0.5f;
+  const float defaultSize = 1.0f;
 
   // half of a side length of the square
   // all points in the cube have coordinates either positive or negative half
