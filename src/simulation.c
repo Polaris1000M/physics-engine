@@ -67,6 +67,26 @@ int objectsInit(Simulation* sim, const char* configPath)
   }
   sim->gravity = gravity->valuedouble;
 
+  const cJSON* light = cJSON_GetObjectItemCaseSensitive(config, "light");
+  const char* lightMessage = "ERROR::CONFIG::INVALID_LIGHT: expected float array with format [<x>, <y>, <z>] for light position\n";
+  if(!cJSON_IsArray(light) || cJSON_GetArraySize(light) != 3)
+  {
+    printf("%s\n", lightMessage);
+    return 1;
+  }
+  for(int i = 0; i < 3; i++)
+  {
+    cJSON* lightCoord = cJSON_GetArrayItem(light, i);
+    if(!cJSON_IsNumber(lightCoord))
+    {
+      printf("%s\n", lightMessage);
+      return 1;
+    }
+    sim->lightPos[i] = lightCoord->valuedouble;
+  }
+
+  sim->gravity = gravity->valuedouble;
+
   cJSON* rawObjects = cJSON_GetObjectItemCaseSensitive(config, "objects");
   ConfigObject* configObjects = parseConfigObjects(rawObjects);
   if(!configObjects)
@@ -169,8 +189,7 @@ void simulationRender(Simulation* sim)
   shaderSetMatrix(&sim->shader, "view", view);
   shaderSetMatrix(&sim->shader, "projection", projection);
 
-  vec3 lightPos = {100.0f, 100.0f, 100.0f};
-  shaderSetVector(&sim->shader, "lightPos", lightPos);
+  shaderSetVector(&sim->shader, "lightPos", sim->lightPos);
   vec3 lightColor = {1.0f, 1.0f, 1.0f};
   shaderSetVector(&sim->shader, "lightColor", lightColor);
   shaderSetVector(&sim->shader, "viewPos", sim->camera.cameraPos);

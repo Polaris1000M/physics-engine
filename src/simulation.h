@@ -23,6 +23,7 @@ typedef struct Simulation {
   unsigned int WINDOW_WIDTH;
 
   float gravity;
+  float lightPos[3];
   float lastTime; // last time render loop was called
   float timeRatio; // multiplied by amount of real time passing to produce amount of simulation time passed
   
