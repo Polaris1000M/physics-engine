@@ -281,6 +281,22 @@ void simulationRender(Simulation* sim)
   }
 }
 
+void simulationFree(Simulation* sim)
+{
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    free(sim->meshes[type]);
+    free(sim->vertices[type]);
+  }
+
+  glDeleteBuffers(1, &sim->floorVBO);
+  glDeleteBuffers(3, sim->VBOs);
+
+  glDeleteVertexArrays(1, &sim->floorVAO);
+  glDeleteVertexArrays(3, sim->VAOs);
+  glDeleteProgram(sim->shader.ID);
+}
+
 void simulationStart(Simulation* sim)
 {
   while(!glfwWindowShouldClose(sim->window))
@@ -293,7 +309,7 @@ void simulationStart(Simulation* sim)
     cameraKeyboardCallback(&sim->camera, sim->window);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     // update particle positions
     float currentTime = glfwGetTime();
@@ -314,6 +330,7 @@ void simulationStart(Simulation* sim)
   }
 
   glfwTerminate();
+  simulationFree(sim);
 }
 
 void simulationPrint(Simulation* sim)

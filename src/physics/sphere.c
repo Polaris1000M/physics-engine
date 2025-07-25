@@ -267,6 +267,20 @@ void icoFacePopulate(IcoFace* face, IcoVertex* icoVertices, float* vertices, uns
   }
 }
 
+void icoFaceFree(IcoFace* face)
+{
+  if(!face->next[0])
+  {
+    return;
+  }
+
+  for(int i = 0; i < 4; i++)
+  {
+    icoFaceFree(face->next[i]);
+    free(face->next[i]);
+  }
+}
+
 // the number of vertices in the finished icosphere
 unsigned int icoVertexCount()
 {
@@ -399,6 +413,12 @@ void sphereIcoMesh(float* vertices)
   {
     icoFacePopulate(icoFaces + i, icoVertices, vertices, &faceIdx);
   }
+
+  for(int i = 0; i < 20; i++)
+  {
+    icoFaceFree(icoFaces + i);
+  }
+  free(icoVertices);
 }
 
 void sphereUVMesh(float* vertices)
