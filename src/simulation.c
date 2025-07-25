@@ -110,7 +110,7 @@ void floorInit(Simulation* sim)
     {1.0f, -1.0f},
     {1.0f, 1.0f}
   };
-  const float side = 10.0f;
+  const float side = 1000.0f;
   const unsigned int floatsPerVertex = 6;
   const unsigned int floatsPerTriangle = 3 * floatsPerVertex;
   vec3 normal = {0.0f, 1.0f, 0.0f};
@@ -229,6 +229,7 @@ void floorRender(Simulation* sim)
   cameraProjection(&sim->camera, projection);
   shaderSetMatrix(&sim->floorShader, "view", view);
   shaderSetMatrix(&sim->floorShader, "projection", projection);
+  shaderSetVector(&sim->floorShader, "lightPos", sim->lightPos);
 
   glBindVertexArray(sim->floorVAO);
   glDrawArrays(GL_TRIANGLES, 0, 6);
