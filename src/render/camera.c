@@ -62,7 +62,7 @@ void cameraInit(Camera* c, GLFWwindow* window)
 
   c->cameraPos[0] = 0.0f;
   c->cameraPos[1] = 2.0f;
-  c->cameraPos[2] = 5.0f; // set camera along positive z axis
+  c->cameraPos[2] = 9.0f; // set camera along positive z axis
 
   c->cameraFront[0] = 0.0f;
   c->cameraFront[1] = 0.0f;
