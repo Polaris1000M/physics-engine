@@ -1,0 +1,17 @@
+{
+  "gravity": 9.8,
+  "light": [100, 100, 100],
+  "objects":
+  [
+    {
+      "type": "sphere",
+      "size": 1,
+      "mass": 0.5,
+      "distribution": "random",
+      "range": [[-500, 500], [1, 1], [-500, 500]],
+      "color": [0.6, 0.6, 0.6],
+      "count": 10000 
+    }
+  ]
+}
+

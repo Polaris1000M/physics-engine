@@ -75,7 +75,7 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->lastTime = 0.0f;
 
   // keyboard configuration
-  c->keySensitivity = 4.0f; 
+  c->keySensitivity = 20.0f; 
 
   // mouse configuration
   c->firstCursor = 1;
@@ -141,6 +141,11 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
     vec3 mov;
     glm_vec3_scale(c->cameraUp, -cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
+  }
+
+  if(c->cameraPos[1] < 0.2f)
+  {
+    c->cameraPos[1] = 0.2f;
   }
 }
 

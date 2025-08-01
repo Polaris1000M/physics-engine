@@ -21,6 +21,7 @@ add_executable(PhysicsEngine
   src/render/shader.c
   src/render/texture.c
   src/render/camera.c
+  src/render/floor.c
   src/physics/object.c
   src/physics/sphere.c
   src/physics/cube.c

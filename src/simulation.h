@@ -16,6 +16,7 @@
 #include "physics/tetrahedron.h"
 #include "render/shader.h"
 #include "render/camera.h"
+#include "render/floor.h"
 
 typedef struct Simulation {
   GLFWwindow* window;
@@ -29,11 +30,7 @@ typedef struct Simulation {
   
   Shader shader;
   Camera camera;
-
-  unsigned int floorVAO;
-  unsigned int floorVBO;
-  float floorMesh[36];
-  Shader floorShader;
+  Floor floor;
 
   // the number of each type of object
   unsigned int objectCounts[OBJECT_TYPES];
