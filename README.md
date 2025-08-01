@@ -7,7 +7,7 @@
 Building a performant, constraint-based physics engine from scratch in C with OpenGL, GLFW, and cglm.
 - Traverse through the scene with keyboard and cursor controls
 - Allow users to save and load previous configurations
-- Model and render cubes, spheres, and equilateral tetrahedrons with custom meshes
+- Model and render cubes, spheres, and equilateral tetrahedrons with programatically generated meshes
 - Use instancing to handle rendering identical meshes
 - Add Phong lighting to rendered objects
 - **[in progress]** Add shadows to rendered objects
