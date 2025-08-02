@@ -3,12 +3,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-int parseConfigObject(cJSON* object, ConfigObject* configObject)
+unsigned int parseConfigObject(cJSON* configObject, Object* object)
 {
   srand(time(NULL));
 
   // parse type
-  const cJSON* configType = cJSON_GetObjectItemCaseSensitive(object, "type");
+  const cJSON* configType = cJSON_GetObjectItemCaseSensitive(configObject, "type");
   const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"tetrahedron\" for type of object\n";
   if(!cJSON_IsString(configType))
   {
@@ -32,73 +32,48 @@ int parseConfigObject(cJSON* object, ConfigObject* configObject)
   }
 
   // parse size
-  const cJSON* configSize = cJSON_GetObjectItemCaseSensitive(object, "size");
+  const cJSON* configSize = cJSON_GetObjectItemCaseSensitive(configObject, "size");
   if(!cJSON_IsNumber(configSize)) {
     printf("ERROR::CONFIG::INVALID_SIZE: expected float for size of object\n");
     return 1;
   }
 
   // parse mass
-  const cJSON* configMass = cJSON_GetObjectItemCaseSensitive(object, "mass");
+  const cJSON* configMass = cJSON_GetObjectItemCaseSensitive(configObject, "mass");
   if(!cJSON_IsNumber(configMass)) {
     printf("ERROR::CONFIG::INVALID_MASS: expected float for mass of object\n");
   }
 
-  // parse distribution
-  const cJSON* configDistribution = cJSON_GetObjectItemCaseSensitive(object, "distribution");
-  if(!cJSON_IsString(configDistribution) || (strcmp(configDistribution->valuestring, "uniform") && strcmp(configDistribution->valuestring, "random")))
+  // parse position
+  const cJSON* configPosition = cJSON_GetObjectItemCaseSensitive(configObject, "position");
+  const char* positionErrorMessage = "ERROR::CONFIG::INVALID_POSITION: expected float array for position of object with format [<x>, <y>, <z>]\n";
+  if(!cJSON_IsArray(configPosition))
   {
-    printf("ERROR::CONFIG::INVALID_DISTRIBUTION: expected \"random\" or \"uniform\" for distribution of object\n");
+    printf("%s", positionErrorMessage);
     return 1;
   }
-
-  // parse range
-  const cJSON* configRange = cJSON_GetObjectItemCaseSensitive(object, "range");
-  const char* rangeErrorMessage = "ERROR::CONFIG::INVALID_POSITION: expected float array for position range of object with format [[<low_x>, <high_x>], [<low_y>, <high_y>], [<low_z>, <high_z>]]\n";
-  if(!cJSON_IsArray(configRange))
+  vec3 position;
+  unsigned int positionSize = cJSON_GetArraySize(configPosition);
+  if(positionSize != 3)
   {
-    printf("%s", rangeErrorMessage);
-    return 1;
-  }
-  float range[3][2];
-  unsigned int rangeSize = cJSON_GetArraySize(configRange);
-  if(rangeSize != 3)
-  {
-    printf("%s", rangeErrorMessage);
+    printf("%s", positionErrorMessage);
     return 1;
   }
 
   for(int i = 0; i < 3; i++)
   {
-    cJSON* coordRange = cJSON_GetArrayItem(configRange, i);
-    if(!cJSON_IsArray(coordRange))
+    cJSON* coord = cJSON_GetArrayItem(configPosition, i);
+    if(!cJSON_IsNumber(coord))
     {
-      printf("%s", rangeErrorMessage);
+      printf("%s", positionErrorMessage);
       return 1;
     }
 
-    unsigned int coordRangeSize = cJSON_GetArraySize(coordRange);
-    if(coordRangeSize != 2)
-    {
-      printf("%s", rangeErrorMessage);
-      return 1;
-    }
-
-    cJSON* lower = cJSON_GetArrayItem(coordRange, 0);
-    cJSON* upper = cJSON_GetArrayItem(coordRange, 1);
-
-    if(!cJSON_IsNumber(lower) || !cJSON_IsNumber(upper))
-    {
-      printf("%s", rangeErrorMessage);
-      return 1;
-    }
-
-    range[i][0] = lower->valuedouble;
-    range[i][1] = upper->valuedouble;
+    position[i] = coord->valuedouble;
   }
 
   // parse color
-  cJSON* configColor = cJSON_GetObjectItemCaseSensitive(object, "color");
+  cJSON* configColor = cJSON_GetObjectItemCaseSensitive(configObject, "color");
   const char* colorErrorMessage = "ERROR::CONFIG::INVALID_COLOR: expected float array for color of object with format [<red_color>, <blue_color>, <green_color>] where each value is from 0 to 1\n";
   if(!cJSON_IsArray(configColor) || cJSON_GetArraySize(configColor) != 3)
   {
@@ -119,14 +94,6 @@ int parseConfigObject(cJSON* object, ConfigObject* configObject)
     color[i] = curColor->valuedouble;
   }
 
-  // parse count
-  const cJSON* configCount = cJSON_GetObjectItemCaseSensitive(object, "count");
-  if(!cJSON_IsNumber(configCount) || configCount->valueint <= 0)
-  {
-    printf("ERROR::CONFIG::INVALID_COUNT: expected positive integer for count of objects\n");
-    return 1;
-  }
-
   // only populate config object after all fields have been verified
 
   // populate type
@@ -134,64 +101,97 @@ int parseConfigObject(cJSON* object, ConfigObject* configObject)
   {
     if(!strcmp(configType->valuestring, OBJECT_NAMES[i]))
     {
-      configObject->type = i;
+      object->type = i;
       break;
     }
   }
 
   // populate size
-  configObject->size = configSize->valuedouble;
+  object->size = configSize->valuedouble;
 
   // populate mass
-  configObject->mass = configMass->valuedouble;
+  object->mass = configMass->valuedouble;
 
-  // populate distribution
-  configObject->distribution = configDistribution->valuestring;
-
-  // populate range
-  memcpy(configObject->range, range, sizeof(configObject->range));
+  glm_vec3_copy(position, object->position);
 
   // populate color
-  glm_vec3_copy(color, configObject->color);
+  glm_vec3_copy(color, object->color);
 
-  // populate count
-  configObject->count = configCount->valueint;
+  object->orientation[0] = 0.0f;
+  object->orientation[1] = 0.0f;
+  object->orientation[2] = 0.0f;
 
   return 0;
 }
 
-ConfigObject* parseConfigObjects(cJSON* objects)
+unsigned int parseConfigObjects(cJSON* configObjects, unsigned int* objectCounts, Object** objects)
 {
-  unsigned int numObjects = cJSON_GetArraySize(objects);
+  unsigned int numObjects = cJSON_GetArraySize(configObjects);
   const char* objectsErrorMessage = "ERROR::CONFIG::INVALID_OBJECTS: expected non-empty JSON array of objects\n"; 
   if(numObjects == 0)
   {
     printf("%s", objectsErrorMessage);
-    return NULL;
+    return 1;
   }
 
-  // include implicit object for the floor
-  ConfigObject* configObjects = malloc((numObjects + 1) * sizeof(ConfigObject));
+  // get object counts
   for(int i = 0; i < numObjects; i++)
   {
-    cJSON* object = cJSON_GetArrayItem(objects, i);
-    if(parseConfigObject(object, configObjects + i))
+    cJSON* configObject = cJSON_GetArrayItem(configObjects, i);
+
+    // parse type
+    const cJSON* configType = cJSON_GetObjectItemCaseSensitive(configObject, "type");
+    const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"tetrahedron\" for type of object\n";
+    if(!cJSON_IsString(configType))
     {
-      return NULL;
+      printf("%s", typeErrorMessage);
+      return 1;
+    }
+
+    // populate type
+    int match = 0;
+    for(int type = 0; type < OBJECT_TYPES; type++)
+    {
+      if(!strcmp(configType->valuestring, OBJECT_NAMES[type]))
+      {
+        objectCounts[type]++;
+        match = 1;
+        break;
+      }
+    }
+    if(!match)
+    {
+      printf("%s", typeErrorMessage);
+      return 1;
     }
   }
 
-  // instantiate floor object
-  configObjects[numObjects].type = FLOOR;
-  configObjects[numObjects].size = 1000.0f;
-  configObjects[numObjects].mass = -1;
-  configObjects[numObjects].distribution = "uniform";
-  memset(configObjects[numObjects].range, 0, sizeof(configObjects[numObjects].range));
-  vec3 floorColor = {0.5f, 0.5f, 0.5f};
-  glm_vec3_copy(floorColor, configObjects[numObjects].color);
-  configObjects[numObjects].count = 1;
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    objects[type] = malloc(objectCounts[type] * sizeof(Object));
+  }
 
-  return configObjects;
+  unsigned int indices[OBJECT_TYPES];
+  memset(indices, 0, OBJECT_TYPES * sizeof(unsigned int));
+  for(int i = 0; i < numObjects; i++)
+  {
+    cJSON* configObject = cJSON_GetArrayItem(configObjects, i);
+    const cJSON* configType = cJSON_GetObjectItemCaseSensitive(configObject, "type");
+    for(int type = 0; type < OBJECT_TYPES; type++)
+    {
+      if(!strcmp(configType->valuestring, OBJECT_NAMES[type]))
+      {
+        if(parseConfigObject(configObject, objects[type] + indices[type]))
+        {
+          return 1;
+        }
+        indices[type]++;
+        break;
+      }
+    }
+  }
+
+  return 0;
 }
 
 char* parseFile(const char* filePath, const char* errorMessage)
@@ -231,59 +231,3 @@ char* parseFile(const char* filePath, const char* errorMessage)
   return buffer;
 }
 
-void convertConfigObjectToObjects(ConfigObject* configObject, Object* objects)
-{
-  // generate a new object for every value in count
-  for(unsigned int i = 0; i < configObject->count; i++)
-  {
-    vec3 position;
-    if(strcmp(configObject->distribution, "random") == 0)
-    {
-      for(unsigned int j = 0; j < 3; j++)
-      {
-        position[j] = configObject->range[j][0] + ((float) rand() / (float) RAND_MAX) * (configObject->range[j][1] - configObject->range[j][0]);
-      }
-    }
-    else
-    {
-      for(unsigned int j = 0; j < 3; j++)
-      {
-        // position is in the middle of the range when only a single object
-        if(configObject->count == 1)
-        {
-          position[j] = (configObject->range[j][0] + configObject->range[j][1]) / 2.0f;
-        }
-        else
-        {
-          position[j] = (configObject->range[j][1] - configObject->range[j][0]) / ((float) configObject->count - 1.0f) * (float) i + configObject->range[j][0];
-        }
-      }
-    }
-
-    objectInit(objects + i, configObject->type, configObject->size, configObject->mass, position, configObject->color);
-  }
-}
-
-void convertConfigObjectsToObjects(int numConfigObjects, ConfigObject* configObjects, unsigned int* objectCounts, Object** objects)
-{
-  memset(objectCounts, 0, OBJECT_TYPES * sizeof(unsigned int));
-
-  for(int i = 0; i < numConfigObjects; i++)
-  {
-    objectCounts[configObjects[i].type] += configObjects[i].count;
-  }
-
-  for(int i = 0; i < OBJECT_TYPES; i++)
-  {
-    objects[i] = malloc(objectCounts[i] * sizeof(Object));
-  }
-
-  unsigned int indices[OBJECT_TYPES]; // next indices to write the new objects
-  memset(indices, 0, OBJECT_TYPES * sizeof(unsigned int));
-  for(int i = 0; i < numConfigObjects; i++)
-  {
-    ObjectType type = configObjects[i].type;
-    convertConfigObjectToObjects(configObjects + i, objects[type] + indices[type]);
-    indices[type] += configObjects[i].count;
-  }
-}

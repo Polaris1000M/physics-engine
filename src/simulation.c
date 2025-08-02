@@ -71,7 +71,7 @@ int objectsInit(Simulation* sim, const char* configPath)
   const char* lightMessage = "ERROR::CONFIG::INVALID_LIGHT: expected float array with format [<x>, <y>, <z>] for light position\n";
   if(!cJSON_IsArray(light) || cJSON_GetArraySize(light) != 3)
   {
-    printf("%s\n", lightMessage);
+    printf("%s", lightMessage);
     return 1;
   }
   for(int i = 0; i < 3; i++)
@@ -79,7 +79,7 @@ int objectsInit(Simulation* sim, const char* configPath)
     cJSON* lightCoord = cJSON_GetArrayItem(light, i);
     if(!cJSON_IsNumber(lightCoord))
     {
-      printf("%s\n", lightMessage);
+      printf("%s", lightMessage);
       return 1;
     }
     sim->lightPos[i] = lightCoord->valuedouble;
@@ -87,16 +87,13 @@ int objectsInit(Simulation* sim, const char* configPath)
 
   sim->gravity = gravity->valuedouble;
 
-  cJSON* rawObjects = cJSON_GetObjectItemCaseSensitive(config, "objects");
-  ConfigObject* configObjects = parseConfigObjects(rawObjects);
-  if(!configObjects)
+  cJSON* configObjects = cJSON_GetObjectItemCaseSensitive(config, "objects");
+
+  if(parseConfigObjects(configObjects, sim->objectCounts, sim->objects))
   {
     return 1;
   }
-  unsigned int numConfigObjects = cJSON_GetArraySize(rawObjects);
 
-  convertConfigObjectsToObjects(numConfigObjects + 1, configObjects, sim->objectCounts, sim->objects);
-  
   return 0;
 }
 
@@ -259,7 +256,7 @@ void simulationStart(Simulation* sim)
     simulationUpdate(sim, sim->timeRatio * deltaTime);
 
     // calculate FPS
-    printf("%f\n", 1000.0f / deltaTime);
+    printf("%f\n", deltaTime);
 
     sim->lastTime = currentTime;
 
