@@ -72,7 +72,6 @@ void icoVertexReplace(IcoVertex* vertex, int cur, int next)
 {
   for(int i = 0; i < 6; i++)
   {
-    // also replace vertex if the index is still the default -1 value
     if(vertex->neighbors[i] == cur)
     {
       vertex->neighbors[i] = next;
@@ -98,16 +97,17 @@ int icoVertexMidpoint(IcoVertex* icoVertices, unsigned int vertexOne, unsigned i
       continue;
     }
 
+    // compare current neighbor with all neighbors of second vertex
     for(int j = 0; j < 6; j++)
     {
       if(icoVertices[vertexOne].neighbors[i] == icoVertices[vertexTwo].neighbors[j])
       {
         vec3 diff;
-        unsigned int cur = icoVertices[vertexOne].neighbors[i];
-        glm_vec3_sub(icoVertices[cur].coords, target, diff);
+        unsigned int curIdx = icoVertices[vertexOne].neighbors[i];
+        glm_vec3_sub(icoVertices[curIdx].coords, target, diff);
         if(glm_vec3_dot(diff, diff) < EPS)
         {
-          return cur;
+          return curIdx;
         }
       }
     }
@@ -141,7 +141,7 @@ void icoFaceConnect(IcoFace* face, IcoVertex* vertices)
 {
   for(int i = 0; i < 3; i++)
   {
-    for(int j = 0; j < 3; j++)
+    for(int j = i + 1; j < 3; j++)
     {
       icoVertexAdd(vertices + face->indices[i], face->indices[j]);
       icoVertexAdd(vertices + face->indices[j], face->indices[i]);
@@ -285,12 +285,14 @@ void icoFaceFree(IcoFace* face)
 unsigned int icoVertexCount()
 {
   unsigned int result = 12;
+  unsigned int vertices = 20;
 
   // each subdivision produces no more than 3 times as many vertices
   // 6 new vertices for each vertex, but each new vertex is counted twice
   for(int i = 0; i < RECUR; i++)
   {
-    result *= 5;
+    result += vertices * 3 / 2;
+    vertices *= 4;
   }
 
   return result;
