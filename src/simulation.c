@@ -4,6 +4,12 @@
 #include <string.h>
 #include <stdio.h>
 #include <time.h>
+#include "physics/objects/floor.h"
+#include "physics/objects/sphere.h"
+#include "physics/objects/cube.h"
+#include "physics/objects/tetrahedron.h"
+#include "render/shader.h"
+#include "render/camera.h"
 
 // initializes OpenGL and GLFW boilerplate
 int openglInit(Simulation* sim)

@@ -21,11 +21,11 @@ add_executable(PhysicsEngine
   src/render/shader.c
   src/render/texture.c
   src/render/camera.c
-  src/physics/floor.c
   src/physics/object.c
-  src/physics/sphere.c
-  src/physics/cube.c
-  src/physics/tetrahedron.c
+  src/physics/objects/floor.c
+  src/physics/objects/sphere.c
+  src/physics/objects/cube.c
+  src/physics/objects/tetrahedron.c
   src/utils/cJSON.c
   src/utils/parse.c
 )

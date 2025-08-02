@@ -11,10 +11,6 @@
 #include <GLFW/glfw3.h>
 #include <cglm/cglm.h>
 #include "physics/object.h"
-#include "physics/floor.h"
-#include "physics/sphere.h"
-#include "physics/cube.h"
-#include "physics/tetrahedron.h"
 #include "render/shader.h"
 #include "render/camera.h"
 
