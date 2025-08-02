@@ -94,7 +94,8 @@ int objectsInit(Simulation* sim, const char* configPath)
     return 1;
   }
   unsigned int numConfigObjects = cJSON_GetArraySize(rawObjects);
-  convertConfigObjectsToObjects(numConfigObjects, configObjects, sim->objectCounts, sim->objects);
+
+  convertConfigObjectsToObjects(numConfigObjects + 1, configObjects, sim->objectCounts, sim->objects);
   
   return 0;
 }
@@ -102,13 +103,13 @@ int objectsInit(Simulation* sim, const char* configPath)
 // initalizes and binds default meshes
 int buffersInit(Simulation* sim)
 {
-  floorInit(&sim->floor);
-
+  sim->meshSizes[FLOOR] = floorMeshSize();
   sim->meshSizes[SPHERE] = sphereIcoMeshSize();
   sim->meshSizes[CUBE] = cubeMeshSize();
   sim->meshSizes[TETRAHEDRON] = tetrahedronMeshSize();
 
   void (*generateMesh[OBJECT_TYPES])(float*); 
+  generateMesh[FLOOR] = floorMesh;
   generateMesh[SPHERE] = sphereIcoMesh;
   generateMesh[CUBE] = cubeMesh;
   generateMesh[TETRAHEDRON] = tetrahedronMesh;
@@ -183,8 +184,6 @@ void simulationUpdate(Simulation* sim, float deltaTime)
 
 void simulationRender(Simulation* sim)
 {
-  floorRender(&sim->floor, &sim->camera, sim->lightPos);
-
   shaderUse(&sim->shader);
 
   mat4 view, projection;
@@ -234,10 +233,8 @@ void simulationFree(Simulation* sim)
     free(sim->vertices[type]);
   }
 
-  glDeleteBuffers(1, &sim->floor.VBO);
   glDeleteBuffers(3, sim->VBOs);
 
-  glDeleteVertexArrays(1, &sim->floor.VAO);
   glDeleteVertexArrays(3, sim->VAOs);
   glDeleteProgram(sim->shader.ID);
 }
@@ -361,10 +358,4 @@ void simulationPrint(Simulation* sim)
   //     // }
   //   }
   // }
-
-  printf("FLOOR\n");
-  for(int i = 0; i < 36; i += 3)
-  {
-    printf("(%f, %f, %f)\n", sim->floor.mesh[i], sim->floor.mesh[i + 1], sim->floor.mesh[i + 2]);
-  }
 }

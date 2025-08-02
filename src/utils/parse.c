@@ -130,7 +130,7 @@ int parseConfigObject(cJSON* object, ConfigObject* configObject)
   // only populate config object after all fields have been verified
 
   // populate type
-  for(int i = 0; i < 3; i++)
+  for(int i = 0; i < OBJECT_TYPES; i++)
   {
     if(!strcmp(configType->valuestring, OBJECT_NAMES[i]))
     {
@@ -170,7 +170,8 @@ ConfigObject* parseConfigObjects(cJSON* objects)
     return NULL;
   }
 
-  ConfigObject* configObjects = malloc(numObjects * sizeof(ConfigObject));
+  // include implicit object for the floor
+  ConfigObject* configObjects = malloc((numObjects + 1) * sizeof(ConfigObject));
   for(int i = 0; i < numObjects; i++)
   {
     cJSON* object = cJSON_GetArrayItem(objects, i);
@@ -179,6 +180,16 @@ ConfigObject* parseConfigObjects(cJSON* objects)
       return NULL;
     }
   }
+
+  // instantiate floor object
+  configObjects[numObjects].type = FLOOR;
+  configObjects[numObjects].size = 1000.0f;
+  configObjects[numObjects].mass = -1;
+  configObjects[numObjects].distribution = "uniform";
+  memset(configObjects[numObjects].range, 0, sizeof(configObjects[numObjects].range));
+  vec3 floorColor = {0.5f, 0.5f, 0.5f};
+  glm_vec3_copy(floorColor, configObjects[numObjects].color);
+  configObjects[numObjects].count = 1;
 
   return configObjects;
 }
@@ -267,7 +278,8 @@ void convertConfigObjectsToObjects(int numConfigObjects, ConfigObject* configObj
     objects[i] = malloc(objectCounts[i] * sizeof(Object));
   }
 
-  unsigned int indices[] = {0, 0, 0}; // next indices to write the new objects
+  unsigned int indices[OBJECT_TYPES]; // next indices to write the new objects
+  memset(indices, 0, OBJECT_TYPES * sizeof(unsigned int));
   for(int i = 0; i < numConfigObjects; i++)
   {
     ObjectType type = configObjects[i].type;

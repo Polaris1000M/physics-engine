@@ -5,7 +5,7 @@
 #include "particle.h"
 #include "sphere.h"
 
-const char* OBJECT_NAMES[] = {"sphere", "cube", "tetrahedron"};
+const char* OBJECT_NAMES[] = {"floor", "sphere", "cube", "tetrahedron"};
 
 void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color)
 {

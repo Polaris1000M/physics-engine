@@ -1,8 +1,6 @@
 #ifndef SPHERE_H
 #define SPHERE_H
 
-#include "object.h"
-
 // generates the UV mesh for a sphere
 void sphereUVMesh(float* vertices);
 

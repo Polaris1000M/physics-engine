@@ -1,8 +1,6 @@
 #ifndef TETRAHEDRON_H
 #define TETRAHEDRON_H
 
-#include "object.h"
-
 // fills array with vertices assuming object is a tetrahedron 
 void tetrahedronMesh(float* vertices);
 

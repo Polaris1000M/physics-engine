@@ -16,12 +16,13 @@
 
 #include <cglm/cglm.h>
 
-#define OBJECT_TYPES 3
+#define OBJECT_TYPES 4
 
-extern const char* OBJECT_NAMES[3];
+extern const char* OBJECT_NAMES[OBJECT_TYPES];
 
 typedef enum
 {
+  FLOOR,
   SPHERE,
   CUBE,
   TETRAHEDRON

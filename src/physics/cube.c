@@ -1,5 +1,5 @@
 #include "cube.h"
-#include <string.h>
+#include <cglm/cglm.h>
 
 void cubeMesh(float* vertices)
 {
