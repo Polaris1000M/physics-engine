@@ -303,6 +303,10 @@ void simulationPrint(Simulation* sim)
   printf("MESHES\n");
   for(int type = 0; type < OBJECT_TYPES; type++)
   {
+    if(type != SPHERE)
+    {
+      continue;
+    }
     printf("%s %d\n", OBJECT_NAMES[type], sim->meshSizes[type]);
     for(int i = 0; i < sim->meshSizes[type]; i += 3)
     {

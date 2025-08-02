@@ -5,8 +5,8 @@
 #include <string.h>
 #include <cglm/cglm.h>
 
-#define STACKS 10 // number of stacks in a sphere
-#define SECTORS 10 // number of sectors in a sphere
+#define STACKS 30 // number of stacks in a sphere
+#define SECTORS 30 // number of sectors in a sphere
 #define RECUR 3 // number of recursive levels for a sphere
 
 // represents a vertex in the icosphere 
@@ -285,14 +285,14 @@ void icoFaceFree(IcoFace* face)
 unsigned int icoVertexCount()
 {
   unsigned int result = 12;
-  unsigned int vertices = 20;
+  unsigned int del = 30;
 
-  // each subdivision produces no more than 3 times as many vertices
-  // 6 new vertices for each vertex, but each new vertex is counted twice
+  // each subdivision produces as many new vertices as the number of edges
+  // the number of edges increases exponentially by a factor of 4 four each subdivision
   for(int i = 0; i < RECUR; i++)
   {
-    result += vertices * 3 / 2;
-    vertices *= 4;
+    result += del;
+    del *= 4;
   }
 
   return result;
@@ -423,11 +423,22 @@ void sphereIcoMesh(float* vertices)
   free(icoVertices);
 }
 
+unsigned int sphereUVMeshSize()
+{
+  // stacks * sectors rectangles in total
+  // 2 triangles per rectangle, except in top and bottom stacks 
+  // 6 coordinates per vertex
+  // 18 coordinates per triangle
+  return (STACKS - 1) * 2 * SECTORS * 18;
+}
+
+
 void sphereUVMesh(float* vertices)
 {
   const float deltaStack = M_PI / (float) STACKS;
   const float deltaSector = M_PI * 2.0f / (float) SECTORS;
   const float defaultSize = 1.0f;
+  unsigned int vertexIdx = 0;
 
   for(unsigned int stack = 0; stack < STACKS; stack++)
   {
@@ -453,52 +464,56 @@ void sphereUVMesh(float* vertices)
         }
       }
 
-      int floatsPerTriangle = 9;
-      int floatsPerVertex = 3;
-      int idx = stack * SECTORS * floatsPerTriangle * 2 + sector * floatsPerTriangle * 2;
-
-      // iterate over triangles
-      for(int i = 0; i < 2; i++)
-      {
-        // iterate over vertices
-        for(int j = 0; j < 3; j++)
-        {
-          vertices[idx + i * floatsPerTriangle + j * floatsPerVertex] = x[i + j];
-          vertices[idx + i * floatsPerTriangle + j * floatsPerVertex + 1] = y[i + j];
-          vertices[idx + i * floatsPerTriangle + j * floatsPerVertex + 2] = z[i + j];
-        }
-      }
-
-      // edge case for top and bottom stacks
+      unsigned int floatsPerVertex = 6;
+      unsigned int floatsPerTriangle = 3 * floatsPerVertex;
+      
       if(stack == 0)
       {
-        for(int j = 0; j < 3; j++)
+        for(int i = 0; i < 3; i++)
         {
-          vertices[idx + j * floatsPerVertex] = x[1 + j];
-          vertices[idx + j * floatsPerVertex + 1] = y[1 + j];
-          vertices[idx + j * floatsPerVertex + 2] = z[1 + j];
+          vec3 cur = {x[i + 1], y[i + 1], z[i + 1]};
+          glm_vec3_scale_as(cur, defaultSize, cur);
+
+          glm_vec3_copy(cur, vertices + vertexIdx);
+          vertexIdx += 3;
+
+          glm_vec3_copy(cur, vertices + vertexIdx);
+          vertexIdx += 3;
         }
       }
       else if(stack == STACKS - 1)
       {
-        idx += floatsPerTriangle;
-        for(int j = 0; j < 3; j++)
+        for(int i = 0; i < 3; i++)
         {
-          vertices[idx + j * floatsPerVertex] = x[j];
-          vertices[idx + j * floatsPerVertex + 1] = y[j];
-          vertices[idx + j * floatsPerVertex + 2] = z[j];
+          vec3 cur = {x[i], y[i], z[i]};
+          glm_vec3_scale_as(cur, defaultSize, cur);
+
+          glm_vec3_copy(cur, vertices + vertexIdx);
+          vertexIdx += 3;
+
+          glm_vec3_copy(cur, vertices + vertexIdx);
+          vertexIdx += 3;
+        }
+      }
+      else
+      {
+        // iterate over triangles
+        for(int i = 0; i < 2; i++)
+        {
+          // iterate over vertices
+          for(int j = 0; j < 3; j++)
+          {
+            vec3 cur = {x[i + j], y[i + j], z[i + j]};
+            glm_vec3_scale_as(cur, defaultSize, cur);
+
+            glm_vec3_copy(cur, vertices + vertexIdx);
+            vertexIdx += 3;
+            glm_vec3_copy(cur, vertices + vertexIdx);
+            vertexIdx += 3;
+          }
         }
       }
     }
   }
-}
-
-unsigned int sphereUVMeshSize()
-{
-  // stacks * sectors rectangles in total
-  // 2 triangles per rectangle
-  // 9 coordinates per triangle
-  // 9 color coordinates per triangle
-  return STACKS * SECTORS * 18;
 }
 
