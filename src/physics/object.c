@@ -1,7 +1,6 @@
 #include "object.h"
 #include <stdlib.h>
 #include <cglm/cglm.h>
-#include "../simulation.h"
 
 const char* OBJECT_NAMES[] = {"floor", "sphere", "cube", "tetrahedron"};
 

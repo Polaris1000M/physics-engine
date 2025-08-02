@@ -1,34 +1,17 @@
 #include "parse.h"
 #include <string.h>
-#include <stdlib.h>
-#include <time.h>
 
 unsigned int parseConfigObject(cJSON* configObject, Object* object)
 {
-  srand(time(NULL));
-
-  // parse type
+  // populate type since type already checked
   const cJSON* configType = cJSON_GetObjectItemCaseSensitive(configObject, "type");
-  const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"tetrahedron\" for type of object\n";
-  if(!cJSON_IsString(configType))
-  {
-    printf("%s", typeErrorMessage);
-    return 1;
-  }
-
-  int match = 0;
   for(int i = 0; i < OBJECT_TYPES; i++)
   {
     if(!strcmp(configType->valuestring, OBJECT_NAMES[i]))
     {
-      match = 1;
+      object->type = i;
       break;
     }
-  }
-  if(!match)
-  {
-    printf("%s", typeErrorMessage);
-    return 1;
   }
 
   // parse size
@@ -38,10 +21,16 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     return 1;
   }
 
-  // parse mass
-  const cJSON* configMass = cJSON_GetObjectItemCaseSensitive(configObject, "mass");
-  if(!cJSON_IsNumber(configMass)) {
-    printf("ERROR::CONFIG::INVALID_MASS: expected float for mass of object\n");
+  // populate mass according to type
+  if(object->type != FLOOR)
+  {
+    const cJSON* configMass = cJSON_GetObjectItemCaseSensitive(configObject, "mass");
+    if(!cJSON_IsNumber(configMass) || configMass->valuedouble <= 0.0f) {
+      printf("ERROR::CONFIG::INVALID_MASS: expected float for mass of object\n");
+    }
+
+    // populate mass
+    object->mass = configMass->valuedouble;
   }
 
   // parse position
@@ -94,23 +83,10 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     color[i] = curColor->valuedouble;
   }
 
-  // only populate config object after all fields have been verified
-
-  // populate type
-  for(int i = 0; i < OBJECT_TYPES; i++)
-  {
-    if(!strcmp(configType->valuestring, OBJECT_NAMES[i]))
-    {
-      object->type = i;
-      break;
-    }
-  }
+  // prefer populating object after all fields have been verified
 
   // populate size
   object->size = configSize->valuedouble;
-
-  // populate mass
-  object->mass = configMass->valuedouble;
 
   glm_vec3_copy(position, object->position);
 
@@ -141,7 +117,34 @@ unsigned int parseConfigObjects(cJSON* configObjects, unsigned int* objectCounts
 
     // parse type
     const cJSON* configType = cJSON_GetObjectItemCaseSensitive(configObject, "type");
-    const char* typeErrorMessage = "ERROR::CONFIG::INVALID_TYPE: expected \"sphere\", \"cube\", or \"tetrahedron\" for type of object\n";
+    unsigned int typeErrorMessageSize = 38; // front of message
+    typeErrorMessageSize += 19; // end of message
+    // 2 quotes for each name, a comma and a space, an additional or
+    typeErrorMessageSize += OBJECT_TYPES * 2  + (OBJECT_TYPES - 1) * 2 + 3;
+    for(unsigned int type = 0; type < OBJECT_TYPES; type++)
+    {
+      typeErrorMessageSize += strlen(OBJECT_NAMES[type]);
+    }
+    // increment for null-terminated character at end
+    typeErrorMessageSize++;
+
+    char* typeErrorMessage = malloc(typeErrorMessageSize * sizeof(char));
+    typeErrorMessage[0] = '\0';
+    strcat(typeErrorMessage, "ERROR::CONFIG::INVALID_TYPE: expected ");
+    for(int type = 0; type < OBJECT_TYPES; type++)
+    {
+      if(type == OBJECT_TYPES - 1)
+      {
+        strcat(typeErrorMessage, ", or \"");
+      }
+      else if(type != 0)
+      {
+        strcat(typeErrorMessage, ", \"");
+      }
+      strcat(typeErrorMessage, OBJECT_NAMES[type]);
+      strcat(typeErrorMessage, "\"");
+    }
+    strcat(typeErrorMessage, " for type of object\n");
     if(!cJSON_IsString(configType))
     {
       printf("%s", typeErrorMessage);
