@@ -3,10 +3,9 @@
  *
  * Describes the objects in the simulation, with the same object type for each type of simulation object
  *
- * Besides provided functions, each object should support:
+ * Each object should individually support their own:
  * - objectMesh method to generate a default mesh
- * - objectMeshSize to specify the size of the mesh
- * - objectBind method to specify OpenGL boilerplate in instancing each default mesh
+ * - objectMeshSize method to specify the size of the mesh
  *
  * No specific methods are needed for each object to compute how to store per frame data, since the information is identical for each object: model matrix and color
  */

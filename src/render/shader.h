@@ -1,3 +1,9 @@
+/*
+ * shader.h
+ *
+ * Helper struct which manages compiling a shader program and setting uniforms
+ */
+
 #ifndef SHADER_H
 #define SHADER_H
 
