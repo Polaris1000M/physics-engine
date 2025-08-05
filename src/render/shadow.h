@@ -8,6 +8,7 @@
 typedef struct Shadow
 {
   float dist; // the distance between the near and far planes in the camera
+  float padding;
 
   vec3 corners[8];     // 8 corners of the camera frustum
   vec3 lightDir;       // direction of the light

@@ -4,6 +4,7 @@
 unsigned int shadowInit(Shadow* s, Camera* c, vec3 lightDir)
 {
   s->dist = c->far - c->near;
+  s->padding = 10.0f;
   glm_vec3_copy(lightDir, s->lightDir);
   glm_vec3_scale(s->lightDir, -s->dist, s->lightDelta);
   s->SHADOW_WIDTH = 2048;
@@ -77,6 +78,11 @@ void shadowUpdate(Shadow* s, Camera* c)
       glm_vec3_minv(s->corners[i], s->min, s->min);
       glm_vec3_maxv(s->corners[i], s->max, s->max);
     }
+  }
+  for(int i = 0; i < 3; i++)
+  {
+    s->min[i] -= s->padding;
+    s->max[i] += s->padding;
   }
   glm_ortho(s->min[0], s->max[0], s->min[1], s->max[1], -s->max[2], -s->min[2], s->projection);
 

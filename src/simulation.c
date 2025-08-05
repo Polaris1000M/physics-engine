@@ -28,6 +28,8 @@ unsigned int openglInit(Simulation* sim)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
+  glfwWindowHint(GLFW_SAMPLES, 4);
+
   GLFWmonitor* monitor = glfwGetPrimaryMonitor();
   const GLFWvidmode* mode = glfwGetVideoMode(monitor);
 
@@ -49,6 +51,10 @@ unsigned int openglInit(Simulation* sim)
     printf("%s", openglInitErrorMessage);
     return 1;
   }
+
+  glEnable(GL_MULTISAMPLE);
+  glEnable(GL_LINE_SMOOTH);
+  glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);

@@ -1,6 +1,6 @@
 {
   "gravity": 9.8,
-  "light": [-1, 0, 0],
+  "light": [0, -1, 0],
   "objects":
   [
     {
