@@ -27,11 +27,17 @@ typedef struct Camera
   float lastY;            // last y position of cursor
   float yaw;              // rotation around y axis
   float pitch;            // rotation around x axis
+  float near;             // position of the near plane
+  float far;              // position of the far plane
 
   vec3 cameraPos;    // current position of camera
   vec3 cameraFront;  // direction the camera is pointing towards
   vec3 cameraTarget; // the camera's target
   vec3 cameraUp;     // up relative to the camera
+
+  mat4 projection;
+  mat4 view;
+  mat4 vp;
 } Camera;
 
 // initializes camera
@@ -43,11 +49,12 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow *window);
 // passed into glfwSetCursorPosCallback for cursor movement callbacks
 void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos);
 
-// creates view matrix
-void cameraView(Camera* c, mat4 view);
+void cameraUpdate(Camera* c);
 
-// create projection matrix
-void cameraProjection(Camera* c, mat4 projection);
+// computes the coordinates of the 8 corners of the view frustum
+void cameraFrustum(Camera* c, vec3* coords);
+
+void cameraPrint(Camera* c);
 
 #endif
 

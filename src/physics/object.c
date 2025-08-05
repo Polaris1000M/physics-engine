@@ -1,6 +1,7 @@
 #include "object.h"
 #include <stdlib.h>
 #include <cglm/cglm.h>
+#include "../simulation.h"
 
 const char* OBJECT_NAMES[] = {"floor", "sphere", "cube", "tetrahedron"};
 
@@ -19,9 +20,12 @@ void objectPrint(Object* o)
   printf("type: %s\n", OBJECT_NAMES[o->type]);
   printf("size: %f\n", o->size);
   printf("mass: %f\n", o->mass);
-  printf("position: (%f, %f, %f)\n", o->position[0], o->position[1], o->position[2]);
-  printf("color: (%f, %f, %f)\n", o->color[0], o->color[1], o->color[2]);
-  printf("orientation: (%f, %f, %f)\n", o->orientation[0], o->orientation[1], o->orientation[2]);
+  printf("position:\n");
+  glm_vec3_print(o->position, stdout);
+  printf("color:\n");
+  glm_vec3_print(o->color, stdout);
+  printf("orientation:\n");
+  glm_vec3_print(o->orientation, stdout);
 }
 
 void objectVertices(Object* o, float* vertices)
@@ -64,3 +68,4 @@ unsigned int objectVerticesSize()
   // 4x4 float matrix and 3 floats for color
   return 19;
 }
+

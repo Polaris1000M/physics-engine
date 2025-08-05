@@ -197,6 +197,55 @@ unsigned int parseConfigObjects(cJSON* configObjects, unsigned int* objectCounts
   return 0;
 }
 
+unsigned int parseConfig(Simulation* sim, const char* configPath)
+{
+  // parse config file
+  char* configData = parseFile(configPath, "CONFIG");
+  if(!configData)
+  {
+    return 1;
+  }
+  cJSON* config = cJSON_Parse(configData);
+
+  const cJSON* gravity = cJSON_GetObjectItemCaseSensitive(config, "gravity");
+  if(!cJSON_IsNumber(gravity))
+  {
+    printf("ERROR::CONFIG::INVALID_GRAVITY: expected float\n");
+    return 1;
+  }
+  sim->gravity = gravity->valuedouble;
+
+  const cJSON* light = cJSON_GetObjectItemCaseSensitive(config, "light");
+  const char* lightMessage = "ERROR::CONFIG::INVALID_LIGHT: expected float array with format [<x>, <y>, <z>] for light position\n";
+  if(!cJSON_IsArray(light) || cJSON_GetArraySize(light) != 3)
+  {
+    printf("%s", lightMessage);
+    return 1;
+  }
+  for(int i = 0; i < 3; i++)
+  {
+    cJSON* lightCoord = cJSON_GetArrayItem(light, i);
+    if(!cJSON_IsNumber(lightCoord))
+    {
+      printf("%s", lightMessage);
+      return 1;
+    }
+    sim->lightDir[i] = lightCoord->valuedouble;
+  }
+  glm_vec3_normalize(sim->lightDir);
+
+  sim->gravity = gravity->valuedouble;
+
+  cJSON* configObjects = cJSON_GetObjectItemCaseSensitive(config, "objects");
+
+  if(parseConfigObjects(configObjects, sim->objectCounts, sim->objects))
+  {
+    return 1;
+  }
+
+  return 0;
+}
+
 char* parseFile(const char* filePath, const char* errorMessage)
 {
   FILE* fp;

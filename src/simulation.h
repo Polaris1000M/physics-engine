@@ -13,6 +13,7 @@
 #include "physics/object.h"
 #include "render/shader.h"
 #include "render/camera.h"
+#include "render/shadow.h"
 
 typedef struct Simulation {
   GLFWwindow* window;
@@ -20,12 +21,13 @@ typedef struct Simulation {
   unsigned int WINDOW_WIDTH;
 
   float gravity;
-  float lightPos[3];
+  float lightDir[3];
   float lastTime; // last time render loop was called
   float timeRatio; // multiplied by amount of real time passing to produce amount of simulation time passed
   
   Shader shader;
   Camera camera;
+  Shadow shadow;
 
   // the number of each type of object
   unsigned int objectCounts[OBJECT_TYPES];
@@ -56,10 +58,10 @@ typedef struct Simulation {
 } Simulation;
 
 // initialize the simulation
-int simulationInit(Simulation* sim, const char* configPath);
+unsigned int simulationInit(Simulation* sim, const char* configPath);
 
 // updates the positions of the objects in the simulation based on time passed
-void simulationUpdate(Simulation* sim, float deltaTime);
+void simulationUpdate(Simulation* sim);
 
 // renders the current state of the simulation
 void simulationRender(Simulation* sim);

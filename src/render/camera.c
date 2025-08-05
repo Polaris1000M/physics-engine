@@ -60,17 +60,9 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->WINDOW_WIDTH = width; 
   c->WINDOW_HEIGHT = height;
 
-  c->cameraPos[0] = 0.0f;
-  c->cameraPos[1] = 2.0f;
-  c->cameraPos[2] = 9.0f; // set camera along positive z axis
-
-  c->cameraFront[0] = 0.0f;
-  c->cameraFront[1] = 0.0f;
-  c->cameraFront[2] = -1.0f; // camera points towards negative z axis
-
-  c->cameraUp[0] = 0.0f;
-  c->cameraUp[1] = 1.0f;
-  c->cameraUp[2] = 0.0f;
+  glm_vec3_copy((vec3) {0.0f, 2.0f, 9.0f}, c->cameraPos);
+  glm_vec3_copy((vec3) {0.0f, 0.0f, -1.0f}, c->cameraFront);
+  glm_vec3_copy((vec3) {0.0f, 1.0f, 0.0f}, c->cameraUp);
 
   c->lastTime = 0.0f;
 
@@ -85,6 +77,8 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->lastY = 300.0f;
   c->yaw = -90.0f;
   c->pitch = 0.0f;
+  c->near = 0.1f;
+  c->far = 50.0f;
   
   glfwSetWindowUserPointer(window, c);                         // allows callbacks to access camera struct
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // sets window input to the cursor
@@ -149,44 +143,56 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
   }
 }
 
-void cameraLookAt(Camera* c, mat4 view)
+void cameraUpdate(Camera* c)
 {
   vec3 cameraTarget;
   glm_vec3_add(c->cameraPos, c->cameraFront, cameraTarget);
-  glm_lookat(c->cameraPos, cameraTarget, c->cameraUp, view);
+  glm_lookat(c->cameraPos, cameraTarget, c->cameraUp, c->view);
+
+  glm_perspective(glm_rad(c->fov), (float) c->WINDOW_WIDTH / (float) c->WINDOW_HEIGHT, c->near, c->far, c->projection);
+
+  glm_mat4_mul(c->projection, c->view, c->vp);
 }
 
-void cameraCustomLookAt(Camera* c, mat4 view)
+void cameraFrustum(Camera* c, vec3* corners)
 {
-  vec3 cameraDirection;
-  glm_vec3_negate_to(c->cameraFront, cameraDirection);
+  mat4 inv;
+  glm_mat4_inv(c->vp, inv);
 
-  vec3 cameraRight;
-  glm_vec3_crossn(c->cameraUp, cameraDirection, cameraRight);
+  int signs[2] = {-1, 1};
 
-  vec3 cameraUp;
-  glm_vec3_cross(cameraDirection, cameraRight, cameraUp);
-
-  mat4 translate = GLM_MAT4_IDENTITY;
-  vec3 negatePos;
-  glm_vec3_negate_to(c->cameraPos, negatePos);
-  glm_translate_make(translate, negatePos);
-  mat4 basis =
+  // compute near and far plane values
+  for(unsigned int x = 0; x < 2; x++)
   {
-    {cameraRight[0], cameraUp[0], cameraDirection[0], 0.0f},
-    {cameraRight[1], cameraUp[1], cameraDirection[1], 0.0f},
-    {cameraRight[2], cameraUp[2], cameraDirection[2], 0.0f},
-    {0.0f, 0.0f, 0.0f, 1.0f}
-  };
-  glm_mat4_mul(basis, translate, view);
+    for(unsigned int y = 0; y < 2; y++)
+    {
+      for(unsigned int z = 0; z < 2; z++)
+      {
+        vec4 corner = {signs[x], signs[y], signs[z], 1.0f};
+        glm_mat4_mulv(inv, corner, corner);
+
+        for(unsigned int i = 0; i < 3; i++)
+        {
+          corners[4 * x + 2 * y + z][i] = corner[i] / corner[3];
+        }
+      }
+    }
+  }
 }
 
-void cameraView(Camera* c, mat4 view)
+void cameraPrint(Camera* c)
 {
-  cameraLookAt(c, view);
-}
-
-void cameraProjection(Camera* c, mat4 projection)
-{
-  glm_perspective(glm_rad(c->fov), (float) c->WINDOW_WIDTH / (float) c->WINDOW_HEIGHT, 0.1f, 100.0f, projection);
+  printf("CAMERA\n");
+  printf("fov: %f\n", c->fov);
+  printf("aspect: %f\n", (float) c->WINDOW_WIDTH / (float) c->WINDOW_HEIGHT);
+  printf("near: %f\n", (float) c->near);
+  printf("far: %f\n", (float) c->far);
+  printf("cameraPos: ");
+  glm_vec3_print(c->cameraPos, stdout);
+  printf("cameraFront: ");
+  glm_vec3_print(c->cameraFront, stdout);
+  printf("view: ");
+  glm_mat4_print(c->view, stdout);
+  printf("projection: ");
+  glm_mat4_print(c->projection, stdout);
 }

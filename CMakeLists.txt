@@ -17,16 +17,18 @@ set_target_properties(glfw PROPERTIES
 
 add_executable(PhysicsEngine
   src/main.c
+  src/physics/object.c
   src/simulation.c
   src/render/shader.c
   src/render/texture.c
   src/render/camera.c
-  src/physics/object.c
+  src/render/shadow.c
   src/physics/objects/floor.c
   src/physics/objects/sphere.c
   src/physics/objects/cube.c
   src/physics/objects/tetrahedron.c
   src/utils/cJSON.c
+  src/utils/save.c
   src/utils/parse.c
 )
 
