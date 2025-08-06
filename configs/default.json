@@ -1,6 +1,8 @@
 {
   "gravity": 9.8,
-  "light": [-1, -1, -1],
+  "lightDir": [-1, -1, -1],
+  "cameraDir": [-1, 1, -2],
+  "cameraPos": [0, 2, 15],
   "objects":
   [
     {

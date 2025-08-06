@@ -68,8 +68,6 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->WINDOW_WIDTH = width; 
   c->WINDOW_HEIGHT = height;
 
-  glm_vec3_copy((vec3) {0.0f, 2.0f, 9.0f}, c->cameraPos);
-  glm_vec3_copy((vec3) {0.0f, 0.0f, -1.0f}, c->cameraFront);
   glm_vec3_copy((vec3) {0.0f, 1.0f, 0.0f}, c->cameraUp);
 
   c->lastTime = 0.0f;
@@ -81,10 +79,8 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->firstCursor = 1;
   c->cursorSensitivity = 0.1f;
   c->fov = 45.0f;
-  c->lastX = 400.0f;
-  c->lastY = 300.0f;
-  c->yaw = -90.0f;
-  c->pitch = 0.0f;
+  c->lastX = width / 2;
+  c->lastY = height / 2;
   c->near = 0.1f;
   c->far = 75.0f;
   
@@ -93,6 +89,41 @@ void cameraInit(Camera* c, GLFWwindow* window)
   glfwSetCursorPosCallback(window, cameraCursorCallback);          // calls function whenever cursor position changes
   glfwSetScrollCallback(window, cameraScrollCallback);         // called whenever camera scrolls
   glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+
+  if(fabsf(c->cameraFront[1]) > 0.9999f)
+  {
+    if(c->cameraFront[1] > 0.0f)
+    {
+      c->cameraFront[1] = 0.99f;
+    }
+    else
+    {
+      c->cameraFront[1] = -0.99f;
+    }
+    c->cameraFront[2] = -0.01f;
+  }
+  float x = c->cameraFront[0];
+  float y = c->cameraFront[1];
+  float z = c->cameraFront[2];
+  c->pitch = atan2(y, sqrt(x * x + z * z)) * 180.0f / M_PI;
+  printf("%f\n", c->pitch);
+  if(fabsf(c->pitch) >= 90.0f)
+  {
+    if(c->pitch < 0.0f)
+    {
+      c->pitch = -180.0f - c->pitch;
+    }
+    else
+    {
+      c->pitch = 180.0f - c->pitch;
+    }
+  }
+
+  c->yaw = atan2(z, x) * 180.0f / M_PI;
+  if(c->yaw < 0.0f)
+  {
+    c->yaw += 360.0f;
+  }
 }
 
 void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
@@ -194,6 +225,8 @@ void cameraPrint(Camera* c)
   printf("aspect: %f\n", (float) c->WINDOW_WIDTH / (float) c->WINDOW_HEIGHT);
   printf("near: %f\n", (float) c->near);
   printf("far: %f\n", (float) c->far);
+  printf("yaw: %f\n", (float) c->yaw);
+  printf("pitch: %f\n", (float) c->pitch);
   printf("cameraPos: ");
   glm_vec3_print(c->cameraPos, stdout);
   printf("cameraFront: ");

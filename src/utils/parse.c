@@ -197,6 +197,26 @@ unsigned int parseConfigObjects(cJSON* configObjects, unsigned int* objectCounts
   return 0;
 }
 
+unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
+{
+  if(!cJSON_IsArray(vec) || cJSON_GetArraySize(vec) != 3)
+  {
+    printf("%s", message);
+    return 1;
+  }
+  for(int i = 0; i < 3; i++)
+  {
+    cJSON* coord = cJSON_GetArrayItem(vec, i);
+    if(!cJSON_IsNumber(coord))
+    {
+      printf("%s", message);
+      return 1;
+    }
+    target[i] = coord->valuedouble;
+  }
+  return 0;
+}
+
 unsigned int parseConfig(Simulation* sim, const char* configPath)
 {
   // parse config file
@@ -215,24 +235,28 @@ unsigned int parseConfig(Simulation* sim, const char* configPath)
   }
   sim->gravity = gravity->valuedouble;
 
-  const cJSON* light = cJSON_GetObjectItemCaseSensitive(config, "light");
-  const char* lightMessage = "ERROR::CONFIG::INVALID_LIGHT: expected float array with format [<x>, <y>, <z>] for light position\n";
-  if(!cJSON_IsArray(light) || cJSON_GetArraySize(light) != 3)
+  const cJSON* light = cJSON_GetObjectItemCaseSensitive(config, "lightDir");
+  const char* lightMessage = "ERROR::CONFIG::INVALID_LIGHT_DIR: expected float array with format [<x>, <y>, <z>] for light direction\n";
+  if(parseVec3(sim->lightDir, light, lightMessage))
   {
-    printf("%s", lightMessage);
     return 1;
   }
-  for(int i = 0; i < 3; i++)
-  {
-    cJSON* lightCoord = cJSON_GetArrayItem(light, i);
-    if(!cJSON_IsNumber(lightCoord))
-    {
-      printf("%s", lightMessage);
-      return 1;
-    }
-    sim->lightDir[i] = lightCoord->valuedouble;
-  }
   glm_vec3_normalize(sim->lightDir);
+
+  const cJSON* cameraPos = cJSON_GetObjectItemCaseSensitive(config, "cameraPos");
+  const char* cameraPosMessage = "ERROR::CONFIG::INVALID_CAMERA_POS: expected float array with format [<x>, <y>, <z>] for camera position\n";
+  if(parseVec3(sim->camera.cameraPos, cameraPos, cameraPosMessage))
+  {
+    return 1;
+  }
+
+  const cJSON* cameraDir = cJSON_GetObjectItemCaseSensitive(config, "cameraDir");
+  const char* cameraDirMessage = "ERROR::CONFIG::INVALID_CAMERA_DIR: expected float array with format [<x>, <y>, <z>] for camera direction\n";
+  if(parseVec3(sim->camera.cameraFront, cameraDir, cameraDirMessage))
+  {
+    return 1;
+  }
+  glm_vec3_normalize(sim->camera.cameraFront);
 
   sim->gravity = gravity->valuedouble;
 

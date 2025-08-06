@@ -244,7 +244,7 @@ void simulationStart(Simulation* sim)
     simulationUpdate(sim);
     simulationRender(sim);
 
-    // simulationPrint(sim);
+    simulationPrint(sim);
 
     glfwSwapBuffers(sim->window);
     glfwPollEvents();
@@ -339,5 +339,5 @@ void simulationPrint(Simulation* sim)
   // }
   
   cameraPrint(&sim->camera);
-  shadowPrint(&sim->shadow);
+  // shadowPrint(&sim->shadow);
 }
