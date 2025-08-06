@@ -208,7 +208,7 @@ void simulationRender(Simulation* sim)
   // normal lighting pass
   shaderUse(&sim->shader);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  // glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+  glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
   
   shaderSetMatrix(&sim->shader, "vp", sim->camera.vp);
   shaderSetMatrix(&sim->shader, "shadowVP", sim->shadow.vp);
@@ -218,7 +218,6 @@ void simulationRender(Simulation* sim)
 
   shaderSetInt(&sim->shader, "depthMap", 1);
   shaderSetVector(&sim->shader, "lightDir", sim->lightDir);
-  shaderSetVector(&sim->shader, "lightColor", GLM_VEC3_ONE);
   shaderSetVector(&sim->shader, "viewPos", sim->camera.cameraPos);
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   objectsRender(sim);
