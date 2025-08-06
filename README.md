@@ -1,5 +1,11 @@
 <h1 align="center">
-  <img src="assets/banner.png" height="100" hspace="10">
+  
+<img src="https://github.com/Polaris1000M/physics-engine/blob/main/assets/text.png#gh-light-mode-only" alt="Logo" height="60">
+<img src="https://github.com/Polaris1000M/physics-engine/blob/main/assets/text-inverted.png#gh-dark-mode-only" alt="Logo" height="60">
+
+<img src="assets/phong-icosphere.png" height="75" hspace="10">
+<img src="assets/colored-icosphere.png" height="75">
+
 </h1>
 
 Building a performant, constraint-based physics engine from scratch in C with OpenGL, GLFW, and cglm.
