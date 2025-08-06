@@ -24,6 +24,14 @@ void cameraCursorCallback(GLFWwindow *window, double xPos, double yPos)
   
   c->yaw += xOffset;
   c->pitch += yOffset;
+  if(c->pitch < -89.0f)
+  {
+    c->pitch = -89.0f;
+  }
+  else if(c->pitch > 89.0f)
+  {
+    c->pitch = 89.0f;
+  }
 
   vec3 direction = {cos(glm_rad(c->yaw)) * cos(glm_rad(c->pitch)), sin(glm_rad(c->pitch)), sin(glm_rad(c->yaw)) * cos(glm_rad(c->pitch))};
   glm_normalize_to(direction, c->cameraFront);
@@ -97,13 +105,17 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
   if(glfwGetKey(window, GLFW_KEY_W))
   {
     vec3 mov;
-    glm_vec3_scale(c->cameraFront, cameraSpeed, mov);
+    glm_vec3_copy(c->cameraFront, mov);
+    mov[1] = 0;
+    glm_vec3_scale_as(mov, cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 
   if(glfwGetKey(window, GLFW_KEY_S)) {
     vec3 mov;
-    glm_vec3_scale(c->cameraFront, -cameraSpeed, mov);
+    glm_vec3_copy(c->cameraFront, mov);
+    mov[1] = 0;
+    glm_vec3_scale_as(mov, -cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
   }
 
@@ -135,11 +147,6 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
     vec3 mov;
     glm_vec3_scale(c->cameraUp, -cameraSpeed, mov);
     glm_vec3_add(c->cameraPos, mov, c->cameraPos);
-  }
-
-  if(c->cameraPos[1] < 0.2f)
-  {
-    c->cameraPos[1] = 0.2f;
   }
 }
 
