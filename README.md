@@ -1,7 +1,5 @@
 <h1 align="center">
-   <img src="assets/text.png" height="60" hspace="20">
-  <img src="assets/phong-icosphere.png" height="75" hspace="10">
-  <img src="assets/colored-icosphere.png" height="75">
+  <img src="assets/banner.png" height="100" hspace="10">
 </h1>
 
 Building a performant, constraint-based physics engine from scratch in C with OpenGL, GLFW, and cglm.
