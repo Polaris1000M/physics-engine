@@ -1,6 +1,26 @@
 #include "parse.h"
 #include <string.h>
 
+unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
+{
+  if(!cJSON_IsArray(vec) || cJSON_GetArraySize(vec) != 3)
+  {
+    printf("%s", message);
+    return 1;
+  }
+  for(int i = 0; i < 3; i++)
+  {
+    cJSON* coord = cJSON_GetArrayItem(vec, i);
+    if(!cJSON_IsNumber(coord))
+    {
+      printf("%s", message);
+      return 1;
+    }
+    target[i] = coord->valuedouble;
+  }
+  return 0;
+}
+
 unsigned int parseConfigObject(cJSON* configObject, Object* object)
 {
   // populate type since type already checked
@@ -71,7 +91,17 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
   }
   else
   {
-    parseVec3(object->orientation, configOrientation, "ERROR::CONFIG::INVALID_ORIENTATION:: expected float array for orientation of object with format [<pitch>, <yaw>, <roll>]\n");
+    const char* orientationErrorMessage = "ERROR::CONFIG::INVALID_ORIENTATION:: expected float array for orientation of object with format [<pitch>, <yaw>, <roll>]\n";
+    if(parseVec3(object->orientation, configOrientation, orientationErrorMessage))
+    {
+      printf("%s", orientationErrorMessage);
+      return 1;
+    }
+
+    for(int i = 0; i < 3; i++)
+    {
+      object->orientation[i] = glm_rad(object->orientation[i]);
+    }
   }
 
   // parse color
@@ -123,10 +153,6 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
 
   // populate color
   glm_vec3_copy(color, object->color);
-
-  object->orientation[0] = 0.0f;
-  object->orientation[1] = 0.0f;
-  object->orientation[2] = 0.0f;
 
   return 0;
 }
@@ -225,26 +251,6 @@ unsigned int parseConfigObjects(cJSON* configObjects, unsigned int* objectCounts
     }
   }
 
-  return 0;
-}
-
-unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
-{
-  if(!cJSON_IsArray(vec) || cJSON_GetArraySize(vec) != 3)
-  {
-    printf("%s", message);
-    return 1;
-  }
-  for(int i = 0; i < 3; i++)
-  {
-    cJSON* coord = cJSON_GetArrayItem(vec, i);
-    if(!cJSON_IsNumber(coord))
-    {
-      printf("%s", message);
-      return 1;
-    }
-    target[i] = coord->valuedouble;
-  }
   return 0;
 }
 

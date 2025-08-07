@@ -17,7 +17,8 @@ void main()
   gl_Position = vp * model * vec4(aPos, 1.0);
 
   color = aColor;
-  normal = aNormal;
+  mat3 normalMatrix = transpose(inverse(mat3(model)));
+  normal = normalize(normalMatrix * aNormal);
   FragPos = vec3(model * vec4(aPos, 1.0));
   vec4 shadowCoord4 = shadowVP * vec4(FragPos, 1.0);
   ShadowCoord = (shadowCoord4.xyz / shadowCoord4.w) * 0.5 + 0.5;

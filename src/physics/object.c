@@ -35,24 +35,36 @@ void objectVertices(Object* o, float* vertices)
   {
     for(int j = 0; j < 3; j++)
     {
-      if(i != j)
+      if(i == j)
       {
-        scale[i][j] = o->size;
+        res[i][j] = o->size;
       }
       else
       {
-        scale[i][j] = 0.0f;
+        res[i][j] = 0.0f;
       }
     }
   }
-  scale[3][3] = 1.0f;
+  res[3][3] = 1.0f;
 
-  glm_translate(res, o->position);
+  for(int i = 0; i < 3; i++)
+  {
+    res[i][3] = o->position[i];
+  }
 
   mat4 rot;
-  glm_euler((vec3) {glm_rad(object->orientation[0]), glm_rad(object->orientation[1]), glm_rad(object->orientation[2])}, rot);
+  glm_euler(o->orientation, rot);
+  glm_mat4_mul(rot, res, res);
 
-  glm_mat4_mul(res, rot, res);
+  for(int i = 0; i < 4; i++)
+  {
+    for(int j = 0; j < 4; j++)
+    {
+      vertices[i * 4 + j] = res[j][i];
+    }
+  }
+
+  glm_mat4_print(res, stdout);
 
 
   for(int i = 16; i < 19; i++)

@@ -244,7 +244,7 @@ void simulationStart(Simulation* sim)
     simulationUpdate(sim);
     simulationRender(sim);
 
-    simulationPrint(sim);
+    // simulationPrint(sim);
 
     glfwSwapBuffers(sim->window);
     glfwPollEvents();
@@ -256,25 +256,25 @@ void simulationStart(Simulation* sim)
 
 void simulationPrint(Simulation* sim)
 {
-  // printf("OBJECTS\n");
-  // printf("Object Counts\n");
-  // for(int type = 0; type < OBJECT_TYPES; type++)
-  // {
-  //   printf("%s: %d\n", OBJECT_NAMES[type], sim->objectCounts[type]);
-  // }
-  // printf("\n");
+  printf("OBJECTS\n");
+  printf("Object Counts\n");
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    printf("%s: %d\n", OBJECT_NAMES[type], sim->objectCounts[type]);
+  }
+  printf("\n");
 
-  // for(int type = 0; type < OBJECT_TYPES; type++)
-  // {
-  //   printf("%s\n", OBJECT_NAMES[type]);
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    printf("%s\n", OBJECT_NAMES[type]);
 
-  //   for(int i = 0; i < sim->objectCounts[type]; i++)
-  //   {
-  //     objectPrint(sim->objects[type] + i);
-  //     printf("\n");
-  //   }
-  //   printf("\n");
-  // }
+    for(int i = 0; i < sim->objectCounts[type]; i++)
+    {
+      objectPrint(sim->objects[type] + i);
+      printf("\n");
+    }
+    printf("\n");
+  }
 
   // printf("MESHES\n");
   // for(int type = 0; type < OBJECT_TYPES; type++)
