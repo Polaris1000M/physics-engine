@@ -1,6 +1,6 @@
 <h1 align="center">
-  <img src="https://github.com/Polaris1000M/physics-engine/blob/main/assets/text-banner.png#gh-light-mode-only" alt="Logo" height="90">
-  <img src="https://github.com/Polaris1000M/physics-engine/blob/main/assets/text-banner-inverted.png#gh-dark-mode-only" alt="Logo" height="90">
+  <img src="https://github.com/Polaris1000M/physics-engine/blob/main/assets/text-banner.png#gh-light-mode-only" alt="Logo" height="85">
+  <img src="https://github.com/Polaris1000M/physics-engine/blob/main/assets/text-banner-inverted.png#gh-dark-mode-only" alt="Logo" height="85">
 </h1>
 
 Building a performant, constraint-based physics engine from scratch in C with OpenGL, GLFW, and cglm.
