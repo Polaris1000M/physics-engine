@@ -31,9 +31,9 @@ void objectPrint(Object* o)
 void objectVertices(Object* o, float* vertices)
 {
   mat4 res;
-  for(int i = 0; i < 3; i++)
+  for(int i = 0; i < 4; i++)
   {
-    for(int j = 0; j < 3; j++)
+    for(int j = 0; j < 4; j++)
     {
       if(i == j)
       {
@@ -63,9 +63,6 @@ void objectVertices(Object* o, float* vertices)
       vertices[i * 4 + j] = res[j][i];
     }
   }
-
-  glm_mat4_print(res, stdout);
-
 
   for(int i = 16; i < 19; i++)
   {

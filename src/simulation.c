@@ -23,6 +23,7 @@ unsigned int openglInit(Simulation* sim)
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -338,6 +339,6 @@ void simulationPrint(Simulation* sim)
   //   }
   // }
   
-  cameraPrint(&sim->camera);
+  // cameraPrint(&sim->camera);
   // shadowPrint(&sim->shadow);
 }

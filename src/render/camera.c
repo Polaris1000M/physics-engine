@@ -82,7 +82,7 @@ void cameraInit(Camera* c, GLFWwindow* window)
   c->lastX = width / 2;
   c->lastY = height / 2;
   c->near = 0.1f;
-  c->far = 75.0f;
+  c->far = 50.0f;
   
   glfwSetWindowUserPointer(window, c);                         // allows callbacks to access camera struct
   glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // sets window input to the cursor
