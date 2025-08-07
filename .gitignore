@@ -2,3 +2,6 @@
 build/
 include/cglm/
 images/
+million.json
+ten.json
+hundred.json
