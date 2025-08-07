@@ -36,34 +36,47 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
   // parse position
   const cJSON* configPosition = cJSON_GetObjectItemCaseSensitive(configObject, "position");
   const char* positionErrorMessage = "ERROR::CONFIG::INVALID_POSITION: expected float array for position of object with format [<x>, <y>, <z>]\n";
+  vec3 position;
   if(!cJSON_IsArray(configPosition))
   {
-    printf("%s", positionErrorMessage);
-    return 1;
+    glm_vec3_copy(GLM_VEC3_ZERO, position);
   }
-  vec3 position;
-  unsigned int positionSize = cJSON_GetArraySize(configPosition);
-  if(positionSize != 3)
+  else
   {
-    printf("%s", positionErrorMessage);
-    return 1;
-  }
-
-  for(int i = 0; i < 3; i++)
-  {
-    cJSON* coord = cJSON_GetArrayItem(configPosition, i);
-    if(!cJSON_IsNumber(coord))
+    unsigned int positionSize = cJSON_GetArraySize(configPosition);
+    if(positionSize != 3)
     {
       printf("%s", positionErrorMessage);
       return 1;
     }
 
-    position[i] = coord->valuedouble;
+    for(int i = 0; i < 3; i++)
+    {
+      cJSON* coord = cJSON_GetArrayItem(configPosition, i);
+      if(!cJSON_IsNumber(coord))
+      {
+        printf("%s", positionErrorMessage);
+        return 1;
+      }
+
+      position[i] = coord->valuedouble;
+    }
+  }
+
+  // parse orientation
+  cJSON* configOrientation = cJSON_GetObjectItemCaseSensitive(configObject, "orientation");
+  if(!cJSON_IsArray(configOrientation))
+  {
+    glm_vec3_copy(GLM_VEC3_ZERO, object->orientation);
+  }
+  else
+  {
+    parseVec3(object->orientation, configOrientation, "ERROR::CONFIG::INVALID_ORIENTATION:: expected float array for orientation of object with format [<pitch>, <yaw>, <roll>]\n");
   }
 
   // parse color
   cJSON* configColor = cJSON_GetObjectItemCaseSensitive(configObject, "color");
-  const char* colorErrorMessage = "ERROR::CONFIG::INVALID_COLOR: expected float array for color of object with format [<red_color>, <blue_color>, <green_color>] where each value is from 0 to 1\n";
+  const char* colorErrorMessage = "ERROR::CONFIG::INVALID_COLOR: expected float array for color of object with format [<red_color>, <blue_color>, <green_color>] with non-negative values\n";
   if(!cJSON_IsArray(configColor) || cJSON_GetArraySize(configColor) != 3)
   {
     printf("%s", colorErrorMessage);
@@ -74,13 +87,31 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
   {
     cJSON* curColor = cJSON_GetArrayItem(configColor, i);
 
-    if(!cJSON_IsNumber(curColor) || curColor->valuedouble > 1.0 || curColor->valuedouble < 0.0)
+    if(!cJSON_IsNumber(curColor) || curColor->valuedouble < 0.0f)
     {
       printf("%s", colorErrorMessage);
       return 1;
     }
 
+
     color[i] = curColor->valuedouble;
+  }
+
+  unsigned int scale = 0;
+  for(int i = 0; i < 3; i++)
+  {
+    if(color[i] > 1)
+    {
+      scale = 1;
+      break;
+    }
+  }
+  if(scale)
+  {
+    for(int i = 0; i < 3; i++)
+    {
+      color[i] /= 255.0f;
+    }
   }
 
   // prefer populating object after all fields have been verified

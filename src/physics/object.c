@@ -30,32 +30,30 @@ void objectPrint(Object* o)
 
 void objectVertices(Object* o, float* vertices)
 {
-  for(int i = 0; i < 4; i++)
+  mat4 res;
+  for(int i = 0; i < 3; i++)
   {
-    for(int j = 0; j < 4; j++)
+    for(int j = 0; j < 3; j++)
     {
-      int idx = i * 4 + j;
-      if(j == i)
+      if(i != j)
       {
-        if(i == 3)
-        {
-          vertices[idx] = 1.0f;
-        }
-        else
-        {
-          vertices[idx] = o->size;
-        }
+        scale[i][j] = o->size;
       }
       else
       {
-        vertices[idx] = 0.0f;
+        scale[i][j] = 0.0f;
       }
     }
   }
+  scale[3][3] = 1.0f;
 
-  vertices[12] = o->position[0];
-  vertices[13] = o->position[1];
-  vertices[14] = o->position[2];
+  glm_translate(res, o->position);
+
+  mat4 rot;
+  glm_euler((vec3) {glm_rad(object->orientation[0]), glm_rad(object->orientation[1]), glm_rad(object->orientation[2])}, rot);
+
+  glm_mat4_mul(res, rot, res);
+
 
   for(int i = 16; i < 19; i++)
   {

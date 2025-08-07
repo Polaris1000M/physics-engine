@@ -4,11 +4,11 @@
 unsigned int shadowInit(Shadow* s, Camera* c, vec3 lightDir)
 {
   s->dist = c->far - c->near;
-  s->padding = 10.0f;
+  s->padding = 15.0f;
   glm_vec3_copy(lightDir, s->lightDir);
   glm_vec3_scale(s->lightDir, -s->dist, s->lightDelta);
-  s->SHADOW_WIDTH = 4096;
-  s->SHADOW_HEIGHT = 4096;
+  s->SHADOW_WIDTH = 8192;
+  s->SHADOW_HEIGHT = 8192;
   shaderInit(&s->shader, "../src/render/shaders/shadow.vs", "../src/render/shaders/shadow.fs");
 
   glGenFramebuffers(1, &s->FBO);

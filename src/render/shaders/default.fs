@@ -11,7 +11,8 @@ in vec3 ShadowCoord;
 
 out vec4 FragColor;
 
-vec2 poissonDisk[16] = vec2[](
+vec2 poissonDisk[16] = vec2[]
+(
   vec2(-0.94201624, -0.39906216), vec2(0.94558609, -0.76890725),
   vec2(-0.094184101, -0.92938870), vec2(0.34495938, 0.29387760),
   vec2(-0.91588581, 0.45771432), vec2(-0.81544232, -0.87912464),
@@ -24,20 +25,22 @@ vec2 poissonDisk[16] = vec2[](
 
 void main()
 {
-  float ambientStrength = 0.6;
+  float ambientStrength = 0.8;
+  float normalStrength = 0.4;
+  float specularStrength = 0.2;
+
   vec3 ambient = vec3(ambientStrength);
 
   vec3 norm = normalize(normal);
   float diff = max(dot(norm, -lightDir), 0.0);
-  vec3 diffuse = vec3(diff);
+  vec3 diffuse = vec3(diff * normalStrength);
 
-  float specularStrength = 0.5;
   vec3 viewDir = normalize(viewPos - FragPos);
   vec3 reflectDir = reflect(lightDir, norm);
   float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
   vec3 specular = vec3(specularStrength * spec);
 
-  float bias = 0.008;
+  float bias = 0.001;
   vec3 biasedShadowCoord = ShadowCoord;
   biasedShadowCoord.z -= bias;
   float shadow = 0;
