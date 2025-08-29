@@ -49,7 +49,7 @@ void tetrahedronMesh(float* vertices)
   for(int i = 0; i < 3; i++)
   {
     unsigned int idx = 3 * floatsPerTriangle + i * floatsPerVertex;
-    glm_vec3_copy(coords[i], vertices + idx);
+    glm_vec3_copy(coords[2 - i], vertices + idx);
     glm_vec3_copy(normal, vertices + idx + 3);
   }
 }
