@@ -277,20 +277,20 @@ void simulationPrint(Simulation* sim)
     printf("\n");
   }
 
-  // printf("MESHES\n");
-  // for(int type = 0; type < OBJECT_TYPES; type++)
-  // {
-  //   if(type != SPHERE)
-  //   {
-  //     continue;
-  //   }
-  //   printf("%s %d\n", OBJECT_NAMES[type], sim->meshSizes[type]);
-  //   for(int i = 0; i < sim->meshSizes[type]; i += 3)
-  //   {
-  //     printf("(%f, %f, %f)\n", sim->meshes[type][i], sim->meshes[type][i + 1], sim->meshes[type][i + 2]);
-  //   }
-  //   printf("\n");
-  // }
+  printf("MESHES\n");
+  for(int type = 0; type < OBJECT_TYPES; type++)
+  {
+    if(type == SPHERE)
+    {
+      continue;
+    }
+    printf("%s %d\n", OBJECT_NAMES[type], sim->meshSizes[type]);
+    for(int i = 0; i < sim->meshSizes[type]; i += 3)
+    {
+      printf("(%f, %f, %f)\n", sim->meshes[type][i], sim->meshes[type][i + 1], sim->meshes[type][i + 2]);
+    }
+    printf("\n");
+  }
 
   // printf("VERTICES\n");
   // for(int type = 0; type < OBJECT_TYPES; type++)

@@ -10,15 +10,46 @@ void cubeMesh(float* vertices)
   // multiplied by square root of 3
   const float half = defaultSize / 1.73205081f;
   
-  const float sign[2] = {-1.0f, 1.0f};
   const int floatsPerVertex = 6;
   const int floatsPerTriangle = 3 * floatsPerVertex;
+
+  // describes the sign of the other 2 axes for any fixed axis
   const float signs[4][2] =
   {
     {-1.0f, 1.0f},
     {1.0f, 1.0f},
     {-1.0f, -1.0f},
     {1.0f, -1.0f}
+  };
+
+  // for each of the 6 faces, describes the correct pattern to produce 
+  // counterclockwise triangles
+  const int patterns[6][2][3] = 
+  {
+    {
+      {1, 3, 2},
+      {1, 2, 0}
+    },
+    {
+      {3, 1, 0},
+      {3, 0, 2}
+    },
+    {
+      {1, 0, 2},
+      {1, 2, 3}
+    },
+    {
+      {3, 2, 0},
+      {3, 0, 1}
+    },
+    {
+      {0, 1, 3},
+      {0, 3, 2}
+    },
+    {
+      {1, 0, 2},
+      {1, 2, 3}
+    }
   };
   
   // all faces in cube are defined by one fixed coordinate which has the same value for all coordinates
@@ -34,18 +65,32 @@ void cubeMesh(float* vertices)
       for(int sign = 0; sign < 4; sign++)
       {
         face[sign][fixed] = half * (2 * fixedSign - 1);
-        face[sign][(fixed + 1) % 3] = signs[sign][0] * half;
-        face[sign][(fixed + 2) % 3] = signs[sign][1] * half;
+        if(fixed == 0)
+        {
+          face[sign][1] = half * signs[sign][0];
+          face[sign][2] = half * signs[sign][1];
+        }
+        else if(fixed == 1)
+        {
+          face[sign][0] = half * signs[sign][0];
+          face[sign][2] = half * signs[sign][1];
+        }
+        else if(fixed == 2)
+        {
+          face[sign][0] = half * signs[sign][0];
+          face[sign][1] = half * signs[sign][1];
+        }
       }
 
       vec3 normal = {0.0f, 0.0f, 0.0f};
-      normal[fixed] = sign[fixedSign];
+      normal[fixed] = 2 * fixedSign - 1.0f;
       for(int i = 0; i < 2; i++)
       {
         for(int j = 0; j < 3; j++)
         {
+          int patternIdx = fixed * 2 + fixedSign;
           int idx = fixed * 4 * floatsPerTriangle + fixedSign * 2 * floatsPerTriangle + i * floatsPerTriangle + j * floatsPerVertex;
-          glm_vec3_copy(face[i + j], vertices + idx);
+          glm_vec3_copy(face[patterns[patternIdx][i][j]], vertices + idx);
           glm_vec3_copy(normal, vertices + idx + 3);
         }
       }
