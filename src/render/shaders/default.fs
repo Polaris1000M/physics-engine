@@ -40,6 +40,14 @@ void main()
   float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
   vec3 specular = vec3(specularStrength * spec);
 
+  bool isFront = gl_FrontFacing;
+  if(!isFront)
+  {
+    vec3 result = (ambient + diffuse + specular) * color;
+    FragColor = vec4(result, 1.0);
+    return;
+  }
+
   float bias = 0.001;
   vec3 biasedShadowCoord = ShadowCoord;
   biasedShadowCoord.z -= bias;

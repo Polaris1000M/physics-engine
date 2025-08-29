@@ -172,6 +172,11 @@ void objectsRender(Simulation* sim)
 {
   for(unsigned int type = 0; type < OBJECT_TYPES; type++)
   {
+    if(type == FLOOR)
+    {
+        glDisable(GL_CULL_FACE);
+    }
+
     glBindVertexArray(sim->VAOs[type]);
     for(unsigned int i = 0, idx = 0; i < sim->objectCounts[type]; i++, idx += objectVerticesSize())
     {
@@ -184,6 +189,11 @@ void objectsRender(Simulation* sim)
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    if(type == FLOOR)
+    {
+        glEnable(GL_CULL_FACE);
+    }
   }
 }
 
