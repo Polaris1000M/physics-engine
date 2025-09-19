@@ -11,7 +11,7 @@
 
 typedef struct Shader
 {
-  unsigned int ID;
+    unsigned int ID;
 } Shader;
 
 // initializes shader

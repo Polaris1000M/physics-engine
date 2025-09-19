@@ -5,3 +5,5 @@ images/
 million.json
 ten.json
 hundred.json
+.cache/
+compile_commands.json

@@ -10,34 +10,35 @@
 
 #include <cglm/cglm.h>
 #include <GLFW/glfw3.h>
+#include "../physics/object.h"
 
 typedef struct Camera
 {
-  unsigned int WINDOW_WIDTH;
-  unsigned int WINDOW_HEIGHT;
+    unsigned int WINDOW_WIDTH;
+    unsigned int WINDOW_HEIGHT;
 
-  float lastTime; // last time render loop was called
+    float lastTime; // last time render loop was called
 
-  float keySensitivity; // controls how sensitive movement is during key presses
+    float keySensitivity; // controls how sensitive movement is during key presses
 
-  int firstCursor;         // whether this is the first time cursor input has been processed
-  float cursorSensitivity; // controls how much changes in mouse position rotate view
-  float fov;              // visible angle of screen in viewport
-  float lastX;            // last x position of cursor
-  float lastY;            // last y position of cursor
-  float yaw;              // rotation around y axis
-  float pitch;            // rotation around x axis
-  float near;             // position of the near plane
-  float far;              // position of the far plane
+    int firstCursor;         // whether this is the first time cursor input has been processed
+    float cursorSensitivity; // controls how much changes in mouse position rotate view
+    float fov;              // visible angle of screen in viewport
+    float lastX;            // last x position of cursor
+    float lastY;            // last y position of cursor
+    float yaw;              // rotation around y axis
+    float pitch;            // rotation around x axis
+    float near;             // position of the near plane
+    float far;              // position of the far plane
 
-  vec3 cameraPos;    // current position of camera
-  vec3 cameraFront;  // direction the camera is pointing towards
-  vec3 cameraTarget; // the camera's target
-  vec3 cameraUp;     // up relative to the camera
+    vec3 cameraPos;    // current position of camera
+    vec3 cameraFront;  // direction the camera is pointing towards
+    vec3 cameraTarget; // the camera's target
+    vec3 cameraUp;     // up relative to the camera
 
-  mat4 projection;
-  mat4 view;
-  mat4 vp;
+    mat4 projection;
+    mat4 view;
+    mat4 vp;
 } Camera;
 
 // initializes camera
@@ -54,7 +55,10 @@ void cameraUpdate(Camera* c);
 // computes the coordinates of the 8 corners of the view frustum
 void cameraFrustum(Camera* c, vec3* coords);
 
+// checks whether an object is included inside a camera's frustum for 
+// frustum occlusion
+bool cameraCheckFrustumInclusion(Camera* c, Object* o);
+
 void cameraPrint(Camera* c);
 
 #endif
-

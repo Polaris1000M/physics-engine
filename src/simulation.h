@@ -16,44 +16,44 @@
 #include "render/shadow.h"
 
 typedef struct Simulation {
-  GLFWwindow* window;
-  unsigned int WINDOW_HEIGHT;
-  unsigned int WINDOW_WIDTH;
+    GLFWwindow* window;
+    unsigned int WINDOW_HEIGHT;
+    unsigned int WINDOW_WIDTH;
 
-  float gravity;
-  float lightDir[3];
-  float lastTime; // last time render loop was called
-  float timeRatio; // multiplied by amount of real time passing to produce amount of simulation time passed
-  
-  Shader shader;
-  Camera camera;
-  Shadow shadow;
+    float gravity;
+    float lightDir[3];
+    float lastTime; // last time render loop was called
+    float timeRatio; // multiplied by amount of real time passing to produce amount of simulation time passed
 
-  // the number of each type of object
-  unsigned int objectCounts[OBJECT_TYPES];
+    Shader shader;
+    Camera camera;
+    Shadow shadow;
 
-  // arrays holding all objects
-  Object* objects[OBJECT_TYPES];
+    // the number of each type of object
+    unsigned int objectCounts[OBJECT_TYPES];
 
-  // default meshes for each object type
-  float* meshes[OBJECT_TYPES];
+    // arrays holding all objects
+    Object* objects[OBJECT_TYPES];
 
-  // the number of floats in a single instance of the object
-  unsigned int meshSizes[OBJECT_TYPES];
+    // default meshes for each object type
+    float* meshes[OBJECT_TYPES];
 
-  // VBOs for each of the object meshes
-  unsigned int VBOs[OBJECT_TYPES];
+    // the number of floats in a single instance of the object
+    unsigned int meshSizes[OBJECT_TYPES];
 
-  // VBOs for per instance data
-  unsigned int instanceVBOs[OBJECT_TYPES];
+    // VBOs for each of the object meshes
+    unsigned int VBOs[OBJECT_TYPES];
 
-  // VAOs for each of the object meshes
-  unsigned int VAOs[OBJECT_TYPES];
+    // VBOs for per instance data
+    unsigned int instanceVBOs[OBJECT_TYPES];
 
-  unsigned int vertexCounts[OBJECT_TYPES];
+    // VAOs for each of the object meshes
+    unsigned int VAOs[OBJECT_TYPES];
 
-  // buffer with additional per instance rendering data (model matrix and color)
-  float* vertices[OBJECT_TYPES];
+    unsigned int vertexCounts[OBJECT_TYPES];
+
+    // buffer with additional per instance rendering data (model matrix and color)
+    float* vertices[OBJECT_TYPES];
 
 } Simulation;
 

@@ -3,8 +3,8 @@
 
 typedef struct Texture
 {
-  unsigned int ID;
-  unsigned int textureUnit; // location of texture on GPU
+    unsigned int ID;
+    unsigned int textureUnit; // location of texture on GPU
 } Texture;
 
 // initializes texture with a provided texture and source path

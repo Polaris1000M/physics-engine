@@ -21,21 +21,21 @@ extern const char* OBJECT_NAMES[OBJECT_TYPES];
 
 typedef enum
 {
-  FLOOR,
-  SPHERE,
-  CUBE,
-  TETRAHEDRON
+    FLOOR,
+    SPHERE,
+    CUBE,
+    TETRAHEDRON
 } ObjectType;
 
 // represents an object in the simulation
 typedef struct Object
 {
-  ObjectType type;
-  float size;
-  float mass;
-  vec3 position;
-  vec3 color;
-  vec3 orientation; // euler angles representing rotation
+    ObjectType type;
+    float size;
+    float mass;
+    vec3 position;
+    vec3 color;
+    vec3 orientation; // euler angles representing rotation
 } Object;
 
 // initializes an object
