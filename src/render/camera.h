@@ -62,3 +62,4 @@ bool cameraCheckFrustumInclusion(Camera* c, Object* o);
 void cameraPrint(Camera* c);
 
 #endif
+
