@@ -11,6 +11,7 @@ in vec3 ShadowCoord;
 
 out vec4 FragColor;
 
+// used to create smoother shadow edges
 vec2 poissonDisk[16] = vec2[]
 (
      vec2(-0.94201624, -0.39906216), vec2(0.94558609, -0.76890725),
@@ -25,6 +26,7 @@ vec2 poissonDisk[16] = vec2[]
 
 void main()
 {
+    // Phong lighting parameters
     float ambientStrength = 0.8;
     float normalStrength = 0.4;
     float specularStrength = 0.2;
@@ -40,22 +42,28 @@ void main()
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     vec3 specular = vec3(specularStrength * spec);
 
-    bool isFront = gl_FrontFacing;
-    if(!isFront)
+    // no need to compute shadow if not facing the camera
+    if(!gl_FrontFacing)
     {
         vec3 result = (ambient + diffuse + specular) * color;
         FragColor = vec4(result, 1.0);
         return;
     }
 
+    // prevents shadows from rendering poorly when z-coordinates are extremely
+    // close
     float bias = 0.001;
     vec3 biasedShadowCoord = ShadowCoord;
     biasedShadowCoord.z -= bias;
     float shadow = 0;
     vec2 texelSize = 1.0 / textureSize(depthMap, 0);
+
+    // apply noise based on Poisson disk
     for(int i = 0; i < 16; i++)
     {
-        vec3 sampleCoord = vec3(biasedShadowCoord.xy + poissonDisk[i] * texelSize * 2.0, biasedShadowCoord.z);
+        vec3 sampleCoord =
+            vec3(biasedShadowCoord.xy + poissonDisk[i] * texelSize * 2.0,
+                 biasedShadowCoord.z);
         shadow += texture(depthMap, sampleCoord);
     }
     shadow /= 16;
@@ -63,4 +71,3 @@ void main()
     vec3 result = (ambient + shadow * (diffuse + specular)) * color;
     FragColor = vec4(result, 1.0);
 }
-

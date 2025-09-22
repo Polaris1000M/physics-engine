@@ -1,7 +1,8 @@
 #ifndef FLOOR_H
 #define FLOOR_H
 
-void floorMesh(float* vertices);
+// generates mesh for floor
+void floorMesh(float* mesh);
 
 unsigned int floorMeshSize();
 

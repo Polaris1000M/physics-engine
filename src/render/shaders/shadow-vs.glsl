@@ -8,4 +8,3 @@ void main()
 {
     gl_Position = vp * model * vec4(aPos, 1.0);
 }
-

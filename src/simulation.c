@@ -1,11 +1,13 @@
 #include "simulation.h"
+
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio.h>
 #include <time.h>
+
+#include "physics/objects/cube.h"
 #include "physics/objects/floor.h"
 #include "physics/objects/sphere.h"
-#include "physics/objects/cube.h"
 #include "physics/objects/tetrahedron.h"
 #include "utils/parse.h"
 #include "utils/save.h"
@@ -13,7 +15,9 @@
 // initializes OpenGL and GLFW boilerplate
 unsigned int openglInit(Simulation* sim)
 {
-    const char* openglInitErrorMessage = "ERROR::OPENGL::INITIALIZATION_ERROR: failed to initialize OpenGL and GLFW\n";
+    const char* openglInitErrorMessage =
+        "ERROR::OPENGL::INITIALIZATION_ERROR: failed to initialize OpenGL and "
+        "GLFW\n";
 
     if (!glfwInit())
     {
@@ -36,8 +40,9 @@ unsigned int openglInit(Simulation* sim)
 
     sim->WINDOW_WIDTH = mode->width;
     sim->WINDOW_HEIGHT = mode->height;
-    sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT, "PhysicsEngine", NULL, NULL);
-    if(!sim->window)
+    sim->window = glfwCreateWindow(sim->WINDOW_WIDTH, sim->WINDOW_HEIGHT,
+                                   "PhysicsEngine", NULL, NULL);
+    if (!sim->window)
     {
         glfwTerminate();
         printf("%s", openglInitErrorMessage);
@@ -46,7 +51,7 @@ unsigned int openglInit(Simulation* sim)
 
     glfwMakeContextCurrent(sim->window);
 
-    if(!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress))
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         printf("%s", openglInitErrorMessage);
         return 1;
@@ -64,6 +69,8 @@ unsigned int openglInit(Simulation* sim)
     return 0;
 }
 
+// generate and bind all object data (model matrices, color, and meshes) to
+// OpenGL
 void buffersInit(Simulation* sim)
 {
     sim->meshSizes[FLOOR] = floorMeshSize();
@@ -71,46 +78,66 @@ void buffersInit(Simulation* sim)
     sim->meshSizes[CUBE] = cubeMeshSize();
     sim->meshSizes[TETRAHEDRON] = tetrahedronMeshSize();
 
-    void (*generateMesh[OBJECT_TYPES])(float*); 
+    // stores each of the methods for generating meshes for easier iteration
+    void (*generateMesh[OBJECT_TYPES])(float*);
     generateMesh[FLOOR] = floorMesh;
     generateMesh[SPHERE] = sphereIcoMesh;
     generateMesh[CUBE] = cubeMesh;
     generateMesh[TETRAHEDRON] = tetrahedronMesh;
 
     glGenVertexArrays(OBJECT_TYPES, sim->VAOs);
-    glGenBuffers(OBJECT_TYPES, sim->VBOs);
-    glGenBuffers(OBJECT_TYPES, sim->instanceVBOs);
+    glGenBuffers(OBJECT_TYPES, sim->meshVBOs);
+    glGenBuffers(OBJECT_TYPES, sim->objectVBOs);
 
-    for(int type = 0; type < OBJECT_TYPES; type++)
+    for (int type = 0; type < OBJECT_TYPES; type++)
     {
+        // generate default mesh data
         sim->meshes[type] = malloc(sim->meshSizes[type] * sizeof(float));
         generateMesh[type](sim->meshes[type]);
 
-        sim->vertexCounts[type] = sim->objectCounts[type] * objectVerticesSize();
-        sim->vertices[type] = malloc(sim->vertexCounts[type] * sizeof(float));
-
+        // allocate object data
+        sim->objectSizes[type] =
+            sim->objectCounts[type] * objectVerticesSize();
+        sim->objectData[type] =
+            malloc(sim->objectSizes[type] * sizeof(float));
 
         glBindVertexArray(sim->VAOs[type]);
 
         // mesh vertex buffer
-        glBindBuffer(GL_ARRAY_BUFFER, sim->VBOs[type]);
-        glBufferData(GL_ARRAY_BUFFER, sim->meshSizes[type] * sizeof(float), sim->meshes[type], GL_STATIC_DRAW);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) 0);
+        glBindBuffer(GL_ARRAY_BUFFER, sim->meshVBOs[type]);
+        glBufferData(GL_ARRAY_BUFFER, sim->meshSizes[type] * sizeof(float),
+                     sim->meshes[type], GL_STATIC_DRAW);
+
+        // position data
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                              (void*)0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*) (3 * sizeof(float)));
+
+        // vertex normals
+        glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                              (void*)(3 * sizeof(float)));
         glEnableVertexAttribArray(6);
 
-        // instance vertex buffer
-        glBindBuffer(GL_ARRAY_BUFFER, sim->instanceVBOs[type]);
-        glBufferData(GL_ARRAY_BUFFER, sim->vertexCounts[type] * sizeof(float), sim->vertices[type], GL_STATIC_DRAW);
-        for(unsigned int i = 0; i < 4; i++)
+        // object vertex buffer
+        glBindBuffer(GL_ARRAY_BUFFER, sim->objectVBOs[type]);
+        glBufferData(GL_ARRAY_BUFFER,
+                     sim->objectSizes[type] * sizeof(float),
+                     sim->objectData[type], GL_STATIC_DRAW);
+
+        // model matrix
+        for (unsigned int i = 0; i < 4; i++)
         {
             glEnableVertexAttribArray(i + 1);
-            glVertexAttribPointer(i + 1, 4, GL_FLOAT, GL_FALSE, objectVerticesSize() * sizeof(float), (void*) (i * 4 * sizeof(float)));
-            glVertexAttribDivisor(i + 1, 1);
+            glVertexAttribPointer(i + 1, 4, GL_FLOAT, GL_FALSE,
+                                  objectVerticesSize() * sizeof(float),
+                                  (void*)(i * 4 * sizeof(float)));
+            glVertexAttribDivisor(i + 1, 1);  // configured for instancing
         }
+        // object color
         glEnableVertexAttribArray(5);
-        glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, objectVerticesSize() * sizeof(float), (void*) (16 * sizeof(float)));
+        glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE,
+                              objectVerticesSize() * sizeof(float),
+                              (void*)(16 * sizeof(float)));
         glVertexAttribDivisor(5, 1);
 
         glBindVertexArray(0);
@@ -120,13 +147,13 @@ void buffersInit(Simulation* sim)
 unsigned int simulationInit(Simulation* sim, const char* configPath)
 {
     // OpenGL boilerplate
-    if(openglInit(sim))
+    if (openglInit(sim))
     {
         return 1;
     }
 
     // initialize objects from config
-    if(parseConfig(sim, configPath))
+    if (parseConfig(sim, configPath))
     {
         return 1;
     }
@@ -134,22 +161,23 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     sim->lastTime = 0.0f;
     sim->timeRatio = 0.5f;
 
-    shaderInit(&sim->shader, "../src/render/shaders/default-vs.glsl", "../src/render/shaders/default-fs.glsl");
+    shaderInit(&sim->shader, "../src/render/shaders/default-vs.glsl",
+               "../src/render/shaders/default-fs.glsl");
     cameraInit(&sim->camera, sim->window);
-    if(shadowInit(&sim->shadow, &sim->camera, sim->lightDir))
+    if (shadowInit(&sim->shadow, &sim->camera, sim->lightDir))
     {
         return 1;
     }
 
-    // initalize default meshes and bind
-    buffersInit(sim);  
+    // initalize object data and bind
+    buffersInit(sim);
 
     return 0;
 }
 
 void simulationUpdate(Simulation* sim)
 {
-    if(glfwGetKey(sim->window, GLFW_KEY_ESCAPE))
+    if (glfwGetKey(sim->window, GLFW_KEY_ESCAPE))
     {
         glfwSetWindowShouldClose(sim->window, 1);
     }
@@ -167,29 +195,39 @@ void simulationUpdate(Simulation* sim)
     shadowUpdate(&sim->shadow, &sim->camera);
 }
 
+// iterate through objects and render with instancing
 void objectsRender(Simulation* sim)
 {
-    for(unsigned int type = 0; type < OBJECT_TYPES; type++)
+    for (unsigned int type = 0; type < OBJECT_TYPES; type++)
     {
-        if(type == FLOOR)
+        // floor should not be culled
+        if (type == FLOOR)
         {
             glDisable(GL_CULL_FACE);
         }
 
         glBindVertexArray(sim->VAOs[type]);
-        for(unsigned int i = 0, idx = 0; i < sim->objectCounts[type]; i++, idx += objectVerticesSize())
+        for (unsigned int i = 0, idx = 0; i < sim->objectCounts[type];
+             i++, idx += objectVerticesSize())
         {
-            objectVertices(&sim->objects[type][i], sim->vertices[type] + idx);
+            // update object model matrices and color
+            objectVertices(&sim->objects[type][i], sim->objectData[type] + idx);
         }
 
-        glBindBuffer(GL_ARRAY_BUFFER, sim->instanceVBOs[type]);
-        glBufferData(GL_ARRAY_BUFFER, sim->vertexCounts[type] * sizeof(float), sim->vertices[type], GL_STATIC_DRAW);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 6, sim->objectCounts[type]);
+        // reattach new object data
+        glBindBuffer(GL_ARRAY_BUFFER, sim->objectVBOs[type]);
+        glBufferData(GL_ARRAY_BUFFER,
+                     sim->objectSizes[type] * sizeof(float),
+                     sim->objectData[type], GL_STATIC_DRAW);
+
+        // draw objects with instancing
+        glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 6,
+                              sim->objectCounts[type]);
 
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        if(type == FLOOR)
+        if (type == FLOOR)
         {
             glEnable(GL_CULL_FACE);
         }
@@ -208,9 +246,10 @@ void simulationRender(Simulation* sim)
     shaderUse(&sim->shadow.shader);
     shaderSetMatrix(&sim->shadow.shader, "vp", sim->shadow.vp);
     objectsRender(sim);
-    if(glfwGetKey(sim->window, GLFW_KEY_P))
+    if (glfwGetKey(sim->window, GLFW_KEY_P))
     {
-        saveFramebuffer(sim->shadow.FBO, sim->shadow.SHADOW_WIDTH, sim->shadow.SHADOW_HEIGHT);
+        saveFramebuffer(sim->shadow.FBO, sim->shadow.SHADOW_WIDTH,
+                        sim->shadow.SHADOW_HEIGHT);
     }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -236,21 +275,21 @@ void simulationRender(Simulation* sim)
 
 void simulationFree(Simulation* sim)
 {
-    for(int type = 0; type < OBJECT_TYPES; type++)
+    for (int type = 0; type < OBJECT_TYPES; type++)
     {
         free(sim->meshes[type]);
-        free(sim->vertices[type]);
+        free(sim->objectData[type]);
     }
 
     glDeleteFramebuffers(1, &sim->shadow.FBO);
-    glDeleteBuffers(3, sim->VBOs);
+    glDeleteBuffers(3, sim->meshVBOs);
     glDeleteVertexArrays(3, sim->VAOs);
     glDeleteProgram(sim->shader.ID);
 }
 
 void simulationStart(Simulation* sim)
 {
-    while(!glfwWindowShouldClose(sim->window))
+    while (!glfwWindowShouldClose(sim->window))
     {
         simulationUpdate(sim);
         simulationRender(sim);
@@ -269,17 +308,17 @@ void simulationPrint(Simulation* sim)
 {
     printf("OBJECTS\n");
     printf("Object Counts\n");
-    for(int type = 0; type < OBJECT_TYPES; type++)
+    for (int type = 0; type < OBJECT_TYPES; type++)
     {
         printf("%s: %d\n", OBJECT_NAMES[type], sim->objectCounts[type]);
     }
     printf("\n");
 
-    for(int type = 0; type < OBJECT_TYPES; type++)
+    for (int type = 0; type < OBJECT_TYPES; type++)
     {
         printf("%s\n", OBJECT_NAMES[type]);
 
-        for(int i = 0; i < sim->objectCounts[type]; i++)
+        for (int i = 0; i < sim->objectCounts[type]; i++)
         {
             objectPrint(sim->objects[type] + i);
             printf("\n");
@@ -288,16 +327,17 @@ void simulationPrint(Simulation* sim)
     }
 
     printf("MESHES\n");
-    for(int type = 0; type < OBJECT_TYPES; type++)
+    for (int type = 0; type < OBJECT_TYPES; type++)
     {
-        if(type == SPHERE)
+        if (type == SPHERE)
         {
             continue;
         }
         printf("%s %d\n", OBJECT_NAMES[type], sim->meshSizes[type]);
-        for(int i = 0; i < sim->meshSizes[type]; i += 3)
+        for (int i = 0; i < sim->meshSizes[type]; i += 3)
         {
-            printf("(%f, %f, %f)\n", sim->meshes[type][i], sim->meshes[type][i + 1], sim->meshes[type][i + 2]);
+            printf("(%f, %f, %f)\n", sim->meshes[type][i],
+                   sim->meshes[type][i + 1], sim->meshes[type][i + 2]);
         }
         printf("\n");
     }
@@ -340,11 +380,13 @@ void simulationPrint(Simulation* sim)
     //   // print all vertices in a single object
     //   for(int i = 0; i < sim->vertexCounts[type]; i += 3)
     //   {
-    //     printf("(%f, %f, %f)\n", sim->vertices[type][i], sim->vertices[type][i + 1], sim->vertices[type][i + 2]);
+    //     printf("(%f, %f, %f)\n", sim->vertices[type][i],
+    //     sim->vertices[type][i + 1], sim->vertices[type][i + 2]);
     //     // // iterate over all groups of 3 vertices in the current object
     //     // for(int j = 0; j < i * sim->singleVertexCounts[type]; j += 3)
     //     // {
-    //     //   printf("(%f, %f, %f)\n", sim->vertices[type][j], sim->vertices[type][j + 1], sim->vertices[type][j + 2]);
+    //     //   printf("(%f, %f, %f)\n", sim->vertices[type][j],
+    //     sim->vertices[type][j + 1], sim->vertices[type][j + 2]);
     //     // }
     //   }
     // }

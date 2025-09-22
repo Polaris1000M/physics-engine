@@ -1,13 +1,14 @@
 /*
  * object.h
  *
- * Describes the objects in the simulation, with the same object type for each type of simulation object
+ * Generic object struct for simulation
+ * Stores position, color, and orientation
+ * Can generate each object's model matrix
  *
- * Each object should individually support their own:
+ * Each type of object (sphere, cube, etc.) should individually support their
+ * own:
  * - objectMesh method to generate a default mesh
  * - objectMeshSize method to specify the size of the mesh
- *
- * No specific methods are needed for each object to compute how to store per frame data, since the information is identical for each object: model matrix and color
  */
 
 #ifndef OBJECT_H
@@ -35,16 +36,17 @@ typedef struct Object
     float mass;
     vec3 position;
     vec3 color;
-    vec3 orientation; // euler angles representing rotation
+    vec3 orientation;  // euler angles representing rotation
 } Object;
 
 // initializes an object
-void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color);
+void objectInit(Object* o, ObjectType type, float size, float mass,
+                vec3 position, vec3 color);
 
 // prints an object
 void objectPrint(Object* o);
 
-// generates the vertex data for each object comprised of the model matrix and color data
+// generates and stores model matrix and color data 
 void objectVertices(Object* o, float* vertices);
 
 // returns the size of an object's per instance data

@@ -1,9 +1,10 @@
 #include "tetrahedron.h"
-#include <math.h>
+
 #include <cglm/cglm.h>
+#include <math.h>
 #include <string.h>
 
-void tetrahedronMesh(float* vertices)
+void tetrahedronMesh(float* mesh)
 {
     float coords[4][3];
 
@@ -13,10 +14,11 @@ void tetrahedronMesh(float* vertices)
     coords[0][1] = defaultSize * -sin(angleDown);
     coords[0][2] = 0.0f;
 
-    // create other points on the base of the pyramid by rotating prior point 120 degrees about the y axis
+    // create other points on the base of the pyramid by rotating prior point
+    // 120 degrees about the y axis
     mat4 rotate = GLM_MAT4_IDENTITY;
     glm_rotate_y(rotate, 2.0f * M_PI / 3.0f, rotate);
-    for(int i = 1; i < 3; i++)
+    for (int i = 1; i < 3; i++)
     {
         glm_mat4_mulv3(rotate, coords[i - 1], 1.0f, coords[i]);
     }
@@ -28,7 +30,7 @@ void tetrahedronMesh(float* vertices)
     const unsigned int floatsPerVertex = 6;
     const unsigned int floatsPerTriangle = floatsPerVertex * 3;
 
-    for(int face = 0; face < 3; face++)
+    for (int face = 0; face < 3; face++)
     {
         const unsigned int indices[3] = {3, face, (face + 1) % 3};
         vec3 e1, e2, normal;
@@ -37,20 +39,20 @@ void tetrahedronMesh(float* vertices)
         glm_vec3_crossn(e1, e2, normal);
 
         unsigned int idx = face * floatsPerTriangle;
-        for(int i = 0; i < 3; i++)
+        for (int i = 0; i < 3; i++)
         {
-            glm_vec3_copy(coords[indices[i]], vertices + idx);
-            glm_vec3_copy(normal, vertices + idx + 3);
+            glm_vec3_copy(coords[indices[i]], mesh + idx);
+            glm_vec3_copy(normal, mesh + idx + 3);
             idx += floatsPerVertex;
         }
     }
 
     vec3 normal = {0.0f, -1.0f, 0.0f};
-    for(int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         unsigned int idx = 3 * floatsPerTriangle + i * floatsPerVertex;
-        glm_vec3_copy(coords[2 - i], vertices + idx);
-        glm_vec3_copy(normal, vertices + idx + 3);
+        glm_vec3_copy(coords[2 - i], mesh + idx);
+        glm_vec3_copy(normal, mesh + idx + 3);
     }
 }
 

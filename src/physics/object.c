@@ -1,10 +1,12 @@
 #include "object.h"
-#include <stdlib.h>
+
 #include <cglm/cglm.h>
+#include <stdlib.h>
 
 const char* OBJECT_NAMES[] = {"floor", "sphere", "cube", "tetrahedron"};
 
-void objectInit(Object* o, ObjectType type, float size, float mass, vec3 position, vec3 color)
+void objectInit(Object* o, ObjectType type, float size, float mass,
+                vec3 position, vec3 color)
 {
     o->type = type;
     o->size = size;
@@ -30,11 +32,11 @@ void objectPrint(Object* o)
 void objectVertices(Object* o, float* vertices)
 {
     mat4 res;
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        for(int j = 0; j < 4; j++)
+        for (int j = 0; j < 4; j++)
         {
-            if(i == j)
+            if (i == j)
             {
                 res[i][j] = o->size;
             }
@@ -46,7 +48,7 @@ void objectVertices(Object* o, float* vertices)
     }
     res[3][3] = 1.0f;
 
-    for(int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
         res[i][3] = o->position[i];
     }
@@ -55,15 +57,15 @@ void objectVertices(Object* o, float* vertices)
     glm_euler(o->orientation, rot);
     glm_mat4_mul(rot, res, res);
 
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
-        for(int j = 0; j < 4; j++)
+        for (int j = 0; j < 4; j++)
         {
             vertices[i * 4 + j] = res[j][i];
         }
     }
 
-    for(int i = 16; i < 19; i++)
+    for (int i = 16; i < 19; i++)
     {
         vertices[i] = o->color[i - 16];
     }
@@ -74,4 +76,3 @@ unsigned int objectVerticesSize()
     // 4x4 float matrix and 3 floats for color
     return 19;
 }
-
