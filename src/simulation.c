@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "cJSON.h"
 #include "physics/objects/cube.h"
 #include "physics/objects/floor.h"
 #include "physics/objects/sphere.h"
@@ -96,10 +97,8 @@ void buffersInit(Simulation* sim)
         generateMesh[type](sim->meshes[type]);
 
         // allocate object data
-        sim->objectSizes[type] =
-            sim->objectCounts[type] * objectVerticesSize();
-        sim->objectData[type] =
-            malloc(sim->objectSizes[type] * sizeof(float));
+        sim->objectSizes[type] = sim->objectCounts[type] * objectVerticesSize();
+        sim->objectData[type] = malloc(sim->objectSizes[type] * sizeof(float));
 
         glBindVertexArray(sim->VAOs[type]);
 
@@ -120,8 +119,7 @@ void buffersInit(Simulation* sim)
 
         // object vertex buffer
         glBindBuffer(GL_ARRAY_BUFFER, sim->objectVBOs[type]);
-        glBufferData(GL_ARRAY_BUFFER,
-                     sim->objectSizes[type] * sizeof(float),
+        glBufferData(GL_ARRAY_BUFFER, sim->objectSizes[type] * sizeof(float),
                      sim->objectData[type], GL_STATIC_DRAW);
 
         // model matrix
@@ -182,6 +180,11 @@ void simulationUpdate(Simulation* sim)
         glfwSetWindowShouldClose(sim->window, 1);
     }
 
+    if (glfwGetKey(sim->window, GLFW_KEY_ENTER))
+    {
+        simulationSave(sim);
+    }
+
     cameraKeyboardCallback(&sim->camera, sim->window);
 
     float currentTime = glfwGetTime();
@@ -216,8 +219,7 @@ void objectsRender(Simulation* sim)
 
         // reattach new object data
         glBindBuffer(GL_ARRAY_BUFFER, sim->objectVBOs[type]);
-        glBufferData(GL_ARRAY_BUFFER,
-                     sim->objectSizes[type] * sizeof(float),
+        glBufferData(GL_ARRAY_BUFFER, sim->objectSizes[type] * sizeof(float),
                      sim->objectData[type], GL_STATIC_DRAW);
 
         // draw objects with instancing
@@ -277,6 +279,7 @@ void simulationFree(Simulation* sim)
 {
     for (int type = 0; type < OBJECT_TYPES; type++)
     {
+        free(sim->objects[type]);
         free(sim->meshes[type]);
         free(sim->objectData[type]);
     }
@@ -302,6 +305,43 @@ void simulationStart(Simulation* sim)
 
     glfwTerminate();
     simulationFree(sim);
+}
+
+void simulationSave(Simulation* sim)
+{
+    cJSON* config = cJSON_CreateObject();
+
+    // save simulation configuration
+    cJSON_AddNumberToObject(config, "gravity", sim->gravity);
+
+    cJSON* configLightDir = cJSON_CreateFloatArray(sim->lightDir, 3);
+    cJSON_AddItemReferenceToObject(config, "lightDir", configLightDir);
+
+    cJSON* configCameraDir = cJSON_CreateFloatArray(sim->camera.cameraFront, 3);
+    cJSON_AddItemReferenceToObject(config, "cameraDir", configCameraDir);
+
+    cJSON* configCameraPos = cJSON_CreateFloatArray(sim->camera.cameraPos, 3);
+    cJSON_AddItemReferenceToObject(config, "cameraPos", configCameraPos);
+
+    // save simulation objects
+    cJSON* configObjects = cJSON_CreateArray();
+    for (int type = 0; type < OBJECT_TYPES; type++)
+    {
+        for (int i = 0; i < sim->objectCounts[type]; i++)
+        {
+            cJSON* configObject = objectToJSON(sim->objects[type] + i);
+            cJSON_AddItemToArray(configObjects, configObject);
+        }
+    }
+
+    cJSON_AddItemReferenceToObject(config, "objects", configObjects);
+
+    char* configString = cJSON_Print(config);
+
+    FILE* configFile = fopen("../configs/saved.json", "w");
+    fprintf(configFile, "%s", configString);
+    fclose(configFile);
+    free(configString);
 }
 
 void simulationPrint(Simulation* sim)

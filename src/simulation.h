@@ -39,11 +39,11 @@ typedef struct Simulation
     // the number of each type of object
     unsigned int objectCounts[OBJECT_TYPES];
 
-    // the number of floats in all of the objects for each object type
-    unsigned int objectSizes[OBJECT_TYPES];
-
-    // VBO IDs for objects
+    // VBOs for object data
     unsigned int objectVBOs[OBJECT_TYPES];
+
+    // the number of floats in all of the object data for each object type
+    unsigned int objectSizes[OBJECT_TYPES];
 
     // buffer with per object rendering data (model matrix and
     // color)
@@ -74,6 +74,9 @@ void simulationRender(Simulation* sim);
 
 // starts the simulation
 void simulationStart(Simulation* sim);
+
+// save the current state of the simulation into JSON format
+void simulationSave(Simulation* sim);
 
 // prints the contents of the simulation for debugging
 void simulationPrint(Simulation* sim);

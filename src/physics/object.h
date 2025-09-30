@@ -15,6 +15,7 @@
 #define OBJECT_H
 
 #include <cglm/cglm.h>
+#include "cJSON.h"
 
 #define OBJECT_TYPES 4
 
@@ -51,5 +52,8 @@ void objectVertices(Object* o, float* vertices);
 
 // returns the size of an object's per instance data
 unsigned int objectVerticesSize();
+
+// converts object data into JSON
+cJSON* objectToJSON(Object* o);
 
 #endif

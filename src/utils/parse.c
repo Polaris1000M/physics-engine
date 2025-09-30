@@ -2,6 +2,9 @@
 
 #include <string.h>
 
+#include "../physics/object.h"
+#include "cJSON.h"
+
 // parses a single vec3 based on cJSON array
 unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
 {
@@ -23,6 +26,7 @@ unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
     return 0;
 }
 
+// parses a single JSON into an object
 unsigned int parseConfigObject(cJSON* configObject, Object* object)
 {
     // populate type since type already checked
@@ -107,7 +111,8 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     {
         const char* orientationErrorMessage =
             "ERROR::CONFIG::INVALID_ORIENTATION:: expected float array for "
-            "orientation of object with format [<pitch>, <yaw>, <roll>]\n";
+            "orientation of object in degrees with format [<pitch>, <yaw>, "
+            "<roll>]\n";
         if (parseVec3(object->orientation, configOrientation,
                       orientationErrorMessage))
         {
@@ -164,11 +169,10 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
         }
     }
 
-    // prefer populating object after all fields have been verified
-
     // populate size
     object->size = configSize->valuedouble;
 
+    // population position
     glm_vec3_copy(position, object->position);
 
     // populate color
@@ -177,9 +181,13 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     return 0;
 }
 
+// parses cJSON array into array of objects
 unsigned int parseConfigObjects(cJSON* configObjects,
                                 unsigned int* objectCounts, Object** objects)
 {
+    // determines number of each type of object to properly allocate object
+    // array then parses each object individually
+
     unsigned int numObjects = cJSON_GetArraySize(configObjects);
     const char* objectsErrorMessage =
         "ERROR::CONFIG::INVALID_OBJECTS: expected non-empty JSON array of "
@@ -195,7 +203,7 @@ unsigned int parseConfigObjects(cJSON* configObjects,
     {
         cJSON* configObject = cJSON_GetArrayItem(configObjects, i);
 
-        // parse type
+        // parse the type of the object (i.e., cube, sphere, tetrahedron, etc.)
         const cJSON* configType =
             cJSON_GetObjectItemCaseSensitive(configObject, "type");
         unsigned int typeErrorMessageSize = 38;  // front of message
@@ -233,7 +241,7 @@ unsigned int parseConfigObjects(cJSON* configObjects,
             return 1;
         }
 
-        // populate type
+        // update object type
         int match = 0;
         for (int type = 0; type < OBJECT_TYPES; type++)
         {

@@ -2,6 +2,7 @@
 
 #include <cglm/cglm.h>
 #include <stdlib.h>
+#include "cJSON.h"
 
 const char* OBJECT_NAMES[] = {"floor", "sphere", "cube", "tetrahedron"};
 
@@ -75,4 +76,30 @@ unsigned int objectVerticesSize()
 {
     // 4x4 float matrix and 3 floats for color
     return 19;
+}
+
+cJSON* objectToJSON(Object* o)
+{
+    cJSON* configObject = cJSON_CreateObject();
+
+    cJSON_AddStringToObject(configObject, "type", OBJECT_NAMES[o->type]);
+    cJSON_AddNumberToObject(configObject, "size", o->size);
+    cJSON_AddNumberToObject(configObject, "mass", o->mass);
+
+    cJSON* configPosition = cJSON_CreateFloatArray(o->position, 3);
+    cJSON_AddItemReferenceToObject(configObject, "position", configPosition);
+
+    cJSON* configColor = cJSON_CreateFloatArray(o->color, 3);
+    cJSON_AddItemReferenceToObject(configObject, "color", configColor);
+
+    float degreeOrientation[3];
+    for(int i = 0; i < 3; i++)
+    {
+        degreeOrientation[i] = glm_deg(o->orientation[i]);
+    }
+
+    cJSON* configOrientation = cJSON_CreateFloatArray(degreeOrientation, 3);
+    cJSON_AddItemReferenceToObject(configObject, "orientation", configOrientation);
+    
+    return configObject;
 }
