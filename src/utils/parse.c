@@ -198,6 +198,43 @@ unsigned int parseConfigObjects(cJSON* configObjects,
         return 1;
     }
 
+    // create type error message
+    unsigned int typeErrorMessageSize = 38;  // front of message
+    typeErrorMessageSize += 19;              // end of message
+                                             // 2 quotes for each name, a comma and a
+                                             // space, an additional or
+    typeErrorMessageSize += OBJECT_TYPES * 2 + (OBJECT_TYPES - 1) * 2 + 3;
+    for (unsigned int type = 0; type < OBJECT_TYPES; type++)
+    {
+        typeErrorMessageSize += strlen(OBJECT_NAMES[type]);
+    }
+    // increment for null-terminated character at end
+    typeErrorMessageSize++;
+
+    char* typeErrorMessage = malloc(typeErrorMessageSize * sizeof(char));
+    typeErrorMessage[0] = '\0';
+    strcat(typeErrorMessage, "ERROR::CONFIG::INVALID_TYPE: expected ");
+    for (int type = 0; type < OBJECT_TYPES; type++)
+    {
+        if (type == OBJECT_TYPES - 1)
+        {
+            strcat(typeErrorMessage, ", or \"");
+        }
+        else if (type != 0)
+        {
+            strcat(typeErrorMessage, ", \"");
+        }
+        strcat(typeErrorMessage, OBJECT_NAMES[type]);
+        strcat(typeErrorMessage, "\"");
+    }
+    strcat(typeErrorMessage, " for type of object\n");
+
+    // initialize each count to 0
+    for (int i = 0; i < OBJECT_TYPES; i++)
+    {
+        objectCounts[i] = 0;
+    }
+
     // get object counts
     for (int i = 0; i < numObjects; i++)
     {
@@ -206,35 +243,7 @@ unsigned int parseConfigObjects(cJSON* configObjects,
         // parse the type of the object (i.e., cube, sphere, tetrahedron, etc.)
         const cJSON* configType =
             cJSON_GetObjectItemCaseSensitive(configObject, "type");
-        unsigned int typeErrorMessageSize = 38;  // front of message
-        typeErrorMessageSize += 19;              // end of message
-                                     // 2 quotes for each name, a comma and a
-                                     // space, an additional or
-        typeErrorMessageSize += OBJECT_TYPES * 2 + (OBJECT_TYPES - 1) * 2 + 3;
-        for (unsigned int type = 0; type < OBJECT_TYPES; type++)
-        {
-            typeErrorMessageSize += strlen(OBJECT_NAMES[type]);
-        }
-        // increment for null-terminated character at end
-        typeErrorMessageSize++;
 
-        char* typeErrorMessage = malloc(typeErrorMessageSize * sizeof(char));
-        typeErrorMessage[0] = '\0';
-        strcat(typeErrorMessage, "ERROR::CONFIG::INVALID_TYPE: expected ");
-        for (int type = 0; type < OBJECT_TYPES; type++)
-        {
-            if (type == OBJECT_TYPES - 1)
-            {
-                strcat(typeErrorMessage, ", or \"");
-            }
-            else if (type != 0)
-            {
-                strcat(typeErrorMessage, ", \"");
-            }
-            strcat(typeErrorMessage, OBJECT_NAMES[type]);
-            strcat(typeErrorMessage, "\"");
-        }
-        strcat(typeErrorMessage, " for type of object\n");
         if (!cJSON_IsString(configType))
         {
             printf("%s", typeErrorMessage);
