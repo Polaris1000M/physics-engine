@@ -1,9 +1,11 @@
 .DS_Store
 build/
-include/cglm/
+include/
 images/
 million.json
 ten.json
 hundred.json
 .cache/
 compile_commands.json
+libs/
+
