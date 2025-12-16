@@ -18,6 +18,8 @@ typedef struct Camera
     unsigned int WINDOW_WIDTH;
     unsigned int WINDOW_HEIGHT;
 
+    int enabled;  // whether keyboard and cursor navigation should be enabled
+
     float lastTime;  // last time render loop was called
 
     float keySensitivity;  // controls how sensitive movement is during key
@@ -64,6 +66,9 @@ void cameraFrustum(Camera* c, vec3* coords);
 // checks whether an object is included inside a camera's frustum for
 // frustum occlusion
 bool cameraCheckFrustumInclusion(Camera* c, Object* o);
+
+// toggles whether camera navigation is on or off
+void cameraToggleNavigation(Camera* c, GLFWwindow* window);
 
 // prints camera data
 void cameraPrint(Camera* c);

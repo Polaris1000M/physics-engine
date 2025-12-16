@@ -1,5 +1,6 @@
 #include "simulation.h"
 
+#include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +11,7 @@
 #include "physics/objects/floor.h"
 #include "physics/objects/sphere.h"
 #include "physics/objects/tetrahedron.h"
+#include "render/camera.h"
 #include "utils/parse.h"
 #include "utils/save.h"
 
@@ -142,6 +144,15 @@ void buffersInit(Simulation* sim)
     }
 }
 
+void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    {
+        Camera* c = glfwGetWindowUserPointer(window);
+        cameraToggleNavigation(c, window);
+    }
+}
+
 unsigned int simulationInit(Simulation* sim, const char* configPath)
 {
     // OpenGL boilerplate
@@ -149,6 +160,7 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     {
         return 1;
     }
+    glfwSetKeyCallback(sim->window, keyCallback);
 
     // initialize objects from config
     if (parseConfig(sim, configPath))
@@ -173,9 +185,10 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     return 0;
 }
 
-void simulationUpdate(Simulation* sim)
+// processes keyboard and mouse input from use
+void simulationProcessInput(Simulation* sim)
 {
-    if (glfwGetKey(sim->window, GLFW_KEY_ESCAPE))
+    if (glfwGetKey(sim->window, GLFW_KEY_Q))
     {
         glfwSetWindowShouldClose(sim->window, 1);
     }
@@ -191,6 +204,11 @@ void simulationUpdate(Simulation* sim)
     }
 
     cameraKeyboardCallback(&sim->camera, sim->window);
+}
+
+void simulationUpdate(Simulation* sim)
+{
+    simulationProcessInput(sim);
 
     float currentTime = glfwGetTime();
     float deltaTime = currentTime - sim->lastTime;

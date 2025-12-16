@@ -68,10 +68,10 @@ void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
     }
 }
 
-
 // sets all the necessary callbacks for the camera to function
-void setCameraCallbacks(GLFWwindow* window)
+void cameraEnableNavigation(Camera* c, GLFWwindow* window)
 {
+    c->enabled = 1;
     glfwSetInputMode(window, GLFW_CURSOR,
                  GLFW_CURSOR_DISABLED);  // sets window input to the cursor
     glfwSetCursorPosCallback(window,
@@ -82,18 +82,43 @@ void setCameraCallbacks(GLFWwindow* window)
     glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
 }
 
-// disables camera callbacks whenever window is no longer in focus
-void focusCallback(GLFWwindow* window, int focused)
+// disables all callbacks for camera navigation
+void cameraDisableNavigation(Camera* c, GLFWwindow* window)
 {
-    if (focused)
+    c->enabled = 0;
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    glfwSetCursorPosCallback(window, NULL);
+    glfwSetScrollCallback(window, NULL);
+}
+
+void cameraToggleNavigation(Camera *c, GLFWwindow *window)
+{
+    if (c->enabled)
     {
-        setCameraCallbacks(window);
+        cameraDisableNavigation(c, window);
     }
     else
     {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        glfwSetCursorPosCallback(window, NULL);
-        glfwSetScrollCallback(window, NULL);
+        cameraEnableNavigation(c, window);
+    }
+}
+
+// disables camera callbacks whenever window is no longer in focus
+void cameraFocusCallback(GLFWwindow* window, int focused)
+{
+    Camera* c = glfwGetWindowUserPointer(window);
+    if (!c->enabled)
+    {
+        return;
+    }
+
+    if (focused)
+    {
+        cameraEnableNavigation(c, window);
+    }
+    else
+    {
+        cameraDisableNavigation(c, window);
     }
 }
 
@@ -105,6 +130,8 @@ void cameraInit(Camera* c, GLFWwindow* window)
     c->WINDOW_HEIGHT = height;
 
     glm_vec3_copy((vec3){0.0f, 1.0f, 0.0f}, c->cameraUp);
+
+    c->enabled = 0;
 
     c->lastTime = 0.0f;
 
@@ -122,10 +149,7 @@ void cameraInit(Camera* c, GLFWwindow* window)
 
     glfwSetWindowUserPointer(window,
                              c);  // allows callbacks to access camera struct
-    
-    // configure camera callbacks
-    glfwSetWindowFocusCallback(window, focusCallback);
-    setCameraCallbacks(window);
+    glfwSetWindowFocusCallback(window, cameraFocusCallback);
 
     if (fabsf(c->cameraFront[1]) > 0.9999f)
     {
@@ -168,6 +192,11 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
 {
     float deltaTime = glfwGetTime() - c->lastTime;
     c->lastTime = glfwGetTime();
+
+    if (!c->enabled)
+    {
+        return;
+    }
 
     const float cameraSpeed = deltaTime * c->keySensitivity;
 
