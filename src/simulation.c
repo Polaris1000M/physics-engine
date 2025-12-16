@@ -185,12 +185,17 @@ void simulationUpdate(Simulation* sim)
         simulationSave(sim);
     }
 
+    if (glfwGetKey(sim->window, GLFW_KEY_P))
+    {
+        simulationPrint(sim);
+    }
+
     cameraKeyboardCallback(&sim->camera, sim->window);
 
     float currentTime = glfwGetTime();
     float deltaTime = currentTime - sim->lastTime;
 
-    printf("%f\n", deltaTime);
+    // printf("%f\n", deltaTime);
 
     sim->lastTime = currentTime;
 
@@ -296,8 +301,6 @@ void simulationStart(Simulation* sim)
     {
         simulationUpdate(sim);
         simulationRender(sim);
-
-        // simulationPrint(sim);
 
         glfwSwapBuffers(sim->window);
         glfwPollEvents();

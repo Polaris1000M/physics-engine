@@ -1,7 +1,9 @@
 #include "camera.h"
 
+#include <GLFW/glfw3.h>
 #include <cglm/cglm.h>
 #include <stdio.h>
+
 
 // called whenever the cursor position changes
 void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos)
@@ -66,6 +68,35 @@ void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
     }
 }
 
+
+// sets all the necessary callbacks for the camera to function
+void setCameraCallbacks(GLFWwindow* window)
+{
+    glfwSetInputMode(window, GLFW_CURSOR,
+                 GLFW_CURSOR_DISABLED);  // sets window input to the cursor
+    glfwSetCursorPosCallback(window,
+                             cameraCursorCallback);  // calls function whenever
+                                                     // cursor position changes
+    glfwSetScrollCallback(
+        window, cameraScrollCallback);  // called whenever camera scrolls
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+}
+
+// disables camera callbacks whenever window is no longer in focus
+void focusCallback(GLFWwindow* window, int focused)
+{
+    if (focused)
+    {
+        setCameraCallbacks(window);
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        glfwSetCursorPosCallback(window, NULL);
+        glfwSetScrollCallback(window, NULL);
+    }
+}
+
 void cameraInit(Camera* c, GLFWwindow* window)
 {
     int width, height;
@@ -91,14 +122,10 @@ void cameraInit(Camera* c, GLFWwindow* window)
 
     glfwSetWindowUserPointer(window,
                              c);  // allows callbacks to access camera struct
-    glfwSetInputMode(window, GLFW_CURSOR,
-                     GLFW_CURSOR_DISABLED);  // sets window input to the cursor
-    glfwSetCursorPosCallback(window,
-                             cameraCursorCallback);  // calls function whenever
-                                                     // cursor position changes
-    glfwSetScrollCallback(
-        window, cameraScrollCallback);  // called whenever camera scrolls
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+    
+    // configure camera callbacks
+    glfwSetWindowFocusCallback(window, focusCallback);
+    setCameraCallbacks(window);
 
     if (fabsf(c->cameraFront[1]) > 0.9999f)
     {

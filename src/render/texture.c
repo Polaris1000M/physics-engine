@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <glad/glad.h>
 
-void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource)
+void textureImageInit(Texture* t, unsigned int textureUnit, const char* textureSource)
 {
     int width;
     int height;
@@ -14,7 +14,7 @@ void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource
 
     if(!data)
     {
-        printf("Failed to load texture: %s\n", textureSource);
+        printf("ERROR::TEXTURE::INITIALIZATION_ERROR: failed to load texture: %s\n", textureSource);
         return;
     }
 

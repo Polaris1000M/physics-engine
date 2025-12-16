@@ -8,6 +8,8 @@ typedef struct Texture
 } Texture;
 
 // initializes texture with a provided texture and source path
-void textureInit(Texture* t, unsigned int textureUnit, const char* textureSource);
+void textureImageInit(Texture* t, unsigned int textureUnit, const char* textureSource);
+
+// void textureGlyphInit(Texture* t,)
 
 #endif
