@@ -112,9 +112,15 @@ void cameraToggleNavigation(Camera *c, GLFWwindow *window)
 // adjusts to changes in the framebuffer's size
 void framebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-    Camera* c = &((Simulation*) glfwGetWindowUserPointer(window))->camera;
-    c->WINDOW_HEIGHT = height;
-    c->WINDOW_WIDTH = width;
+    Simulation* sim = glfwGetWindowUserPointer(window);
+    sim->camera.WINDOW_HEIGHT = height;
+    sim->camera.WINDOW_WIDTH = width;
+
+    simulationUpdate(sim);
+    simulationRender(sim);
+
+    glfwSwapBuffers(sim->window);
+    glfwPollEvents();
 }
 
 void simulationKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
