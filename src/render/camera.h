@@ -50,12 +50,6 @@ typedef struct Camera
 // initializes camera
 void cameraInit(Camera* c, GLFWwindow* window);
 
-// processes keyboard input
-void cameraKeyboardCallback(Camera* c, GLFWwindow* window);
-
-// passed into glfwSetCursorPosCallback for cursor movement callbacks
-void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos);
-
 // updates the camera's perspective and vp matrices
 // should be called after the camera's view direction and position have changed
 void cameraUpdate(Camera* c);
@@ -65,10 +59,9 @@ void cameraFrustum(Camera* c, vec3* coords);
 
 // checks whether an object is included inside a camera's frustum for
 // frustum occlusion
-bool cameraCheckFrustumInclusion(Camera* c, Object* o);
+int cameraCheckFrustumInclusion(Camera* c, Object* o);
 
-// toggles whether camera navigation is on or off
-void cameraToggleNavigation(Camera* c, GLFWwindow* window);
+void cameraProcessInput(Camera* c, GLFWwindow* window);
 
 // prints camera data
 void cameraPrint(Camera* c);

@@ -1,126 +1,6 @@
 #include "camera.h"
 
-#include <GLFW/glfw3.h>
-#include <cglm/cglm.h>
 #include <stdio.h>
-
-
-// called whenever the cursor position changes
-void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos)
-{
-    Camera* c = glfwGetWindowUserPointer(window);
-
-    if (c->firstCursor)
-    {
-        c->firstCursor = 0;
-        c->lastX = (float)xPos;
-        c->lastY = (float)yPos;
-    }
-
-    float xOffset = xPos - c->lastX;
-    float yOffset = c->lastY - yPos;
-    c->lastX = xPos;
-    c->lastY = yPos;
-
-    xOffset *= c->cursorSensitivity;
-    yOffset *= c->cursorSensitivity;
-
-    c->yaw += xOffset;
-    c->pitch += yOffset;
-    if (c->pitch < -89.0f)
-    {
-        c->pitch = -89.0f;
-    }
-    else if (c->pitch > 89.0f)
-    {
-        c->pitch = 89.0f;
-    }
-
-    vec3 direction = {cos(glm_rad(c->yaw)) * cos(glm_rad(c->pitch)),
-                      sin(glm_rad(c->pitch)),
-                      sin(glm_rad(c->yaw)) * cos(glm_rad(c->pitch))};
-    glm_normalize_to(direction, c->cameraFront);
-}
-
-// adjusts to changes in the framebuffer's size
-void framebufferSizeCallback(GLFWwindow* window, int width, int height)
-{
-    Camera* c = glfwGetWindowUserPointer(window);
-    c->WINDOW_HEIGHT = height;
-    c->WINDOW_WIDTH = width;
-}
-
-// called whenever scroll input is received
-// changes FOV based on scrolling
-void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
-{
-    Camera* c = glfwGetWindowUserPointer(window);
-
-    c->fov -= (float)yOffset;
-    if (c->fov < 1.0f)
-    {
-        c->fov = 1.0f;
-    }
-
-    if (c->fov > 45.0f)
-    {
-        c->fov = 45.0f;
-    }
-}
-
-// sets all the necessary callbacks for the camera to function
-void cameraEnableNavigation(Camera* c, GLFWwindow* window)
-{
-    c->enabled = 1;
-    glfwSetInputMode(window, GLFW_CURSOR,
-                 GLFW_CURSOR_DISABLED);  // sets window input to the cursor
-    glfwSetCursorPosCallback(window,
-                             cameraCursorCallback);  // calls function whenever
-                                                     // cursor position changes
-    glfwSetScrollCallback(
-        window, cameraScrollCallback);  // called whenever camera scrolls
-    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
-}
-
-// disables all callbacks for camera navigation
-void cameraDisableNavigation(Camera* c, GLFWwindow* window)
-{
-    c->enabled = 0;
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-    glfwSetCursorPosCallback(window, NULL);
-    glfwSetScrollCallback(window, NULL);
-}
-
-void cameraToggleNavigation(Camera *c, GLFWwindow *window)
-{
-    if (c->enabled)
-    {
-        cameraDisableNavigation(c, window);
-    }
-    else
-    {
-        cameraEnableNavigation(c, window);
-    }
-}
-
-// disables camera callbacks whenever window is no longer in focus
-void cameraFocusCallback(GLFWwindow* window, int focused)
-{
-    Camera* c = glfwGetWindowUserPointer(window);
-    if (!c->enabled)
-    {
-        return;
-    }
-
-    if (focused)
-    {
-        cameraEnableNavigation(c, window);
-    }
-    else
-    {
-        cameraDisableNavigation(c, window);
-    }
-}
 
 void cameraInit(Camera* c, GLFWwindow* window)
 {
@@ -146,10 +26,6 @@ void cameraInit(Camera* c, GLFWwindow* window)
     c->lastY = height / 2;
     c->near = 0.1f;
     c->far = 100.0f;
-
-    glfwSetWindowUserPointer(window,
-                             c);  // allows callbacks to access camera struct
-    glfwSetWindowFocusCallback(window, cameraFocusCallback);
 
     if (fabsf(c->cameraFront[1]) > 0.9999f)
     {
@@ -187,8 +63,47 @@ void cameraInit(Camera* c, GLFWwindow* window)
     }
 }
 
+void cameraUpdate(Camera* c)
+{
+    vec3 cameraTarget;
+    glm_vec3_add(c->cameraPos, c->cameraFront, cameraTarget);
+    glm_lookat(c->cameraPos, cameraTarget, c->cameraUp, c->view);
+
+    glm_perspective(glm_rad(c->fov),
+                    (float)c->WINDOW_WIDTH / (float)c->WINDOW_HEIGHT, c->near,
+                    c->far, c->projection);
+
+    glm_mat4_mul(c->projection, c->view, c->vp);
+}
+
+void cameraFrustum(Camera* c, vec3* corners)
+{
+    mat4 inv;
+    glm_mat4_inv(c->vp, inv);
+
+    int signs[2] = {-1, 1};
+
+    // compute near and far plane values
+    for (unsigned int x = 0; x < 2; x++)
+    {
+        for (unsigned int y = 0; y < 2; y++)
+        {
+            for (unsigned int z = 0; z < 2; z++)
+            {
+                vec4 corner = {signs[x], signs[y], signs[z], 1.0f};
+                glm_mat4_mulv(inv, corner, corner);
+
+                for (unsigned int i = 0; i < 3; i++)
+                {
+                    corners[4 * x + 2 * y + z][i] = corner[i] / corner[3];
+                }
+            }
+        }
+    }
+}
+
 // handles movement
-void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
+void cameraProcessInput(Camera* c, GLFWwindow* window)
 {
     float deltaTime = glfwGetTime() - c->lastTime;
     c->lastTime = glfwGetTime();
@@ -249,44 +164,6 @@ void cameraKeyboardCallback(Camera* c, GLFWwindow* window)
     }
 }
 
-void cameraUpdate(Camera* c)
-{
-    vec3 cameraTarget;
-    glm_vec3_add(c->cameraPos, c->cameraFront, cameraTarget);
-    glm_lookat(c->cameraPos, cameraTarget, c->cameraUp, c->view);
-
-    glm_perspective(glm_rad(c->fov),
-                    (float)c->WINDOW_WIDTH / (float)c->WINDOW_HEIGHT, c->near,
-                    c->far, c->projection);
-
-    glm_mat4_mul(c->projection, c->view, c->vp);
-}
-
-void cameraFrustum(Camera* c, vec3* corners)
-{
-    mat4 inv;
-    glm_mat4_inv(c->vp, inv);
-
-    int signs[2] = {-1, 1};
-
-    // compute near and far plane values
-    for (unsigned int x = 0; x < 2; x++)
-    {
-        for (unsigned int y = 0; y < 2; y++)
-        {
-            for (unsigned int z = 0; z < 2; z++)
-            {
-                vec4 corner = {signs[x], signs[y], signs[z], 1.0f};
-                glm_mat4_mulv(inv, corner, corner);
-
-                for (unsigned int i = 0; i < 3; i++)
-                {
-                    corners[4 * x + 2 * y + z][i] = corner[i] / corner[3];
-                }
-            }
-        }
-    }
-}
 
 void cameraPrint(Camera* c)
 {

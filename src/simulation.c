@@ -17,6 +17,7 @@
 #include "render/text.h"
 #include "utils/parse.h"
 #include "utils/save.h"
+#include "utils/callbacks.h"
 
 // initializes OpenGL and GLFW boilerplate
 unsigned int openglInit(Simulation* sim)
@@ -147,15 +148,6 @@ void buffersInit(Simulation* sim)
     }
 }
 
-void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (key == GLFW_KEY_C && action == GLFW_PRESS)
-    {
-        Camera* c = glfwGetWindowUserPointer(window);
-        cameraToggleNavigation(c, window);
-    }
-}
-
 unsigned int simulationInit(Simulation* sim, const char* configPath)
 {
     // OpenGL boilerplate
@@ -163,7 +155,6 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     {
         return 1;
     }
-    glfwSetKeyCallback(sim->window, keyCallback);
 
     // initialize objects from config
     if (parseConfig(sim, configPath))
@@ -189,6 +180,8 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     // initalize object data and bind
     buffersInit(sim);
 
+    callbacksInit(sim);
+
     return 0;
 }
 
@@ -210,7 +203,7 @@ void simulationProcessInput(Simulation* sim)
         simulationPrint(sim);
     }
 
-    cameraKeyboardCallback(&sim->camera, sim->window);
+    cameraProcessInput(&sim->camera, sim->window);
 }
 
 void simulationUpdate(Simulation* sim)
