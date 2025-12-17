@@ -104,6 +104,14 @@ void textRender(Text* t, const char* text, int width, int height, float x, float
     {
         Character ch = t->characters[text[i]];
 
+        // advance cursor on space character
+        if (text[i] == ' ')
+        {
+            x += (ch.advance >> 6) * scale;
+            continue;
+        }
+
+
         float xpos = x + ch.bearing[0] * scale;
         float ypos = y - (ch.size[1] - ch.bearing[1]) * scale;
 
@@ -129,5 +137,7 @@ void textRender(Text* t, const char* text, int width, int height, float x, float
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
+
+    glActiveTexture(GL_TEXTURE0);
 }
 
