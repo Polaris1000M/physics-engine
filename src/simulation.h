@@ -28,6 +28,8 @@ typedef struct Simulation
     float lastTime;   // last time render loop was called
     float timeRatio;  // multiplied by amount of real time passing to produce
                       // amount of simulation time passed
+    float avgFPS;
+    unsigned long long frames;
 
     Shader shader;
     Camera camera;

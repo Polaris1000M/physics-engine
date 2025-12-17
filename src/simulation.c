@@ -161,6 +161,8 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
         return 1;
     }
 
+    sim->avgFPS = 0;
+    sim->frames = 0;
     sim->lastTime = 0.0f;
     sim->timeRatio = 0.5f;
 
@@ -211,6 +213,7 @@ void simulationUpdate(Simulation* sim)
 
     cameraUpdate(&sim->camera);
     shadowUpdate(&sim->shadow, &sim->camera);
+    sim->frames++;
 }
 
 // iterate through objects and render with instancing
@@ -290,7 +293,7 @@ void simulationRender(Simulation* sim)
     objectsRender(sim);
 
     // render metrics
-    unsigned int lines = OBJECT_TYPES + 3;
+    unsigned int lines = OBJECT_TYPES + 6;
     char buffers[lines][20];
     char* text[lines];
 
@@ -322,14 +325,24 @@ void simulationRender(Simulation* sim)
         snprintf(buffers[0], 20, "%d %s", totalObjects, "Total Object");
     }
 
-    // ms per frame
+    // FPS
     float currentTime = glfwGetTime();
-    float deltaTime = currentTime - sim->lastTime;
+    float fps = 1.0f / (currentTime - sim->lastTime);
     sim->lastTime = currentTime;
-    snprintf(buffers[OBJECT_TYPES + 1], 20, "%f ms", deltaTime);
+    snprintf(buffers[OBJECT_TYPES + 1], 20, "%f fps", fps);
+
+    sim->avgFPS = ((sim->avgFPS * sim->frames) + fps) / (sim->frames + 1);
+    snprintf(buffers[OBJECT_TYPES + 2], 20, "%f avg fps", sim->avgFPS);
 
     // fov
-    snprintf(buffers[OBJECT_TYPES + 2], 20, "%.2f fov", sim->camera.fov);
+    snprintf(buffers[OBJECT_TYPES + 3], 20, "%.2f fov", sim->camera.fov);
+
+    // time
+    snprintf(buffers[OBJECT_TYPES + 4], 20, "%.2fs elapsed", currentTime);
+
+    // frames
+    snprintf(buffers[OBJECT_TYPES + 5], 20, "%llu frames", sim->frames);
+
 
     for(int i = 0; i < lines; i++)
     {
