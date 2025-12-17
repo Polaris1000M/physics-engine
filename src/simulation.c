@@ -327,7 +327,7 @@ void simulationRender(Simulation* sim)
     snprintf(buffers[OBJECT_TYPES + 1], 20, "%f ms", deltaTime);
 
     // fov
-    snprintf(buffers[OBJECT_TYPES + 2], 20, "%f fov", sim->camera.fov);
+    snprintf(buffers[OBJECT_TYPES + 2], 20, "%.2f fov", sim->camera.fov);
 
     for(int i = 0; i < lines; i++)
     {

@@ -21,6 +21,7 @@ typedef struct Camera
     int WINDOW_HEIGHT;
 
     int enabled;  // whether keyboard and cursor navigation should be enabled
+    int focused;  // whether the current window is in focus
 
     float lastTime;  // last time render loop was called
 
