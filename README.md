@@ -12,6 +12,7 @@ Building a performant, constraint-based physics engine from scratch in C with Op
 - Add shadows to rendered objects
 - Allow users to enable and disable navigation with keybinds
 - **[in progress]** Add text to rendered output describing performance metrics
+- **[in progress]** Configure rendering to handle window resizing
 - **[in progress]** Implement a constraint-based physics solver
 - **[in progress]** Add skybox for easier viewing and simulation traversal
 - **[in progress]** Handle millions of concurrent objects through compute shaders
