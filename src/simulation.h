@@ -16,6 +16,7 @@
 #include "render/camera.h"
 #include "render/shader.h"
 #include "render/shadow.h"
+#include "render/text.h"
 
 typedef struct Simulation
 {
@@ -32,6 +33,7 @@ typedef struct Simulation
     Shader shader;
     Camera camera;
     Shadow shadow;
+    Text text;
 
     // arrays holding all objects
     Object* objects[OBJECT_TYPES];

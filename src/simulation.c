@@ -12,6 +12,7 @@
 #include "physics/objects/sphere.h"
 #include "physics/objects/tetrahedron.h"
 #include "render/camera.h"
+#include "render/text.h"
 #include "utils/parse.h"
 #include "utils/save.h"
 
@@ -178,6 +179,10 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     {
         return 1;
     }
+    if (textInit(&sim->text, "../assets/roboto/static/Roboto-Regular.ttf"))
+    {
+        return 1;
+    }
 
     // initalize object data and bind
     buffersInit(sim);
@@ -209,13 +214,6 @@ void simulationProcessInput(Simulation* sim)
 void simulationUpdate(Simulation* sim)
 {
     simulationProcessInput(sim);
-
-    float currentTime = glfwGetTime();
-    float deltaTime = currentTime - sim->lastTime;
-
-    // printf("%f\n", deltaTime);
-
-    sim->lastTime = currentTime;
 
     cameraUpdate(&sim->camera);
     shadowUpdate(&sim->shadow, &sim->camera);
@@ -296,6 +294,14 @@ void simulationRender(Simulation* sim)
     shaderSetVector(&sim->shader, "viewPos", sim->camera.cameraPos);
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     objectsRender(sim);
+
+    // render metrics
+    float currentTime = glfwGetTime();
+    float deltaTime = currentTime - sim->lastTime;
+    sim->lastTime = currentTime;
+    char SPF[12];
+    snprintf(SPF, 12, "%f ms", deltaTime);
+    textRender(&sim->text, SPF, sim->camera.WINDOW_WIDTH, sim->camera.WINDOW_HEIGHT, 25.0f, 25.0f, 1.0f, (vec3) { 0, 0, 0 });
 }
 
 void simulationFree(Simulation* sim)
