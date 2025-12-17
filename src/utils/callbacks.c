@@ -1,4 +1,5 @@
 #include "callbacks.h"
+#include "simulation.h"
 
 // called whenever the cursor position changes
 void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos)
@@ -129,6 +130,14 @@ void simulationKeyCallback(GLFWwindow* window, int key, int scancode, int action
     {
         Camera* c = &((Simulation*) glfwGetWindowUserPointer(window))->camera;
         cameraToggleNavigation(c, window);
+    }
+
+    if (key == GLFW_KEY_R && action == GLFW_PRESS)
+    {
+        Simulation* sim = glfwGetWindowUserPointer(window);
+        cameraDisableNavigation(&sim->camera, window);
+        glfwSetWindowShouldClose(sim->window, 1);
+        simulationInit(sim, sim->configPath);
     }
 }
 

@@ -20,6 +20,7 @@
 
 typedef struct Simulation
 {
+    const char* configPath; // used to reset the simulation
     GLFWwindow* window;
 
     float gravity;

@@ -147,6 +147,8 @@ void buffersInit(Simulation* sim)
 
 unsigned int simulationInit(Simulation* sim, const char* configPath)
 {
+    sim->configPath = configPath;
+
     // OpenGL boilerplate
     if (openglInit(sim))
     {
