@@ -28,6 +28,6 @@ typedef struct Text
 
 int textInit(Text* t, const char* fontPath);
 
-void textRender(Text* t, const char* text, int width, int height, float x, float y, float scale, vec3 color);
+void textRender(Text* t, int lines, char** text, int width, int height, float x, float y, float scale, vec3 color);
 
 #endif

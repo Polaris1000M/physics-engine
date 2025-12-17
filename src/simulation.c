@@ -1,5 +1,6 @@
 #include "simulation.h"
 
+#include <unistd.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +8,7 @@
 #include <time.h>
 
 #include "cJSON.h"
+#include "physics/object.h"
 #include "physics/objects/cube.h"
 #include "physics/objects/floor.h"
 #include "physics/objects/sphere.h"
@@ -179,7 +181,7 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     {
         return 1;
     }
-    if (textInit(&sim->text, "../assets/roboto/static/Roboto-Regular.ttf"))
+    if (textInit(&sim->text, "../assets/roboto/static/Roboto-Light.ttf"))
     {
         return 1;
     }
@@ -296,12 +298,44 @@ void simulationRender(Simulation* sim)
     objectsRender(sim);
 
     // render metrics
+    char buffers[OBJECT_TYPES + 2][20];
+    char* text[OBJECT_TYPES + 2];
     float currentTime = glfwGetTime();
     float deltaTime = currentTime - sim->lastTime;
     sim->lastTime = currentTime;
-    char SPF[12];
-    snprintf(SPF, 12, "%f ms", deltaTime);
-    textRender(&sim->text, SPF, sim->camera.WINDOW_WIDTH, sim->camera.WINDOW_HEIGHT, 25.0f, 25.0f, 1.0f, (vec3) { 0, 0, 0 });
+    snprintf(buffers[0], 20, "%f ms", deltaTime);
+    int totalObjects = 0;
+    for(int i = 0; i < OBJECT_TYPES; i++)
+    {
+        char name[20];
+        strncpy(name, OBJECT_NAMES[i], 19);
+        name[19] = '\0';
+        name[0] = (char) (name[0] - 'a' + 'A');
+        if (sim->objectCounts[i] != 1)
+        {
+            snprintf(buffers[i + 1], 20, "%d %ss", sim->objectCounts[i], name);
+        }
+        else
+        {
+            snprintf(buffers[i + 1], 20, "%d %s", sim->objectCounts[i], name);
+        }
+        totalObjects += sim->objectCounts[i];
+    }
+    
+    if (totalObjects != 1)
+    {
+        snprintf(buffers[OBJECT_TYPES + 1], 20, "%d %ss", totalObjects, "Total Object");
+    }
+    else
+    {
+        snprintf(buffers[OBJECT_TYPES + 1], 20, "%d %s", totalObjects, "Total Object");
+    }
+
+    for(int i = 0; i <= OBJECT_TYPES + 1; i++)
+    {
+        text[i] = buffers[i];
+    }
+    textRender(&sim->text, OBJECT_TYPES + 2, text, sim->camera.WINDOW_WIDTH, sim->camera.WINDOW_HEIGHT, 25.0f, 25.0f, 1.0f, (vec3) { 0.0f, 0.0f, 0.0f });
 }
 
 void simulationFree(Simulation* sim)

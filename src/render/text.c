@@ -21,8 +21,8 @@ int textInit(Text* t, const char* fontPath)
         return 1;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 40);
-    if (FT_Load_Char(face, 'X', FT_LOAD_RENDER))
+    FT_Set_Pixel_Sizes(face, 0, 32);
+    if (FT_Load_Char(face, 'X', FT_LOAD_RENDER | FT_LOAD_TARGET_NORMAL))
     {
         printf("ERROR::FREETYPE: Failed to load glyph\n");
         return 1;
@@ -89,7 +89,7 @@ int textInit(Text* t, const char* fontPath)
     return 0;
 }
 
-void textRender(Text* t, const char* text, int width, int height, float x, float y, float scale, vec3 color)
+void textRender(Text* t, int lines, char** text, int width, int height, float x, float y, float scale, vec3 color)
 {
     shaderUse(&t->shader);
     glm_ortho(0.0f, (float) width, 0.0f, (float) height, -1.0f, 1.0f, t->projection);
@@ -99,45 +99,56 @@ void textRender(Text* t, const char* text, int width, int height, float x, float
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(t->VAO);
 
-    int N = strlen(text);
-    for (int i = 0; i < N; i++)
-    {
-        Character ch = t->characters[text[i]];
+    float origX = x;
 
-        // advance cursor on space character
-        if (text[i] == ' ')
+    for (int i = 0; i < lines; i++)
+    {
+        int N = strlen(text[i]);
+        float dy = 0;
+        for (int j = 0; j < N; j++)
         {
+            Character ch = t->characters[text[i][j]];
+
+            // advance cursor on space character
+            if (text[i][j] == ' ')
+            {
+                x += (ch.advance >> 6) * scale;
+                continue;
+            }
+
+            float xpos = x + ch.bearing[0] * scale;
+            float ypos = y - (ch.size[1] - ch.bearing[1]) * scale;
+
+            float w = ch.size[0] * scale;
+            float h = ch.size[1] * scale;
+
+            if (h > dy)
+            {
+                dy = h;
+            }
+
+            float vertices[6][4] = {
+                { xpos,     ypos + h,   0.0f, 0.0f },            
+                { xpos,     ypos,       0.0f, 1.0f },
+                { xpos + w, ypos,       1.0f, 1.0f },
+
+                { xpos,     ypos + h,   0.0f, 0.0f },
+                { xpos + w, ypos,       1.0f, 1.0f },
+                { xpos + w, ypos + h,   1.0f, 0.0f }           
+            };
+
+            glBindTexture(GL_TEXTURE_2D, ch.ID);
+            glBindBuffer(GL_ARRAY_BUFFER, t->VBO);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
             x += (ch.advance >> 6) * scale;
-            continue;
         }
 
-
-        float xpos = x + ch.bearing[0] * scale;
-        float ypos = y - (ch.size[1] - ch.bearing[1]) * scale;
-
-        float w = ch.size[0] * scale;
-        float h = ch.size[1] * scale;
-
-        float vertices[6][4] = {
-            { xpos,     ypos + h,   0.0f, 0.0f },            
-            { xpos,     ypos,       0.0f, 1.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-
-            { xpos,     ypos + h,   0.0f, 0.0f },
-            { xpos + w, ypos,       1.0f, 1.0f },
-            { xpos + w, ypos + h,   1.0f, 0.0f }           
-        };
-
-        glBindTexture(GL_TEXTURE_2D, ch.ID);
-        glBindBuffer(GL_ARRAY_BUFFER, t->VBO);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
-        x += (ch.advance >> 6) * scale;
+        y += dy + 10;
+        x = origX;
     }
     glBindVertexArray(0);
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    glActiveTexture(GL_TEXTURE0);
 }
 
