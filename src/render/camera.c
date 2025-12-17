@@ -5,7 +5,8 @@
 void cameraInit(Camera* c, GLFWwindow* window)
 {
     int width, height;
-    glfwGetWindowSize(window, &width, &height);
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
     c->WINDOW_WIDTH = width;
     c->WINDOW_HEIGHT = height;
 
@@ -163,7 +164,6 @@ void cameraProcessInput(Camera* c, GLFWwindow* window)
         glm_vec3_add(c->cameraPos, mov, c->cameraPos);
     }
 }
-
 
 void cameraPrint(Camera* c)
 {

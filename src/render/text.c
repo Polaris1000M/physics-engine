@@ -21,7 +21,10 @@ int textInit(Text* t, const char* fontPath)
         return 1;
     }
 
-    FT_Set_Pixel_Sizes(face, 0, 32);
+    t->pixelSizes = 48;
+    t->gapBetweenLines = (t->pixelSizes + 3) / 3;
+
+    FT_Set_Pixel_Sizes(face, 0, t->pixelSizes);
     if (FT_Load_Char(face, 'X', FT_LOAD_RENDER | FT_LOAD_TARGET_NORMAL))
     {
         printf("ERROR::FREETYPE: Failed to load glyph\n");
@@ -101,7 +104,7 @@ void textRender(Text* t, int lines, char** text, int width, int height, float x,
 
     float origX = x;
 
-    for (int i = 0; i < lines; i++)
+    for (int i = lines - 1; i >= 0; i--)
     {
         int N = strlen(text[i]);
         float dy = 0;
@@ -122,6 +125,7 @@ void textRender(Text* t, int lines, char** text, int width, int height, float x,
             float w = ch.size[0] * scale;
             float h = ch.size[1] * scale;
 
+            // get maximum height among current characters
             if (h > dy)
             {
                 dy = h;
@@ -145,7 +149,7 @@ void textRender(Text* t, int lines, char** text, int width, int height, float x,
             x += (ch.advance >> 6) * scale;
         }
 
-        y += dy + 10;
+        y += dy + t->gapBetweenLines;
         x = origX;
     }
     glBindVertexArray(0);

@@ -8,6 +8,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <glad/glad.h>  // must be included first
 #include <GLFW/glfw3.h>
 #include <cglm/cglm.h>
 
@@ -15,8 +16,9 @@
 
 typedef struct Camera
 {
-    unsigned int WINDOW_WIDTH;
-    unsigned int WINDOW_HEIGHT;
+    // not unsigned to pass into glfwGetFramebufferSize method without warnings
+    int WINDOW_WIDTH;
+    int WINDOW_HEIGHT;
 
     int enabled;  // whether keyboard and cursor navigation should be enabled
 

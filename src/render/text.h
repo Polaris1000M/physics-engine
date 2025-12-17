@@ -20,6 +20,9 @@ typedef struct Character
 
 typedef struct Text
 {
+    unsigned int pixelSizes;
+    unsigned int gapBetweenLines;
+
     Character characters[128];
     Shader shader;
     mat4 projection;

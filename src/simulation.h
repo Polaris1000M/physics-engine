@@ -21,10 +21,7 @@
 typedef struct Simulation
 {
     GLFWwindow* window;
-    unsigned int WINDOW_HEIGHT;
-    unsigned int WINDOW_WIDTH;
 
-    int metrics;      // whether or not to render metrics
     float gravity;
     float lightDir[3];
     float lastTime;   // last time render loop was called
