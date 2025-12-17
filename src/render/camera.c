@@ -13,7 +13,6 @@ void cameraInit(Camera* c, GLFWwindow* window)
     glm_vec3_copy((vec3){0.0f, 1.0f, 0.0f}, c->cameraUp);
 
     c->enabled = 0;
-    c->focused = 1;
 
     c->lastTime = 0.0f;
 

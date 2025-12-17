@@ -17,7 +17,7 @@ void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos)
     c->lastX = xPos;
     c->lastY = yPos;
 
-    if (!c->enabled || !c->focused)
+    if (!c->enabled)
     {
         return;
     }
@@ -89,12 +89,10 @@ void cameraFocusCallback(GLFWwindow* window, int focused)
 
     if (focused)
     {
-        c->focused = 1;
         cameraEnableNavigation(c, window);
     }
     else
     {
-        c->focused = 0;
         cameraDisableNavigation(c, window);
     }
 }
