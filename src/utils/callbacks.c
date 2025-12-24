@@ -117,8 +117,8 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height)
     sim->camera.WINDOW_HEIGHT = height;
     sim->camera.WINDOW_WIDTH = width;
 
-    simulationUpdate(sim);
-    simulationRender(sim);
+    // simulationUpdate(sim);
+    // simulationRender(sim);
 
     glfwSwapBuffers(sim->window);
     glfwPollEvents();
