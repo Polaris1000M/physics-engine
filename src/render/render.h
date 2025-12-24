@@ -17,5 +17,7 @@ unsigned int renderInit(Simulation* sim);
 
 void renderUpdate(Simulation* sim);
 
+void render(Simulation* sim);
+
 #endif
 

@@ -1,6 +1,9 @@
 #include "../simulation.h"
 #include "render.h"
 #include "physics/objects/cube.h"
+#include "render/text.h"
+#include "utils/save.h"
+#include <string.h>
 #include "physics/objects/floor.h"
 #include "physics/objects/sphere.h"
 #include "physics/objects/tetrahedron.h"
@@ -162,5 +165,140 @@ void renderUpdate(Simulation* sim)
 {
     cameraUpdate(&sim->camera);
     shadowUpdate(&sim->shadow, &sim->camera);
+}
+
+// iterate through objects and render with instancing
+void objectsRender(Simulation* sim)
+{
+    for (unsigned int type = 0; type < OBJECT_TYPES; type++)
+    {
+        // floor should not be culled
+        if (type == FLOOR)
+        {
+            glDisable(GL_CULL_FACE);
+        }
+
+        glBindVertexArray(sim->VAOs[type]);
+        for (unsigned int i = 0, idx = 0; i < sim->objectCounts[type];
+             i++, idx += objectVerticesSize())
+        {
+            // update object model matrices and color
+            objectVertices(&sim->objects[type][i], sim->objectData[type] + idx);
+        }
+
+        // reattach new object data
+        glBindBuffer(GL_ARRAY_BUFFER, sim->objectVBOs[type]);
+        glBufferData(GL_ARRAY_BUFFER, sim->objectSizes[type] * sizeof(float),
+                     sim->objectData[type], GL_STATIC_DRAW);
+
+        // draw objects with instancing
+        glDrawArraysInstanced(GL_TRIANGLES, 0, sim->meshSizes[type] / 6,
+                              sim->objectCounts[type]);
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        if (type == FLOOR)
+        {
+            glEnable(GL_CULL_FACE);
+        }
+    }
+}
+
+void render(Simulation* sim)
+{
+    // shadow pass
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+
+    glViewport(0, 0, sim->shadow.SHADOW_WIDTH, sim->shadow.SHADOW_HEIGHT);
+    glBindFramebuffer(GL_FRAMEBUFFER, sim->shadow.FBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    shaderUse(&sim->shadow.shader);
+    shaderSetMatrix(&sim->shadow.shader, "vp", sim->shadow.vp);
+    objectsRender(sim);
+    if (glfwGetKey(sim->window, GLFW_KEY_P))
+    {
+        saveFramebuffer(sim->shadow.FBO, sim->shadow.SHADOW_WIDTH,
+                        sim->shadow.SHADOW_HEIGHT);
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+
+    // normal lighting pass
+    shaderUse(&sim->shader);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+    shaderSetMatrix(&sim->shader, "vp", sim->camera.vp);
+    shaderSetMatrix(&sim->shader, "shadowVP", sim->shadow.vp);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, sim->shadow.depthMap);
+
+    shaderSetInt(&sim->shader, "depthMap", 1);
+    shaderSetVector(&sim->shader, "lightDir", sim->lightDir);
+    shaderSetVector(&sim->shader, "viewPos", sim->camera.cameraPos);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    objectsRender(sim);
+
+    // render metrics
+    unsigned int lines = OBJECT_TYPES + 6;
+    char buffers[lines][20];
+    char* text[lines];
+
+    // object counts
+    int totalObjects = 0;
+    for(int i = 0; i < OBJECT_TYPES; i++)
+    {
+        char name[20];
+        strncpy(name, OBJECT_NAMES[i], 19);
+        name[19] = '\0';
+        name[0] = (char) (name[0] - 'a' + 'A');
+        if (sim->objectCounts[i] != 1)
+        {
+            snprintf(buffers[i + 1], 20, "%d %ss", sim->objectCounts[i], name);
+        }
+        else
+        {
+            snprintf(buffers[i + 1], 20, "%d %s", sim->objectCounts[i], name);
+        }
+        totalObjects += sim->objectCounts[i];
+    }
+    
+    if (totalObjects != 1)
+    {
+        snprintf(buffers[0], 20, "%d %ss", totalObjects, "Total Object");
+    }
+    else
+    {
+        snprintf(buffers[0], 20, "%d %s", totalObjects, "Total Object");
+    }
+
+    // FPS
+    float currentTime = glfwGetTime();
+    float fps = 1.0f / (currentTime - sim->lastTime);
+    sim->lastTime = currentTime;
+    snprintf(buffers[OBJECT_TYPES + 1], 20, "%f fps", fps);
+
+    sim->avgFPS = ((sim->avgFPS * sim->frames) + fps) / (sim->frames + 1);
+    snprintf(buffers[OBJECT_TYPES + 2], 20, "%f avg fps", sim->avgFPS);
+
+    // fov
+    snprintf(buffers[OBJECT_TYPES + 3], 20, "%.2f fov", sim->camera.fov);
+
+    // time
+    snprintf(buffers[OBJECT_TYPES + 4], 20, "%.2fs elapsed", currentTime);
+
+    // frames
+    snprintf(buffers[OBJECT_TYPES + 5], 20, "%llu frames", sim->frames);
+
+
+    for(int i = 0; i < lines; i++)
+    {
+        text[i] = buffers[i];
+    }
+    textRender(&sim->text, lines, text, sim->camera.WINDOW_WIDTH, sim->camera.WINDOW_HEIGHT, 25.0f, 25.0f, 1.0f, (vec3) { 0.0f, 0.0f, 0.0f });
 }
 
