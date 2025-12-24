@@ -58,6 +58,7 @@ void simulationUpdate(Simulation* sim)
 
     renderUpdate(sim);
     sim->frames++;
+    physicsUpdate(sim, glfwGetTime() - sim->lastTime);
 }
 
 void simulationFree(Simulation* sim)

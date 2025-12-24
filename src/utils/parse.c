@@ -4,6 +4,7 @@
 
 #include "../physics/object.h"
 #include "cJSON.h"
+#include "cglm/vec3.h"
 
 // parses a single vec3 based on cJSON array
 unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
@@ -174,6 +175,7 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
 
     // population position
     glm_vec3_copy(position, object->position);
+    glm_vec3_copy(GLM_VEC3_ZERO, object->lastPosition);
 
     // populate color
     glm_vec3_copy(color, object->color);

@@ -3,6 +3,6 @@
 
 typedef struct Simulation Simulation;
 
-void physicsUpdate(Simulation* sim);
+void physicsUpdate(Simulation* sim, float deltaTime);
 
 #endif

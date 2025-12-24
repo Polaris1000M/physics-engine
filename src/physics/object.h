@@ -38,6 +38,7 @@ typedef struct Object
     float mass;
     vec3 color;
 
+    vec3 lastPosition; // change in position for Verlet integration
     vec3 position;
     vec3 linearAcceleration;
 
