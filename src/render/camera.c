@@ -168,6 +168,7 @@ void cameraProcessInput(Camera* c, GLFWwindow* window)
 void cameraPrint(Camera* c)
 {
     printf("CAMERA\n");
+    printf("keySensitivity: %f\n", c->keySensitivity);
     printf("fov: %f\n", c->fov);
     printf("aspect: %f\n", (float)c->WINDOW_WIDTH / (float)c->WINDOW_HEIGHT);
     printf("near: %f\n", (float)c->near);

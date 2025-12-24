@@ -73,7 +73,7 @@ unsigned int simulationInit(Simulation* sim, const char* configPath);
 void simulationUpdate(Simulation* sim);
 
 // renders the current state of the simulation
-void simulationRender(Simulation* sim);
+void render(Simulation* sim);
 
 // starts the simulation
 void simulationStart(Simulation* sim);

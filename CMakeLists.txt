@@ -25,6 +25,7 @@ add_executable(PhysicsEngine
     src/main.c
     src/physics/object.c
     src/simulation.c
+    src/render/render.c
     src/render/shader.c
     src/render/texture.c
     src/render/text.c
