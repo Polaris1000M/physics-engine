@@ -210,15 +210,21 @@ void simulationProcessInput(Simulation* sim)
         simulationPrint(sim);
     }
 
+}
+
+// updates all rendering related simulation components
+void renderUpdate(Simulation* sim)
+{
     cameraProcessInput(&sim->camera, sim->window);
+    cameraUpdate(&sim->camera);
+    shadowUpdate(&sim->shadow, &sim->camera);
 }
 
 void simulationUpdate(Simulation* sim)
 {
     simulationProcessInput(sim);
-
-    cameraUpdate(&sim->camera);
-    shadowUpdate(&sim->shadow, &sim->camera);
+    
+    renderUpdate(sim);
     sim->frames++;
 }
 
