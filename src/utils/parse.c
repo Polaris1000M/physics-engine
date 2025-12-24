@@ -173,12 +173,31 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     // populate size
     object->size = configSize->valuedouble;
 
-    // population position
+    // populate position
     glm_vec3_copy(position, object->position);
-    glm_vec3_copy(GLM_VEC3_ZERO, object->lastPosition);
+    glm_vec3_copy(position, object->lastPosition);
 
     // populate color
     glm_vec3_copy(color, object->color);
+
+    // populate static
+    cJSON* configStatic =
+        cJSON_GetObjectItemCaseSensitive(configObject, "static");
+    const char* staticErrorMessage = "ERROR::CONFIG::INVALID_STATIC: expected boolean\n";
+
+    if (configStatic)
+    {
+        if (!cJSON_IsBool(configStatic))
+        {
+            printf("%s", staticErrorMessage);
+            return 1;
+        }
+        object->staticPhysics = configStatic->valueint;
+    }
+    else
+    {
+        object->staticPhysics = 0;
+    }
 
     return 0;
 }

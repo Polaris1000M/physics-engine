@@ -29,6 +29,7 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     sim->frames = 0;
     sim->lastTime = 0.0f;
     sim->timeRatio = 0.5f;
+    sim->physicsDeltaTime = 1.0 / 60.0f;
 
     renderInit(sim);
     callbacksInit(sim);
@@ -58,7 +59,7 @@ void simulationUpdate(Simulation* sim)
 
     renderUpdate(sim);
     sim->frames++;
-    physicsUpdate(sim, glfwGetTime() - sim->lastTime);
+    physicsUpdate(sim);
 }
 
 void simulationFree(Simulation* sim)
@@ -78,6 +79,7 @@ void simulationFree(Simulation* sim)
 
 void simulationStart(Simulation* sim)
 {
+    simulationPrint(sim);
     while (!glfwWindowShouldClose(sim->window))
     {
         simulationUpdate(sim);
@@ -130,42 +132,42 @@ void simulationSave(Simulation* sim)
 
 void simulationPrint(Simulation* sim)
 {
-    // printf("OBJECTS\n");
-    // printf("Object Counts\n");
-    // for (int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //     printf("%s: %d\n", OBJECT_NAMES[type], sim->objectCounts[type]);
-    // }
-    // printf("\n");
-    //
-    // for (int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //     printf("%s\n", OBJECT_NAMES[type]);
-    //
-    //     for (int i = 0; i < sim->objectCounts[type]; i++)
-    //     {
-    //         objectPrint(sim->objects[type] + i);
-    //         printf("\n");
-    //     }
-    //     printf("\n");
-    // }
-    //
-    // printf("MESHES\n");
-    // for (int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //     if (type == SPHERE)
-    //     {
-    //         continue;
-    //     }
-    //     printf("%s %d\n", OBJECT_NAMES[type], sim->meshSizes[type]);
-    //     for (int i = 0; i < sim->meshSizes[type]; i += 3)
-    //     {
-    //         printf("(%f, %f, %f)\n", sim->meshes[type][i],
-    //                sim->meshes[type][i + 1], sim->meshes[type][i + 2]);
-    //     }
-    //     printf("\n");
-    // }
-    //
+    printf("OBJECTS\n");
+    printf("Object Counts\n");
+    for (int type = 0; type < OBJECT_TYPES; type++)
+    {
+        printf("%s: %d\n", OBJECT_NAMES[type], sim->objectCounts[type]);
+    }
+    printf("\n");
+
+    for (int type = 0; type < OBJECT_TYPES; type++)
+    {
+        printf("%s\n", OBJECT_NAMES[type]);
+
+        for (int i = 0; i < sim->objectCounts[type]; i++)
+        {
+            objectPrint(sim->objects[type] + i);
+            printf("\n");
+        }
+        printf("\n");
+    }
+
+    printf("MESHES\n");
+    for (int type = 0; type < OBJECT_TYPES; type++)
+    {
+        if (type == SPHERE)
+        {
+            continue;
+        }
+        printf("%s %d\n", OBJECT_NAMES[type], sim->meshSizes[type]);
+        for (int i = 0; i < sim->meshSizes[type]; i += 3)
+        {
+            printf("(%f, %f, %f)\n", sim->meshes[type][i],
+                   sim->meshes[type][i + 1], sim->meshes[type][i + 2]);
+        }
+        printf("\n");
+    }
+
     // printf("VERTICES\n");
     // for(int type = 0; type < OBJECT_TYPES; type++)
     // {

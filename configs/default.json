@@ -9,7 +9,8 @@
       "type": "floor",
       "size": 15,
       "position": [0, -0.01, 0],
-      "color": [184, 189, 181]
+      "color": [184, 189, 181],
+      "static": true
     },
     {
       "type": "sphere",
