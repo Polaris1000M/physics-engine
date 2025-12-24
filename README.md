@@ -12,10 +12,12 @@ Building a performant, constraint-based physics engine from scratch in C with Op
 - Add shadows to rendered objects
 - Allow users to enable and disable navigation with keybinds
 - Add text to rendered output describing performance metrics
-- **[in progress]** Configure rendering to handle window resizing
-- **[in progress]** Implement a constraint-based physics solver
+- **[in progress]** Implement Verlet integration for linear and angular acceleration
+- **[in progress]** Implement initial configuration for linear and angular velocities
+- **[in progress]** Add multithreading for physics and rendering threads
+- **[in progress]** Implement collision detection and resolution between object types
+- **[in progress]** Allow certain objects to have static physics
 - **[in progress]** Add skybox for easier viewing and simulation traversal
-- **[in progress]** Handle millions of concurrent objects through compute shaders
 
 <div align="center">
   <img src="https://github.com/Polaris1000M/physics-engine/blob/main/assets/banner.png#gh-light-mode-only" alt="Logo" height="173">
