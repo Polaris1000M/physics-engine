@@ -28,7 +28,7 @@ unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
 }
 
 // parses a single JSON into an object
-unsigned int parseConfigObject(cJSON* configObject, Object* object)
+unsigned int parseConfigObject(cJSON* configObject, Object* object, float deltaTime)
 {
     // populate type since type already checked
     const cJSON* configType =
@@ -170,41 +170,75 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
         }
     }
 
+    // parse static
+    cJSON* configStatic =
+        cJSON_GetObjectItemCaseSensitive(configObject, "static");
+    const char* staticErrorMessage = "ERROR::CONFIG::INVALID_STATIC: expected boolean\n";
+    if (configStatic && !cJSON_IsBool(configStatic))
+    {
+        printf("%s", staticErrorMessage);
+        return 1;
+    }
+    int staticPhysics;
+    if (configStatic)
+    {
+        staticPhysics = configStatic->valueint;
+    }
+    else
+    {
+        staticPhysics = 0;
+    }
+
+    // parse velocity
+    cJSON* configVelocity = cJSON_GetObjectItemCaseSensitive(configObject, "velocity");
+    const char* velocityErrorMessage = "ERROR::CONFIG::INVALID_VELOCITY: expected vector of three floats\n";
+    vec3 velocity = GLM_VEC3_ZERO;
+    if (configVelocity)
+    {
+        if (!cJSON_IsArray(configVelocity))
+        {
+            printf("%s", velocityErrorMessage);
+            return 1;
+        }
+
+        for(int i = 0; i < 3; i++)
+        {
+            cJSON* curVelocity = cJSON_GetArrayItem(configVelocity, i);
+
+            if (!cJSON_IsNumber(curVelocity))
+            {
+                printf("%s", velocityErrorMessage);
+                return 1;
+            }
+
+            velocity[i] = curVelocity->valuedouble;
+        }
+    }
+    glm_vec3_print(velocity, stdout);
+
     // populate size
     object->size = configSize->valuedouble;
 
     // populate position
     glm_vec3_copy(position, object->position);
-    glm_vec3_copy(position, object->lastPosition);
 
     // populate color
     glm_vec3_copy(color, object->color);
 
     // populate static
-    cJSON* configStatic =
-        cJSON_GetObjectItemCaseSensitive(configObject, "static");
-    const char* staticErrorMessage = "ERROR::CONFIG::INVALID_STATIC: expected boolean\n";
+    object->staticPhysics = staticPhysics;
 
-    if (configStatic)
-    {
-        if (!cJSON_IsBool(configStatic))
-        {
-            printf("%s", staticErrorMessage);
-            return 1;
-        }
-        object->staticPhysics = configStatic->valueint;
-    }
-    else
-    {
-        object->staticPhysics = 0;
-    }
+    // populate last position
+    glm_vec3_scale(velocity, deltaTime, velocity);
+    glm_vec3_sub(position, velocity, object->lastPosition);
+    glm_vec3_print(object->lastPosition, stdout);
 
     return 0;
 }
 
 // parses cJSON array into array of objects
 unsigned int parseConfigObjects(cJSON* configObjects,
-                                unsigned int* objectCounts, Object** objects)
+                                unsigned int* objectCounts, Object** objects, float deltaTime)
 {
     // determines number of each type of object to properly allocate object
     // array then parses each object individually
@@ -306,7 +340,7 @@ unsigned int parseConfigObjects(cJSON* configObjects,
             if (!strcmp(configType->valuestring, OBJECT_NAMES[type]))
             {
                 if (parseConfigObject(configObject,
-                                      objects[type] + indices[type]))
+                                      objects[type] + indices[type], deltaTime))
                 {
                     return 1;
                 }
@@ -372,7 +406,7 @@ unsigned int parseConfig(Simulation* sim, const char* configPath)
 
     cJSON* configObjects = cJSON_GetObjectItemCaseSensitive(config, "objects");
 
-    if (parseConfigObjects(configObjects, sim->objectCounts, sim->objects))
+    if (parseConfigObjects(configObjects, sim->objectCounts, sim->objects, sim->physicsDeltaTime))
     {
         return 1;
     }

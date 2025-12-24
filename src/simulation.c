@@ -18,18 +18,17 @@
 unsigned int simulationInit(Simulation* sim, const char* configPath)
 {
     sim->configPath = configPath;
+    sim->avgFPS = 0;
+    sim->frames = 0;
+    sim->lastTime = 0.0f;
+    sim->timeRatio = 0.5f;
+    sim->physicsDeltaTime = 1.0 / 60.0f;
 
     // initialize objects from config
     if (parseConfig(sim, configPath))
     {
         return 1;
     }
-
-    sim->avgFPS = 0;
-    sim->frames = 0;
-    sim->lastTime = 0.0f;
-    sim->timeRatio = 0.5f;
-    sim->physicsDeltaTime = 1.0 / 60.0f;
 
     renderInit(sim);
     callbacksInit(sim);
@@ -79,7 +78,7 @@ void simulationFree(Simulation* sim)
 
 void simulationStart(Simulation* sim)
 {
-    simulationPrint(sim);
+    // simulationPrint(sim);
     while (!glfwWindowShouldClose(sim->window))
     {
         simulationUpdate(sim);
