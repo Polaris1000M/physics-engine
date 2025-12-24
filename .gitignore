@@ -2,10 +2,9 @@
 build/
 include/
 images/
-million.json
-ten.json
-hundred.json
+configs/
 .cache/
 compile_commands.json
 libs/
+notes/
 

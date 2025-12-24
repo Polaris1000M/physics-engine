@@ -145,26 +145,13 @@ void buffersInit(Simulation* sim)
     }
 }
 
-unsigned int simulationInit(Simulation* sim, const char* configPath)
+unsigned int renderInit(Simulation* sim)
 {
-    sim->configPath = configPath;
-
     // OpenGL boilerplate
     if (openglInit(sim))
     {
         return 1;
     }
-
-    // initialize objects from config
-    if (parseConfig(sim, configPath))
-    {
-        return 1;
-    }
-
-    sim->avgFPS = 0;
-    sim->frames = 0;
-    sim->lastTime = 0.0f;
-    sim->timeRatio = 0.5f;
 
     shaderInit(&sim->shader, "../src/render/shaders/default-vs.glsl",
                "../src/render/shaders/default-fs.glsl");
@@ -181,6 +168,25 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     // initalize object data and bind
     buffersInit(sim);
 
+    return 0;
+}
+
+unsigned int simulationInit(Simulation* sim, const char* configPath)
+{
+    sim->configPath = configPath;
+
+    // initialize objects from config
+    if (parseConfig(sim, configPath))
+    {
+        return 1;
+    }
+
+    sim->avgFPS = 0;
+    sim->frames = 0;
+    sim->lastTime = 0.0f;
+    sim->timeRatio = 0.5f;
+
+    renderInit(sim);
     callbacksInit(sim);
 
     return 0;
