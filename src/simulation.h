@@ -20,7 +20,7 @@
 
 typedef struct Simulation
 {
-    const char* configPath; // used to reset the simulation
+    const char* configPath;  // used to reset the simulation
     GLFWwindow* window;
 
     float gravity;
@@ -72,9 +72,6 @@ unsigned int simulationInit(Simulation* sim, const char* configPath);
 // updates the positions of the objects in the simulation based on time passed
 void simulationUpdate(Simulation* sim);
 
-// renders the current state of the simulation
-void render(Simulation* sim);
-
 // starts the simulation
 void simulationStart(Simulation* sim);
 
@@ -85,3 +82,4 @@ void simulationSave(Simulation* sim);
 void simulationPrint(Simulation* sim);
 
 #endif
+

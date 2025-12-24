@@ -139,6 +139,12 @@ void simulationKeyCallback(GLFWwindow* window, int key, int scancode, int action
         glfwSetWindowShouldClose(sim->window, 1);
         simulationInit(sim, sim->configPath);
     }
+
+    if (key == GLFW_KEY_P && action == GLFW_PRESS)
+    {
+        Simulation* sim = glfwGetWindowUserPointer(window);
+        simulationPrint(sim);
+    }
 }
 
 void callbacksInit(Simulation* sim)

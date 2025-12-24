@@ -31,6 +31,7 @@ add_executable(PhysicsEngine
     src/render/text.c
     src/render/camera.c
     src/render/shadow.c
+    src/physics/physics.c
     src/physics/objects/floor.c
     src/physics/objects/sphere.c
     src/physics/objects/cube.c

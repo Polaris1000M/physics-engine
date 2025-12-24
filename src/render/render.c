@@ -1,12 +1,14 @@
-#include "../simulation.h"
 #include "render.h"
-#include "physics/objects/cube.h"
-#include "render/text.h"
-#include "utils/save.h"
+
 #include <string.h>
+
+#include "../simulation.h"
+#include "physics/objects/cube.h"
 #include "physics/objects/floor.h"
 #include "physics/objects/sphere.h"
 #include "physics/objects/tetrahedron.h"
+#include "render/text.h"
+#include "utils/save.h"
 
 // initializes OpenGL and GLFW boilerplate
 unsigned int openglInit(Simulation* sim)
@@ -33,7 +35,8 @@ unsigned int openglInit(Simulation* sim)
     glfwWindowHint(GLFW_SAMPLES, 4);
     glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
-    // insert dummy values into width and height since window will be instantly maximized
+    // insert dummy values into width and height since window will be instantly
+    // maximized
     sim->window = glfwCreateWindow(1, 1, "PhysicsEngine", NULL, NULL);
     if (!sim->window)
     {
@@ -250,12 +253,12 @@ void render(Simulation* sim)
 
     // object counts
     int totalObjects = 0;
-    for(int i = 0; i < OBJECT_TYPES; i++)
+    for (int i = 0; i < OBJECT_TYPES; i++)
     {
         char name[20];
         strncpy(name, OBJECT_NAMES[i], 19);
         name[19] = '\0';
-        name[0] = (char) (name[0] - 'a' + 'A');
+        name[0] = (char)(name[0] - 'a' + 'A');
         if (sim->objectCounts[i] != 1)
         {
             snprintf(buffers[i + 1], 20, "%d %ss", sim->objectCounts[i], name);
@@ -266,7 +269,7 @@ void render(Simulation* sim)
         }
         totalObjects += sim->objectCounts[i];
     }
-    
+
     if (totalObjects != 1)
     {
         snprintf(buffers[0], 20, "%d %ss", totalObjects, "Total Object");
@@ -294,11 +297,12 @@ void render(Simulation* sim)
     // frames
     snprintf(buffers[OBJECT_TYPES + 5], 20, "%llu frames", sim->frames);
 
-
-    for(int i = 0; i < lines; i++)
+    for (int i = 0; i < lines; i++)
     {
         text[i] = buffers[i];
     }
-    textRender(&sim->text, lines, text, sim->camera.WINDOW_WIDTH, sim->camera.WINDOW_HEIGHT, 25.0f, 25.0f, 1.0f, (vec3) { 0.0f, 0.0f, 0.0f });
+    textRender(&sim->text, lines, text, sim->camera.WINDOW_WIDTH,
+               sim->camera.WINDOW_HEIGHT, 25.0f, 25.0f, 1.0f,
+               (vec3){0.0f, 0.0f, 0.0f});
 }
 

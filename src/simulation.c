@@ -1,18 +1,19 @@
 #include "simulation.h"
 
-#include <unistd.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 #include "cJSON.h"
+#include "physics/physics.h"
 #include "physics/object.h"
-#include "render/render.h"
 #include "render/camera.h"
-#include "utils/parse.h"
+#include "render/render.h"
 #include "utils/callbacks.h"
+#include "utils/parse.h"
 
 unsigned int simulationInit(Simulation* sim, const char* configPath)
 {
@@ -47,13 +48,14 @@ void simulationProcessInput(Simulation* sim)
     {
         simulationSave(sim);
     }
+
+    cameraProcessInput(&sim->camera, sim->window);
 }
 
 void simulationUpdate(Simulation* sim)
 {
     simulationProcessInput(sim);
-    cameraProcessInput(&sim->camera, sim->window);
-    
+
     renderUpdate(sim);
     sim->frames++;
 }
@@ -215,3 +217,4 @@ void simulationPrint(Simulation* sim)
     // cameraPrint(&sim->camera);
     // shadowPrint(&sim->shadow);
 }
+

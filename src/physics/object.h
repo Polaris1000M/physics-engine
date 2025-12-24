@@ -15,6 +15,7 @@
 #define OBJECT_H
 
 #include <cglm/cglm.h>
+
 #include "cJSON.h"
 
 #define OBJECT_TYPES 4
@@ -35,9 +36,14 @@ typedef struct Object
     ObjectType type;
     float size;
     float mass;
-    vec3 position;
     vec3 color;
-    vec3 orientation;  // euler angles representing rotation
+
+    vec3 position;
+    vec3 linearAcceleration;
+
+    vec3 euler;          // euler angles representing rotation
+    versor orientation;  // quaternion representing orientation
+    vec3 angularAcceleration;
 } Object;
 
 // initializes an object
@@ -47,7 +53,7 @@ void objectInit(Object* o, ObjectType type, float size, float mass,
 // prints an object
 void objectPrint(Object* o);
 
-// generates and stores model matrix and color data 
+// generates and stores model matrix and color data
 void objectVertices(Object* o, float* vertices);
 
 // returns the size of an object's per instance data
@@ -57,3 +63,4 @@ unsigned int objectVerticesSize();
 cJSON* objectToJSON(Object* o);
 
 #endif
+

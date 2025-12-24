@@ -1,7 +1,8 @@
 /*
  * render.h
  *
- * Manages updating all rendering and OpenGL related components of the simulation (e.g., camera, shadow, shaders, text) and executes rendering
+ * Manages updating all rendering and OpenGL related components of the
+ * simulation (e.g., camera, shadow, shaders, text) and executes rendering
  */
 
 #ifndef RENDER_H
