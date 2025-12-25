@@ -40,6 +40,7 @@ add_executable(PhysicsEngine
     src/utils/save.c
     src/utils/parse.c
     src/utils/callbacks.c
+    src/utils/quat.c
 )
 
 target_compile_options(PhysicsEngine PRIVATE -fsanitize=address -g)

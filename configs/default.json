@@ -1,5 +1,5 @@
 {
-  "gravity": 9.8,
+  "gravity": -9.8,
   "lightDir": [-1, -1, -1],
   "cameraDir": [0, -0.1, -1],
   "cameraPos": [0, 5, 25],
@@ -17,7 +17,8 @@
       "size": 1,
       "mass": 0.5,
       "position": [0, 3, 0],
-      "color": [210, 212, 200]
+      "color": [210, 212, 200],
+      "velocity": [0, 10, 0]
     },
     {
       "type": "cube",
@@ -39,7 +40,7 @@
       "mass": 0.5,
       "position": [4, 1, 0],
       "color": [224, 226, 219],
-      "orientation": [45, 0, 45]
+      "euler": [45, 0, 45]
     },
     {
       "type": "sphere",
@@ -54,7 +55,7 @@
       "mass": 0.5,
       "position": [6, 0.33333333, 0],
       "color": [99, 32, 238],
-      "orientation": [0, 60, 0]
+      "euler": [0, 60, 0]
     }
   ]
 }

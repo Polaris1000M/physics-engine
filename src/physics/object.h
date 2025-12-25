@@ -63,7 +63,7 @@ void objectVertices(Object* o, float* vertices);
 unsigned int objectVerticesSize();
 
 // converts object data into JSON
-cJSON* objectToJSON(Object* o);
+cJSON* objectToJSON(Object* o, float deltaTime);
 
 #endif
 

@@ -114,7 +114,7 @@ void simulationSave(Simulation* sim)
     {
         for (int i = 0; i < sim->objectCounts[type]; i++)
         {
-            cJSON* configObject = objectToJSON(sim->objects[type] + i);
+            cJSON* configObject = objectToJSON(sim->objects[type] + i, sim->physicsDeltaTime);
             cJSON_AddItemToArray(configObjects, configObject);
         }
     }

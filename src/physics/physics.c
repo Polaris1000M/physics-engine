@@ -16,7 +16,8 @@ void resolveForces(Simulation* sim)
                 continue;
             }
 
-            glm_vec3_copy((vec3) { 0, -1, 0 }, sim->objects[type][i].linearAcceleration);
+            glm_vec3_copy((vec3) { 0, sim->gravity, 0 }, sim->objects[type][i].linearAcceleration);
+            // glm_vec3_copy((vec3) { 0, 0, 0 }, sim->objects[type][i].linearAcceleration);
         }
     }
 }

@@ -2,6 +2,8 @@
 
 #include <cglm/cglm.h>
 #include <stdlib.h>
+#include "cglm/vec3.h"
+#include "utils/quat.h"
 #include "cJSON.h"
 
 const char* OBJECT_NAMES[] = {"floor", "sphere", "cube", "tetrahedron"};
@@ -14,7 +16,6 @@ void objectInit(Object* o, ObjectType type, float size, float mass,
     o->mass = mass;
     glm_vec3_copy(position, o->position);
     glm_vec3_copy(color, o->color);
-    glm_vec3_copy(GLM_VEC3_ZERO, o->orientation);
 }
 
 void objectPrint(Object* o)
@@ -27,7 +28,7 @@ void objectPrint(Object* o)
     printf("color:\n");
     glm_vec3_print(o->color, stdout);
     printf("orientation:\n");
-    glm_vec3_print(o->orientation, stdout);
+    glm_vec4_print(o->orientation, stdout);
 }
 
 void objectVertices(Object* o, float* vertices)
@@ -55,7 +56,7 @@ void objectVertices(Object* o, float* vertices)
     }
 
     mat4 rot;
-    glm_euler(o->orientation, rot);
+    glm_quat_mat4(o->orientation, rot);
     glm_mat4_mul(rot, res, res);
 
     for (int i = 0; i < 4; i++)
@@ -78,7 +79,7 @@ unsigned int objectVerticesSize()
     return 19;
 }
 
-cJSON* objectToJSON(Object* o)
+cJSON* objectToJSON(Object* o, float deltaTime)
 {
     cJSON* configObject = cJSON_CreateObject();
 
@@ -86,20 +87,22 @@ cJSON* objectToJSON(Object* o)
     cJSON_AddNumberToObject(configObject, "size", o->size);
     cJSON_AddNumberToObject(configObject, "mass", o->mass);
 
+    vec3 velocity;
+    glm_vec3_sub(o->position, o->lastPosition, velocity);
+    glm_vec3_scale(velocity, 1.0 / deltaTime, velocity);
+    cJSON* configVelocity = cJSON_CreateFloatArray(velocity, 3);
+    cJSON_AddItemReferenceToObject(configObject, "velocity", configVelocity);
+
     cJSON* configPosition = cJSON_CreateFloatArray(o->position, 3);
     cJSON_AddItemReferenceToObject(configObject, "position", configPosition);
 
     cJSON* configColor = cJSON_CreateFloatArray(o->color, 3);
     cJSON_AddItemReferenceToObject(configObject, "color", configColor);
 
-    float degreeOrientation[3];
-    for(int i = 0; i < 3; i++)
-    {
-        degreeOrientation[i] = glm_deg(o->orientation[i]);
-    }
-
-    cJSON* configOrientation = cJSON_CreateFloatArray(degreeOrientation, 3);
-    cJSON_AddItemReferenceToObject(configObject, "orientation", configOrientation);
+    vec3 euler;
+    quatToEuler(o->orientation, euler);
+    cJSON* configOrientation = cJSON_CreateFloatArray(euler, 3);
+    cJSON_AddItemReferenceToObject(configObject, "euler", configOrientation);
     
     return configObject;
 }
