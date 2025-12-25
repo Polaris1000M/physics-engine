@@ -6,6 +6,7 @@
 #include "../physics/physics.h"
 #include "cJSON.h"
 #include <cglm/cglm.h>
+#include "cglm/io.h"
 #include "cglm/vec3.h"
 #include "utils/quat.h"
 
@@ -214,7 +215,8 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
 
     // populate spin
     glm_vec3_copy(spin, object->angularVelocity);
-    glm_vec3_copy(object->angularAcceleration, GLM_VEC3_ZERO);
+    glm_vec3_copy(GLM_VEC3_ZERO, object->angularAcceleration);
+    glm_vec3_print(object->angularAcceleration, stdout);
 
     return 0;
 }

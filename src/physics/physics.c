@@ -38,7 +38,6 @@ void linearUpdate(Object* object)
 // use sympletic Euler to update angular orientation
 void angularUpdate(Object* object)
 {
-    glm_vec3_copy((vec3) { 0, 1, 0 }, object->angularAcceleration);
     glm_vec3_muladds(object->angularAcceleration, PHYSICS_DT, object->angularVelocity);
 
     float angle = glm_vec3_norm(object->angularVelocity) * PHYSICS_DT;
