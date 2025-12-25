@@ -1,4 +1,5 @@
 #include "object.h"
+#include "physics.h"
 
 #include <cglm/cglm.h>
 #include <stdlib.h>
@@ -79,7 +80,7 @@ unsigned int objectVerticesSize()
     return 19;
 }
 
-cJSON* objectToJSON(Object* o, float deltaTime)
+cJSON* objectToJSON(Object* o)
 {
     cJSON* configObject = cJSON_CreateObject();
 
@@ -89,7 +90,7 @@ cJSON* objectToJSON(Object* o, float deltaTime)
 
     vec3 velocity;
     glm_vec3_sub(o->position, o->lastPosition, velocity);
-    glm_vec3_scale(velocity, 1.0 / deltaTime, velocity);
+    glm_vec3_scale(velocity, 1.0 / PHYSICS_DT, velocity);
     cJSON* configVelocity = cJSON_CreateFloatArray(velocity, 3);
     cJSON_AddItemReferenceToObject(configObject, "velocity", configVelocity);
 
@@ -106,6 +107,9 @@ cJSON* objectToJSON(Object* o, float deltaTime)
 
     cJSON* configStatic = cJSON_CreateBool(o->staticPhysics);
     cJSON_AddItemReferenceToObject(configObject, "static", configStatic);
+
+    cJSON* configSpin = cJSON_CreateFloatArray(o->angularVelocity, 3);
+    cJSON_AddItemReferenceToObject(configObject, "spin", configSpin);
     
     return configObject;
 }

@@ -22,7 +22,6 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     sim->frames = 0;
     sim->lastTime = 0.0f;
     sim->timeRatio = 0.5f;
-    sim->physicsDeltaTime = 1.0 / 60.0f;
 
     // initialize objects from config
     if (parseConfig(sim, configPath))
@@ -114,7 +113,7 @@ void simulationSave(Simulation* sim)
     {
         for (int i = 0; i < sim->objectCounts[type]; i++)
         {
-            cJSON* configObject = objectToJSON(sim->objects[type] + i, sim->physicsDeltaTime);
+            cJSON* configObject = objectToJSON(sim->objects[type] + i);
             cJSON_AddItemToArray(configObjects, configObject);
         }
     }

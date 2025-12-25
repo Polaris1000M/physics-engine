@@ -3,8 +3,10 @@
 #include <string.h>
 
 #include "../physics/object.h"
+#include "../physics/physics.h"
 #include "cJSON.h"
 #include <cglm/cglm.h>
+#include "cglm/vec3.h"
 #include "utils/quat.h"
 
 // parses a single vec3 based on cJSON array
@@ -29,8 +31,8 @@ unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
 }
 
 // parses a single JSON into an object
-unsigned int parseConfigObject(cJSON* configObject, Object* object,
-                               float deltaTime)
+// expects type, size, mass, position, color, static (default false), velocity (default 0), spin (default 0), euler (default 0)
+unsigned int parseConfigObject(cJSON* configObject, Object* object)
 {
     // populate type since type already checked
     const cJSON* configType =
@@ -76,31 +78,10 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object,
     const char* positionErrorMessage =
         "ERROR::CONFIG::INVALID_POSITION: expected float array for position of "
         "object with format [<x>, <y>, <z>]\n";
-    vec3 position;
-    if (!cJSON_IsArray(configPosition))
+    vec3 position = GLM_VEC3_ZERO;
+    if (parseVec3(position, configPosition, positionErrorMessage))
     {
-        glm_vec3_copy(GLM_VEC3_ZERO, position);
-    }
-    else
-    {
-        unsigned int positionSize = cJSON_GetArraySize(configPosition);
-        if (positionSize != 3)
-        {
-            printf("%s", positionErrorMessage);
-            return 1;
-        }
-
-        for (int i = 0; i < 3; i++)
-        {
-            cJSON* coord = cJSON_GetArrayItem(configPosition, i);
-            if (!cJSON_IsNumber(coord))
-            {
-                printf("%s", positionErrorMessage);
-                return 1;
-            }
-
-            position[i] = coord->valuedouble;
-        }
+        return 1;
     }
 
     // parse euler
@@ -203,6 +184,18 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object,
         return 1;
     }
 
+    // parse spin
+    cJSON* configSpin =
+        cJSON_GetObjectItemCaseSensitive(configObject, "spin");
+    const char* spinErrorMessage =
+        "ERROR::CONFIG::INVALID_SPIN: expected vector of three floats\n";
+    vec3 spin = GLM_VEC3_ZERO;
+    if (configSpin &&
+        parseVec3(spin, configSpin, spinErrorMessage))
+    {
+        return 1;
+    }
+
     // populate size
     object->size = configSize->valuedouble;
 
@@ -216,16 +209,19 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object,
     object->staticPhysics = staticPhysics;
 
     // populate last position
-    glm_vec3_scale(velocity, deltaTime, velocity);
+    glm_vec3_scale(velocity, PHYSICS_DT, velocity);
     glm_vec3_sub(position, velocity, object->lastPosition);
+
+    // populate spin
+    glm_vec3_copy(spin, object->angularVelocity);
+    glm_vec3_copy(object->angularAcceleration, GLM_VEC3_ZERO);
 
     return 0;
 }
 
 // parses cJSON array into array of objects
 unsigned int parseConfigObjects(cJSON* configObjects,
-                                unsigned int* objectCounts, Object** objects,
-                                float deltaTime)
+                                unsigned int* objectCounts, Object** objects)
 {
     // determines number of each type of object to properly allocate object
     // array then parses each object individually
@@ -327,7 +323,7 @@ unsigned int parseConfigObjects(cJSON* configObjects,
             if (!strcmp(configType->valuestring, OBJECT_NAMES[type]))
             {
                 if (parseConfigObject(configObject,
-                                      objects[type] + indices[type], deltaTime))
+                                      objects[type] + indices[type]))
                 {
                     return 1;
                 }
@@ -393,8 +389,7 @@ unsigned int parseConfig(Simulation* sim, const char* configPath)
 
     cJSON* configObjects = cJSON_GetObjectItemCaseSensitive(config, "objects");
 
-    if (parseConfigObjects(configObjects, sim->objectCounts, sim->objects,
-                           sim->physicsDeltaTime))
+    if (parseConfigObjects(configObjects, sim->objectCounts, sim->objects))
     {
         return 1;
     }

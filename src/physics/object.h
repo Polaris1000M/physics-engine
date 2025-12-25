@@ -40,11 +40,11 @@ typedef struct Object
 
     int staticPhysics; // flag indicating whether to ignore physics for object
 
-    vec3 lastPosition; // change in position for Verlet integration
+    vec3 lastPosition; // prior position for Verlet integration
     vec3 position;
     vec3 linearAcceleration;
 
-    vec3 euler;          // euler angles representing rotation
+    vec3 angularVelocity;
     versor orientation;  // quaternion representing orientation
     vec3 angularAcceleration;
 } Object;
@@ -63,7 +63,7 @@ void objectVertices(Object* o, float* vertices);
 unsigned int objectVerticesSize();
 
 // converts object data into JSON
-cJSON* objectToJSON(Object* o, float deltaTime);
+cJSON* objectToJSON(Object* o);
 
 #endif
 

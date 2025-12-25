@@ -23,7 +23,6 @@ typedef struct Simulation
     const char* configPath;  // used to reset the simulation
     GLFWwindow* window;
 
-    float physicsDeltaTime; // fixed dt for each timestep
     float gravity;
     float lightDir[3];
     float lastTime;   // last time render loop was called

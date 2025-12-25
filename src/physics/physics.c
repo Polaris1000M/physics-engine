@@ -1,5 +1,6 @@
 #include "physics.h"
 #include "../simulation.h"
+#include "cglm/quat.h"
 #include "object.h"
 #include "cglm/vec3.h"
 #include <cglm/cglm.h>
@@ -22,9 +23,36 @@ void resolveForces(Simulation* sim)
     }
 }
 
-// use verletIntegration to update object positions and orientations
-void verletIntegration(Simulation* sim)
+// use Verlet integration to update object positions
+void linearUpdate(Object* object)
 {
+    vec3 deltaPosition;
+    glm_vec3_sub(object->position, object->lastPosition, deltaPosition);
+
+    glm_vec3_scale(object->linearAcceleration, PHYSICS_DT * PHYSICS_DT, object->linearAcceleration);
+
+    glm_vec3_copy(object->position, object->lastPosition);
+    glm_vec3_addadd(deltaPosition, object->linearAcceleration, object->position);
+}
+
+// use sympletic Euler to update angular orientation
+void angularUpdate(Object* object)
+{
+    float angle = glm_vec3_norm(object->angularVelocity) * PHYSICS_DT;
+    vec3 axis;
+    glm_vec3_normalize_to(object->angularVelocity, axis);
+
+    versor deltaOrientation;
+    glm_quatv(deltaOrientation, angle, axis);
+
+    glm_quat_mul(deltaOrientation, object->orientation, object->orientation);
+    glm_quat_normalize(object->orientation);
+}
+
+void physicsUpdate(Simulation *sim)
+{
+    resolveForces(sim);
+
     for (int type = 0; type < OBJECT_TYPES; type++)
     {
         for (int i = 0; i < sim->objectCounts[type]; i++)
@@ -33,22 +61,10 @@ void verletIntegration(Simulation* sim)
             {
                 continue;
             }
-
-            Object* object = sim->objects[type] + i;
-            vec3 deltaPosition;
-            glm_vec3_sub(object->position, object->lastPosition, deltaPosition);
-
-            glm_vec3_scale(object->linearAcceleration, sim->physicsDeltaTime * sim->physicsDeltaTime, object->linearAcceleration);
-
-            glm_vec3_copy(object->position, object->lastPosition);
-            glm_vec3_addadd(deltaPosition, object->linearAcceleration, object->position);
+            
+            linearUpdate(sim->objects[type] + i);
+            angularUpdate(sim->objects[type] + i);
         }
     }
-}
-
-void physicsUpdate(Simulation *sim)
-{
-    resolveForces(sim);
-    verletIntegration(sim);
 }
 
