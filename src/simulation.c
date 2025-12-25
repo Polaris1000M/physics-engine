@@ -30,7 +30,10 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     }
 
     renderInit(sim);
+    physicsInit(sim);
     callbacksInit(sim);
+
+    sim->initialized = 1;
 
     return 0;
 }

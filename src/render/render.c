@@ -140,22 +140,26 @@ void buffersInit(Simulation* sim)
 unsigned int renderInit(Simulation* sim)
 {
     // OpenGL boilerplate
-    if (openglInit(sim))
+    if (sim->initialized != 1)
     {
-        return 1;
+        if (openglInit(sim))
+        {
+            return 1;
+        }
+        shaderInit(&sim->shader, "../src/render/shaders/default-vs.glsl",
+                   "../src/render/shaders/default-fs.glsl");
+        if (shadowInit(&sim->shadow, &sim->camera, sim->lightDir))
+        {
+            return 1;
+        }
+
+        if (textInit(&sim->text, "../assets/roboto/static/Roboto-Light.ttf"))
+        {
+            return 1;
+        }
     }
 
-    shaderInit(&sim->shader, "../src/render/shaders/default-vs.glsl",
-               "../src/render/shaders/default-fs.glsl");
     cameraInit(&sim->camera, sim->window);
-    if (shadowInit(&sim->shadow, &sim->camera, sim->lightDir))
-    {
-        return 1;
-    }
-    if (textInit(&sim->text, "../assets/roboto/static/Roboto-Light.ttf"))
-    {
-        return 1;
-    }
 
     // initalize object data and bind
     buffersInit(sim);

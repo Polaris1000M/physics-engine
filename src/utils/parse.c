@@ -216,7 +216,6 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     // populate spin
     glm_vec3_copy(spin, object->angularVelocity);
     glm_vec3_copy(GLM_VEC3_ZERO, object->angularAcceleration);
-    glm_vec3_print(object->angularAcceleration, stdout);
 
     return 0;
 }

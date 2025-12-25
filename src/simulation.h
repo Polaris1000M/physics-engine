@@ -22,6 +22,7 @@ typedef struct Simulation
 {
     const char* configPath;  // used to reset the simulation
     GLFWwindow* window;
+    int initialized;
 
     float gravity;
     float lightDir[3];
@@ -30,6 +31,8 @@ typedef struct Simulation
                       // amount of simulation time passed
     float avgFPS;
     unsigned long long frames;
+
+    void (*collisionTable[OBJECT_TYPES][OBJECT_TYPES])(float*);
 
     Shader shader;
     Camera camera;

@@ -136,7 +136,6 @@ void simulationKeyCallback(GLFWwindow* window, int key, int scancode, int action
     {
         Simulation* sim = glfwGetWindowUserPointer(window);
         cameraDisableNavigation(&sim->camera, window);
-        glfwSetWindowShouldClose(sim->window, 1);
         simulationInit(sim, sim->configPath);
     }
 

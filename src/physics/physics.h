@@ -5,6 +5,8 @@
 
 typedef struct Simulation Simulation;
 
+void physicsInit(Simulation* sim);
+
 void physicsUpdate(Simulation* sim);
 
 #endif
