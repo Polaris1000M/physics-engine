@@ -103,6 +103,9 @@ cJSON* objectToJSON(Object* o, float deltaTime)
     quatToEuler(o->orientation, euler);
     cJSON* configOrientation = cJSON_CreateFloatArray(euler, 3);
     cJSON_AddItemReferenceToObject(configObject, "euler", configOrientation);
+
+    cJSON* configStatic = cJSON_CreateBool(o->staticPhysics);
+    cJSON_AddItemReferenceToObject(configObject, "static", configStatic);
     
     return configObject;
 }
