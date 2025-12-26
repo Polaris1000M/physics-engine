@@ -14,11 +14,11 @@
         },
         {
             "type": "sphere",
-            "size": 1,
+            "size": 1.25,
             "mass": 0.5,
-            "position": [0, 3, 0],
-            "color": [210, 212, 200],
-            "velocity": [0.5, 8, 0]
+            "position": [-5, 1.25, 0],
+            "color": [242, 100, 25],
+            "velocity": [-2, 6, 4]
         },
         {
             "type": "cube",
@@ -26,8 +26,16 @@
             "mass": 0.5,
             "position": [-2, 0.6350852961, 0],
             "color": [136, 150, 150],
-            "velocity": [-2, 7, 0],
+            "velocity": [-2, 8, 0],
             "spin": [-2, -2, -2]
+        },
+        {
+            "type": "sphere",
+            "size": 1,
+            "mass": 0.5,
+            "position": [0, 3, 0],
+            "color": [210, 212, 200],
+            "velocity": [0.5, 8, 0]
         },
         {
             "type": "tetrahedron",
@@ -35,7 +43,7 @@
             "mass": 0.5,
             "position": [2, 0.33333333, 0],
             "color": [95, 116, 112],
-            "velocity": [4, 8, 1],
+            "velocity": [2, 9, 5],
             "spin": [2, 1, 2]
         },
         {
@@ -44,15 +52,9 @@
             "mass": 0.5,
             "position": [4, 1, 0],
             "color": [224, 226, 219],
-            "euler": [45, 0, 45]
-        },
-        {
-            "type": "sphere",
-            "size": 1.25,
-            "mass": 0.5,
-            "position": [-5, 1.25, 0],
-            "color": [242, 100, 25],
-            "velocity": [-1, 6, 4]
+            "euler": [45, 0, 45],
+            "velocity": [0, 6, -3],
+            "spin": [5, 0, 1]
         },
         {
             "type": "tetrahedron",
@@ -60,7 +62,9 @@
             "mass": 0.5,
             "position": [6, 0.33333333, 0],
             "color": [99, 32, 238],
-            "euler": [0, 60, 0]
+            "euler": [0, 60, 0],
+            "velocity": [5, 4, 0],
+            "spin": [2, 7, 1]
         }
     ]
 }
