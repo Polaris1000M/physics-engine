@@ -152,5 +152,6 @@ void callbacksInit(Simulation* sim)
     glfwSetCursorPosCallback(sim->window,
                              cameraCursorCallback);  // calls function whenever
                                                      // cursor position changes
+    cameraEnableNavigation(&sim->camera, sim->window);
 }
 
