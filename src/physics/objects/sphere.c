@@ -527,3 +527,4 @@ void sphereUVMesh(float* mesh)
         }
     }
 }
+

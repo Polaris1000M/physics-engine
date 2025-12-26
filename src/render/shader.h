@@ -33,3 +33,4 @@ void shaderSetMatrix(Shader* s, const char* name, mat4 mat);
 void shaderSetVector(Shader* s, const char* name, vec3 vec);
 
 #endif
+

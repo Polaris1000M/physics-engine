@@ -8,8 +8,8 @@
 #include <unistd.h>
 
 #include "cJSON.h"
-#include "physics/physics.h"
 #include "physics/object.h"
+#include "physics/physics.h"
 #include "render/camera.h"
 #include "render/render.h"
 #include "utils/callbacks.h"
@@ -21,7 +21,6 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     sim->avgFPS = 0;
     sim->frames = 0;
     sim->lastTime = 0.0f;
-    sim->timeRatio = 0.5f;
 
     // initialize objects from config
     if (parseConfig(sim, configPath))
@@ -30,7 +29,6 @@ unsigned int simulationInit(Simulation* sim, const char* configPath)
     }
 
     renderInit(sim);
-    physicsInit(sim);
     callbacksInit(sim);
 
     sim->initialized = 1;
@@ -80,7 +78,6 @@ void simulationFree(Simulation* sim)
 
 void simulationStart(Simulation* sim)
 {
-    // simulationPrint(sim);
     while (!glfwWindowShouldClose(sim->window))
     {
         simulationUpdate(sim);
@@ -129,96 +126,5 @@ void simulationSave(Simulation* sim)
     fprintf(configFile, "%s", configString);
     fclose(configFile);
     free(configString);
-}
-
-void simulationPrint(Simulation* sim)
-{
-    printf("OBJECTS\n");
-    printf("Object Counts\n");
-    for (int type = 0; type < OBJECT_TYPES; type++)
-    {
-        printf("%s: %d\n", OBJECT_NAMES[type], sim->objectCounts[type]);
-    }
-    printf("\n");
-
-    for (int type = 0; type < OBJECT_TYPES; type++)
-    {
-        printf("%s\n", OBJECT_NAMES[type]);
-
-        for (int i = 0; i < sim->objectCounts[type]; i++)
-        {
-            objectPrint(sim->objects[type] + i);
-            printf("\n");
-        }
-        printf("\n");
-    }
-
-    printf("MESHES\n");
-    for (int type = 0; type < OBJECT_TYPES; type++)
-    {
-        if (type == SPHERE)
-        {
-            continue;
-        }
-        printf("%s %d\n", OBJECT_NAMES[type], sim->meshSizes[type]);
-        for (int i = 0; i < sim->meshSizes[type]; i += 3)
-        {
-            printf("(%f, %f, %f)\n", sim->meshes[type][i],
-                   sim->meshes[type][i + 1], sim->meshes[type][i + 2]);
-        }
-        printf("\n");
-    }
-
-    // printf("VERTICES\n");
-    // for(int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //   printf("%s: %d\n", OBJECT_NAMES[type], sim->vertexCounts[type]);
-    // }
-    // for(int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //   for(int i = 0; i < sim->objectCounts[type]; i++)
-    //   {
-    //     for(int j = 0; j < objectVerticesSize(); j++)
-    //     {
-    //       printf("%f ", sim->vertices[type][i * objectVerticesSize() + j]);
-    //     }
-    //     printf("\n");
-    //   }
-    //   printf("\n");
-    // }
-
-    // printf("Single Vertex Counts\n");
-    // for(int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //   printf("%s: %d\n", OBJECT_NAMES[type], sim->singleVertexCounts[type]);
-    // }
-    // printf("\n");
-
-    // printf("Vertex Counts\n");
-    // for(int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //   printf("%s: %d\n", OBJECT_NAMES[type], sim->vertexCounts[type]);
-    // }
-    // printf("\n");
-
-    // for(int type = 0; type < OBJECT_TYPES; type++)
-    // {
-    //   printf("%s\n", OBJECT_NAMES[type]);
-    //   // print all vertices in a single object
-    //   for(int i = 0; i < sim->vertexCounts[type]; i += 3)
-    //   {
-    //     printf("(%f, %f, %f)\n", sim->vertices[type][i],
-    //     sim->vertices[type][i + 1], sim->vertices[type][i + 2]);
-    //     // // iterate over all groups of 3 vertices in the current object
-    //     // for(int j = 0; j < i * sim->singleVertexCounts[type]; j += 3)
-    //     // {
-    //     //   printf("(%f, %f, %f)\n", sim->vertices[type][j],
-    //     sim->vertices[type][j + 1], sim->vertices[type][j + 2]);
-    //     // }
-    //   }
-    // }
-
-    // cameraPrint(&sim->camera);
-    // shadowPrint(&sim->shadow);
 }
 

@@ -20,52 +20,47 @@
 
 typedef struct Simulation
 {
+    /* SIMULATION MANAGEMENT VARIABLES */
     const char* configPath;  // used to reset the simulation
     GLFWwindow* window;
-    int initialized;
+    int initialized;  // whether the simulation has already been initialized for
+                      // restarting purposes
+    unsigned int
+        objectCounts[OBJECT_TYPES];  // the number of each type of object
 
+    /* PHYSICS VARIABLES */
     float gravity;
-    float lightDir[3];
-    float lastTime;   // last time render loop was called
-    float timeRatio;  // multiplied by amount of real time passing to produce
-                      // amount of simulation time passed
-    float avgFPS;
-    unsigned long long frames;
+    void (*collisionTable[OBJECT_TYPES][OBJECT_TYPES])(
+        float*);  // table of function pointers for collision resolution
+    Object* objects[OBJECT_TYPES];  // holds object rigid body data for physics
+                                    // calculations
 
-    void (*collisionTable[OBJECT_TYPES][OBJECT_TYPES])(float*);
+    /* METRICS */
+    float avgFPS;               // average FPS of simulation
+    unsigned long long frames;  // number of frames
+    float lastTime;  // last time simulation loop ran, used to calculate FPS
 
+    /* RENDERING VARIABLES */
     Shader shader;
-    Camera camera;
     Shadow shadow;
+    float lightDir[3];
+    Camera camera;
     Text text;
 
-    // arrays holding all objects
-    Object* objects[OBJECT_TYPES];
+    // object data (model matrix and color)
+    unsigned int objectVBOs[OBJECT_TYPES];  // VBOs for object data
+    unsigned int VAOs[OBJECT_TYPES];        // VAOs for each type of object
+    unsigned int
+        objectSizes[OBJECT_TYPES];  // the number of floats in all of the object
+                                    // data for each object type
+    float* objectData[OBJECT_TYPES];  // buffer with per object rendering data
+                                      // (model matrix and color)
 
-    // the number of each type of object
-    unsigned int objectCounts[OBJECT_TYPES];
-
-    // VBOs for object data
-    unsigned int objectVBOs[OBJECT_TYPES];
-
-    // the number of floats in all of the object data for each object type
-    unsigned int objectSizes[OBJECT_TYPES];
-
-    // buffer with per object rendering data (model matrix and
-    // color)
-    float* objectData[OBJECT_TYPES];
-
-    // default meshes for each object type
-    float* meshes[OBJECT_TYPES];
-
-    // the number of floats in a single mesh of each object
-    unsigned int meshSizes[OBJECT_TYPES];
-
-    // VBOs for each of the object meshes
-    unsigned int meshVBOs[OBJECT_TYPES];
-
-    // VAOs for each type of object
-    unsigned int VAOs[OBJECT_TYPES];
+    // meshes
+    unsigned int meshVBOs[OBJECT_TYPES];   // VBOs for each of the object meshes
+    unsigned int meshSizes[OBJECT_TYPES];  // the number of floats in a single
+                                           // mesh of each object
+    float* meshes[OBJECT_TYPES];  // default meshes for each object type
 
 } Simulation;
 
@@ -80,9 +75,6 @@ void simulationStart(Simulation* sim);
 
 // save the current state of the simulation into JSON format
 void simulationSave(Simulation* sim);
-
-// prints the contents of the simulation for debugging
-void simulationPrint(Simulation* sim);
 
 #endif
 

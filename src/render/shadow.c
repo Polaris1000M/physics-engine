@@ -150,3 +150,4 @@ void shadowPrint(Shadow* s)
         glm_vec3_print(s->corners[i], stdout);
     }
 }
+

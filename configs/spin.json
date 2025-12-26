@@ -1,0 +1,27 @@
+{
+    "gravity": 0,
+    "lightDir": [-1, -1, -1],
+    "cameraDir": [0, 0, -1],
+    "cameraPos": [0, 5, 10],
+    "objects":
+    [
+        {
+            "type": "cube",
+            "size": 1,
+            "mass": 0.5,
+            "position": [2, 5, 0],
+            "euler": [45, 0, 45],
+            "spin": [-5, -5, -5],
+            "color": [50, 175, 200]
+        },
+        {
+            "type": "tetrahedron",
+            "size": 1,
+            "mass": 0.5,
+            "position": [-2, 5, 0],
+            "euler": [45, 0, 45],
+            "spin": [-5, -5, -5],
+            "color": [50, 175, 200]
+        }
+    ]
+}

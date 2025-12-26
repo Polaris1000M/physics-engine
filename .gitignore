@@ -6,6 +6,6 @@ images/
 compile_commands.json
 libs/
 notes/
-configs/
-!configs/default.json
+large/
+*.mov
 
