@@ -17,21 +17,26 @@
             "size": 1,
             "mass": 0.5,
             "position": [0, 3, 0],
-            "color": [210, 212, 200]
+            "color": [210, 212, 200],
+            "velocity": [0.5, 8, 0]
         },
         {
             "type": "cube",
             "size": 1.1,
             "mass": 0.5,
             "position": [-2, 0.6350852961, 0],
-            "color": [136, 150, 150]
+            "color": [136, 150, 150],
+            "velocity": [-2, 7, 0],
+            "spin": [-2, -2, -2]
         },
         {
             "type": "tetrahedron",
             "size": 1,
             "mass": 0.5,
             "position": [2, 0.33333333, 0],
-            "color": [95, 116, 112]
+            "color": [95, 116, 112],
+            "velocity": [4, 8, 1],
+            "spin": [2, 1, 2]
         },
         {
             "type": "cube",
@@ -46,7 +51,8 @@
             "size": 1.25,
             "mass": 0.5,
             "position": [-5, 1.25, 0],
-            "color": [242, 100, 25]
+            "color": [242, 100, 25],
+            "velocity": [-1, 6, 4]
         },
         {
             "type": "tetrahedron",
