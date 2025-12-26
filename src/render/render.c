@@ -8,7 +8,6 @@
 #include "physics/objects/sphere.h"
 #include "physics/objects/tetrahedron.h"
 #include "render/text.h"
-#include "utils/save.h"
 
 // initializes OpenGL and GLFW boilerplate
 unsigned int openglInit(Simulation* sim)
@@ -224,11 +223,6 @@ void render(Simulation* sim)
     shaderUse(&sim->shadow.shader);
     shaderSetMatrix(&sim->shadow.shader, "vp", sim->shadow.vp);
     objectsRender(sim);
-    if (glfwGetKey(sim->window, GLFW_KEY_P))
-    {
-        saveFramebuffer(sim->shadow.FBO, sim->shadow.SHADOW_WIDTH,
-                        sim->shadow.SHADOW_HEIGHT);
-    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);

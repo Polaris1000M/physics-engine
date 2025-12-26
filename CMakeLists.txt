@@ -37,7 +37,7 @@ add_executable(PhysicsEngine
     src/physics/objects/cube.c
     src/physics/objects/tetrahedron.c
     src/utils/cJSON.c
-    src/utils/save.c
+    src/utils/framebuffer.c
     src/utils/parse.c
     src/utils/callbacks.c
     src/utils/quat.c

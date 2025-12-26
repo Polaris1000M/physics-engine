@@ -49,3 +49,4 @@ void shadowUpdate(Shadow* s, Camera* c);
 void shadowPrint(Shadow* s);
 
 #endif
+

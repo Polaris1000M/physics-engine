@@ -18,3 +18,4 @@ unsigned int parseConfig(Simulation* sim, const char* configPath);
 char* parseFile(const char* filePath, const char* errorMessage);
 
 #endif
+

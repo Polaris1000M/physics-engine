@@ -38,9 +38,9 @@ typedef struct Object
     float mass;
     vec3 color;
 
-    int staticPhysics; // flag indicating whether to ignore physics for object
+    int staticPhysics;  // flag indicating whether to ignore physics for object
 
-    vec3 lastPosition; // prior position for Verlet integration
+    vec3 lastPosition;  // prior position for Verlet integration
     vec3 position;
     vec3 linearAcceleration;
 

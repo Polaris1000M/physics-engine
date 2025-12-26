@@ -1,10 +1,11 @@
-#include "callbacks.h"
 #include "simulation.h"
+
+#include "callbacks.h"
 
 // called whenever the cursor position changes
 void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos)
 {
-    Camera* c = &((Simulation*) glfwGetWindowUserPointer(window))->camera;
+    Camera* c = &((Simulation*)glfwGetWindowUserPointer(window))->camera;
 
     if (c->firstCursor)
     {
@@ -36,7 +37,7 @@ void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos)
     {
         c->pitch = 89.0f;
     }
-    
+
     vec3 direction = {cos(glm_rad(c->yaw)) * cos(glm_rad(c->pitch)),
                       sin(glm_rad(c->pitch)),
                       sin(glm_rad(c->yaw)) * cos(glm_rad(c->pitch))};
@@ -47,7 +48,7 @@ void cameraCursorCallback(GLFWwindow* window, double xPos, double yPos)
 // changes FOV based on scrolling
 void cameraScrollCallback(GLFWwindow* window, double xOffset, double yOffset)
 {
-    Camera* c = &((Simulation*) glfwGetWindowUserPointer(window))->camera;
+    Camera* c = &((Simulation*)glfwGetWindowUserPointer(window))->camera;
 
     c->fov -= (float)yOffset;
     if (c->fov < 1.0f)
@@ -66,7 +67,7 @@ void cameraEnableNavigation(Camera* c, GLFWwindow* window)
 {
     c->enabled = 1;
     glfwSetInputMode(window, GLFW_CURSOR,
-                 GLFW_CURSOR_DISABLED);  // sets window input to the cursor
+                     GLFW_CURSOR_DISABLED);  // sets window input to the cursor
     glfwSetScrollCallback(
         window, cameraScrollCallback);  // called whenever camera scrolls
 }
@@ -82,7 +83,7 @@ void cameraDisableNavigation(Camera* c, GLFWwindow* window)
 // disables camera callbacks whenever window is no longer in focus
 void cameraFocusCallback(GLFWwindow* window, int focused)
 {
-    Camera* c = &((Simulation*) glfwGetWindowUserPointer(window))->camera;
+    Camera* c = &((Simulation*)glfwGetWindowUserPointer(window))->camera;
     if (!c->enabled)
     {
         return;
@@ -98,7 +99,7 @@ void cameraFocusCallback(GLFWwindow* window, int focused)
     }
 }
 
-void cameraToggleNavigation(Camera *c, GLFWwindow *window)
+void cameraToggleNavigation(Camera* c, GLFWwindow* window)
 {
     if (c->enabled)
     {
@@ -124,11 +125,12 @@ void framebufferSizeCallback(GLFWwindow* window, int width, int height)
     glfwPollEvents();
 }
 
-void simulationKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void simulationKeyCallback(GLFWwindow* window, int key, int scancode,
+                           int action, int mods)
 {
     if (key == GLFW_KEY_C && action == GLFW_PRESS)
     {
-        Camera* c = &((Simulation*) glfwGetWindowUserPointer(window))->camera;
+        Camera* c = &((Simulation*)glfwGetWindowUserPointer(window))->camera;
         cameraToggleNavigation(c, window);
     }
 
@@ -138,18 +140,13 @@ void simulationKeyCallback(GLFWwindow* window, int key, int scancode, int action
         cameraDisableNavigation(&sim->camera, window);
         simulationInit(sim, sim->configPath);
     }
-
-    if (key == GLFW_KEY_P && action == GLFW_PRESS)
-    {
-        Simulation* sim = glfwGetWindowUserPointer(window);
-        simulationPrint(sim);
-    }
 }
 
 void callbacksInit(Simulation* sim)
 {
     glfwSetKeyCallback(sim->window, simulationKeyCallback);
-    glfwSetWindowUserPointer(sim->window, sim);  // allows callbacks to access simulation struct
+    glfwSetWindowUserPointer(
+        sim->window, sim);  // allows callbacks to access simulation struct
     glfwSetWindowFocusCallback(sim->window, cameraFocusCallback);
     glfwSetFramebufferSizeCallback(sim->window, framebufferSizeCallback);
     glfwSetCursorPosCallback(sim->window,

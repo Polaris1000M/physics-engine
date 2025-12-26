@@ -34,3 +34,4 @@ unsigned int floorMeshSize()
     // 2 triangles
     return 36;
 }
+

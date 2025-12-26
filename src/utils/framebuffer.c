@@ -1,4 +1,4 @@
-#include "save.h"
+#include "framebuffer.h"
 
 #include <glad/glad.h>
 
@@ -34,3 +34,4 @@ void saveFramebuffer(unsigned int FBO, unsigned int width, unsigned int height)
     free(flipped);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
+

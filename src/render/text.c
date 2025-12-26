@@ -1,7 +1,7 @@
 #include "text.h"
-#include <glad/glad.h>
 
 #include <ft2build.h>
+#include <glad/glad.h>
 #include FT_FREETYPE_H
 
 int textInit(Text* t, const char* fontPath)
@@ -10,7 +10,8 @@ int textInit(Text* t, const char* fontPath)
 
     if (FT_Init_FreeType(&ft))
     {
-        printf("%s", "ERROR::FREETYPE: could not initialize FreeType library\n");
+        printf("%s",
+               "ERROR::FREETYPE: could not initialize FreeType library\n");
         return 1;
     }
 
@@ -44,28 +45,20 @@ int textInit(Text* t, const char* fontPath)
         unsigned int ID;
         glGenTextures(1, &ID);
         glBindTexture(GL_TEXTURE_2D, ID);
-        glTexImage2D(
-            GL_TEXTURE_2D,
-            0,
-            GL_RED,
-            face->glyph->bitmap.width,
-            face->glyph->bitmap.rows,
-            0,
-            GL_RED,
-            GL_UNSIGNED_BYTE,
-            face->glyph->bitmap.buffer
-        );
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width,
+                     face->glyph->bitmap.rows, 0, GL_RED, GL_UNSIGNED_BYTE,
+                     face->glyph->bitmap.buffer);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        vec2 size = { face->glyph->bitmap.width, face->glyph->bitmap.rows };
-        vec2 bearing = { face->glyph->bitmap_left, face->glyph->bitmap_top };
+        vec2 size = {face->glyph->bitmap.width, face->glyph->bitmap.rows};
+        vec2 bearing = {face->glyph->bitmap_left, face->glyph->bitmap_top};
         t->characters[c].ID = ID;
         glm_vec2_copy(size, t->characters[c].size);
         glm_vec2_copy(bearing, t->characters[c].bearing);
-        t->characters[c].advance = (unsigned int) (face->glyph->advance.x);
+        t->characters[c].advance = (unsigned int)(face->glyph->advance.x);
     }
 
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -76,7 +69,8 @@ int textInit(Text* t, const char* fontPath)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // initialize shader
-    shaderInit(&t->shader, "../src/render/shaders/font-vs.glsl", "../src/render/shaders/font-fs.glsl");
+    shaderInit(&t->shader, "../src/render/shaders/font-vs.glsl",
+               "../src/render/shaders/font-fs.glsl");
 
     // bind buffers
     glGenVertexArrays(1, &t->VAO);
@@ -92,13 +86,16 @@ int textInit(Text* t, const char* fontPath)
     return 0;
 }
 
-void textRender(Text* t, int lines, char** text, int width, int height, float x, float y, float scale, vec3 color)
+void textRender(Text* t, int lines, char** text, int width, int height, float x,
+                float y, float scale, vec3 color)
 {
     shaderUse(&t->shader);
-    glm_ortho(0.0f, (float) width, 0.0f, (float) height, -1.0f, 1.0f, t->projection);
+    glm_ortho(0.0f, (float)width, 0.0f, (float)height, -1.0f, 1.0f,
+              t->projection);
     shaderSetMatrix(&t->shader, "projection", t->projection);
 
-    glUniform3f(glGetUniformLocation(t->shader.ID, "textColor"), color[0], color[1], color[2]);
+    glUniform3f(glGetUniformLocation(t->shader.ID, "textColor"), color[0],
+                color[1], color[2]);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(t->VAO);
 
@@ -132,14 +129,11 @@ void textRender(Text* t, int lines, char** text, int width, int height, float x,
             }
 
             float vertices[6][4] = {
-                { xpos,     ypos + h,   0.0f, 0.0f },            
-                { xpos,     ypos,       0.0f, 1.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
+                {xpos, ypos + h, 0.0f, 0.0f},    {xpos, ypos, 0.0f, 1.0f},
+                {xpos + w, ypos, 1.0f, 1.0f},
 
-                { xpos,     ypos + h,   0.0f, 0.0f },
-                { xpos + w, ypos,       1.0f, 1.0f },
-                { xpos + w, ypos + h,   1.0f, 0.0f }           
-            };
+                {xpos, ypos + h, 0.0f, 0.0f},    {xpos + w, ypos, 1.0f, 1.0f},
+                {xpos + w, ypos + h, 1.0f, 0.0f}};
 
             glBindTexture(GL_TEXTURE_2D, ch.ID);
             glBindBuffer(GL_ARRAY_BUFFER, t->VBO);

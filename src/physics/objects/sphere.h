@@ -14,3 +14,4 @@ void sphereIcoMesh(float* mesh);
 unsigned int sphereIcoMeshSize();
 
 #endif
+

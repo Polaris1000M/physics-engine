@@ -1,11 +1,11 @@
 #include "object.h"
-#include "physics.h"
 
 #include <cglm/cglm.h>
 #include <stdlib.h>
-#include "cglm/vec3.h"
-#include "utils/quat.h"
+
 #include "cJSON.h"
+#include "physics.h"
+#include "utils/quat.h"
 
 const char* OBJECT_NAMES[] = {"floor", "sphere", "cube", "tetrahedron"};
 
@@ -110,6 +110,7 @@ cJSON* objectToJSON(Object* o)
 
     cJSON* configSpin = cJSON_CreateFloatArray(o->angularVelocity, 3);
     cJSON_AddItemReferenceToObject(configObject, "spin", configSpin);
-    
+
     return configObject;
 }
+

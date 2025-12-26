@@ -62,3 +62,4 @@ unsigned int tetrahedronMeshSize()
     // 18 floats per triangle
     return 72;
 }
+

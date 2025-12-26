@@ -99,3 +99,4 @@ void shaderSetVector(Shader* s, const char* name, vec3 vec)
 {
     glUniform3f(glGetUniformLocation(s->ID, name), vec[0], vec[1], vec[2]);
 }
+

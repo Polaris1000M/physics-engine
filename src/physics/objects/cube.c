@@ -64,8 +64,7 @@ void cubeMesh(float* mesh)
                     int idx = fixed * 4 * floatsPerTriangle +
                               fixedSign * 2 * floatsPerTriangle +
                               i * floatsPerTriangle + j * floatsPerVertex;
-                    glm_vec3_copy(face[patterns[patternIdx][i][j]],
-                                  mesh + idx);
+                    glm_vec3_copy(face[patterns[patternIdx][i][j]], mesh + idx);
                     glm_vec3_copy(normal, mesh + idx + 3);
                 }
             }
@@ -80,3 +79,4 @@ unsigned int cubeMeshSize()
     // 18 coordinates triangle
     return 216;
 }
+

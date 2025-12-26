@@ -184,3 +184,4 @@ void cameraPrint(Camera* c)
     printf("projection: ");
     glm_mat4_print(c->projection, stdout);
 }
+

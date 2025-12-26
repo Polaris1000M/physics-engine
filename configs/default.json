@@ -1,61 +1,61 @@
 {
-  "gravity": -9.8,
-  "lightDir": [-1, -1, -1],
-  "cameraDir": [0, -0.1, -1],
-  "cameraPos": [0, 5, 25],
-  "objects":
-  [
-    {
-      "type": "floor",
-      "size": 15,
-      "position": [0, -0.01, 0],
-      "color": [184, 189, 181],
-      "static": true
-    },
-    {
-      "type": "sphere",
-      "size": 1,
-      "mass": 0.5,
-      "position": [0, 3, 0],
-      "color": [210, 212, 200],
-      "velocity": [0, 10, 0]
-    },
-    {
-      "type": "cube",
-      "size": 1.1,
-      "mass": 0.5,
-      "position": [-2, 0.6350852961, 0],
-      "color": [136, 150, 150]
-    },
-    {
-      "type": "tetrahedron",
-      "size": 1,
-      "mass": 0.5,
-      "position": [2, 0.33333333, 0],
-      "color": [95, 116, 112]
-    },
-    {
-      "type": "cube",
-      "size": 1,
-      "mass": 0.5,
-      "position": [4, 1, 0],
-      "color": [224, 226, 219],
-      "euler": [45, 0, 45]
-    },
-    {
-      "type": "sphere",
-      "size": 1.25,
-      "mass": 0.5,
-      "position": [-5, 1.25, 0],
-      "color": [242, 100, 25]
-    },
-    {
-      "type": "tetrahedron",
-      "size": 1,
-      "mass": 0.5,
-      "position": [6, 0.33333333, 0],
-      "color": [99, 32, 238],
-      "euler": [0, 60, 0]
-    }
-  ]
+    "gravity": -9.8,
+    "lightDir": [-1, -1, -1],
+    "cameraDir": [0, -0.1, -1],
+    "cameraPos": [0, 5, 25],
+    "objects":
+    [
+        {
+            "type": "floor",
+            "size": 15,
+            "position": [0, -0.01, 0],
+            "color": [184, 189, 181],
+            "static": true
+        },
+        {
+            "type": "sphere",
+            "size": 1,
+            "mass": 0.5,
+            "position": [0, 3, 0],
+            "color": [210, 212, 200]
+        },
+        {
+            "type": "cube",
+            "size": 1.1,
+            "mass": 0.5,
+            "position": [-2, 0.6350852961, 0],
+            "color": [136, 150, 150]
+        },
+        {
+            "type": "tetrahedron",
+            "size": 1,
+            "mass": 0.5,
+            "position": [2, 0.33333333, 0],
+            "color": [95, 116, 112]
+        },
+        {
+            "type": "cube",
+            "size": 1,
+            "mass": 0.5,
+            "position": [4, 1, 0],
+            "color": [224, 226, 219],
+            "euler": [45, 0, 45]
+        },
+        {
+            "type": "sphere",
+            "size": 1.25,
+            "mass": 0.5,
+            "position": [-5, 1.25, 0],
+            "color": [242, 100, 25]
+        },
+        {
+            "type": "tetrahedron",
+            "size": 1,
+            "mass": 0.5,
+            "position": [6, 0.33333333, 0],
+            "color": [99, 32, 238],
+            "euler": [0, 60, 0]
+        }
+    ]
 }
+

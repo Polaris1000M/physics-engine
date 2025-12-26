@@ -1,535 +1,535 @@
 {
-  "gravity": 9.8,
-  "lightDir": [0, -1, 0],
-  "cameraDir": [0, -0.25, -1],
-  "cameraPos": [2, 5, 8],
-  "objects":
-  [
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, 0],
-      "color": [0.592156862745098, 0.7019607843137254, 0.6823529411764706]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, 0],
-      "color": [0.8235294117647058, 0.8784313725490196, 0.8274509803921568]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, 0],
-      "color": [0.9411764705882353, 0.8666666666666667, 0.8392156862745098]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, 0],
-      "color": [0.9490196078431372, 0.7647058823529411, 0.7254901960784313]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, 0],
-      "color": [0.8392156862745098, 0.796078431372549, 0.7490196078431373]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -1],
-      "color": [1, 0, 0]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -1],
-      "color": [0, 1, 0]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -1],
-      "color": [0, 0, 1]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -1],
-      "color": [1, 1, 1]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -1],
-      "color": [0, 0, 0]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -2],
-      "color": [5, 102, 141]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -2],
-      "color": [2, 128, 144]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -2],
-      "color": [0, 168, 150]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -2],
-      "color": [2, 195, 154]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -2],
-      "color": [240, 243, 189]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -3],
-      "color": [191, 195, 186]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -3],
-      "color": [169, 172, 169]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -3],
-      "color": [96, 73, 90]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -3],
-      "color": [63, 50, 68]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -3],
-      "color": [47, 34, 53]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -4],
-      "color": [10, 17, 40]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -4],
-      "color": [0, 31, 84]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -4],
-      "color": [3, 64, 120]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -4],
-      "color": [18, 130, 162]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -4],
-      "color": [254, 252, 251]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -5],
-      "color": [239, 99, 81]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -5],
-      "color": [243, 131, 117]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -5],
-      "color": [247, 163, 153]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -5],
-      "color": [251, 195, 188]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -5],
-      "color": [255, 227, 224]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -6],
-      "color": [0, 21, 20]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -6],
-      "color": [251, 255, 254]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -6],
-      "color": [107, 5, 4]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -6],
-      "color": [163, 50, 11]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -6],
-      "color": [230, 175, 46]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -7],
-      "color": [224, 226, 219]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -7],
-      "color": [210, 212, 200]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -7],
-      "color": [184, 189, 181]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -7],
-      "color": [136, 150, 150]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -7],
-      "color": [95, 116, 112]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -8],
-      "color": [50, 48, 49]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -8],
-      "color": [61, 59, 60]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -8],
-      "color": [127, 121, 121]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -8],
-      "color": [193, 189, 179]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -8],
-      "color": [95, 91, 107]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -9],
-      "color": [0, 7, 45]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -9],
-      "color": [0, 28, 85]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -9],
-      "color": [10, 36, 114]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -9],
-      "color": [14, 107, 168]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -9],
-      "color": [166, 225, 250]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -10],
-      "color": [146, 151, 126]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -10],
-      "color": [230, 225, 143]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -10],
-      "color": [254, 252, 173]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -10],
-      "color": [234, 221, 166]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -10],
-      "color": [255, 250, 226]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -11],
-      "color": [229, 75, 75]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -11],
-      "color": [255, 169, 135]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -11],
-      "color": [247, 235, 232]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -11],
-      "color": [68, 65, 64]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -11],
-      "color": [30, 30, 36]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -12],
-      "color": [47, 72, 88]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -12],
-      "color": [51, 101, 138]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -12],
-      "color": [134, 187, 216]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -12],
-      "color": [246, 174, 45]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -12],
-      "color": [242, 100, 25]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -13],
-      "color": [249, 160, 63]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -13],
-      "color": [247, 212, 136]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -13],
-      "color": [234, 239, 177]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -13],
-      "color": [233, 247, 202]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -13],
-      "color": [206, 181, 167]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [0, 0.5, -14],
-      "color": [33, 26, 29]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [1, 0.5, -14],
-      "color": [99, 32, 238]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [2, 0.5, -14],
-      "color": [128, 117, 255]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [3, 0.5, -14],
-      "color": [248, 240, 251]
-    },
-    {
-      "type": "sphere",
-      "size": 0.5,
-      "mass": 0.5,
-      "position": [4, 0.5, -14],
-      "color": [202, 213, 202]
-    }
-  ]
+    "gravity": 0,
+    "lightDir": [0, -1, 0],
+    "cameraDir": [0, -0.25, -1],
+    "cameraPos": [2, 5, 8],
+    "objects":
+    [
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, 0],
+            "color": [0.592156862745098, 0.7019607843137254, 0.6823529411764706]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, 0],
+            "color": [0.8235294117647058, 0.8784313725490196, 0.8274509803921568]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, 0],
+            "color": [0.9411764705882353, 0.8666666666666667, 0.8392156862745098]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, 0],
+            "color": [0.9490196078431372, 0.7647058823529411, 0.7254901960784313]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, 0],
+            "color": [0.8392156862745098, 0.796078431372549, 0.7490196078431373]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -1],
+            "color": [1, 0, 0]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -1],
+            "color": [0, 1, 0]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -1],
+            "color": [0, 0, 1]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -1],
+            "color": [1, 1, 1]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -1],
+            "color": [0, 0, 0]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -2],
+            "color": [5, 102, 141]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -2],
+            "color": [2, 128, 144]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -2],
+            "color": [0, 168, 150]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -2],
+            "color": [2, 195, 154]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -2],
+            "color": [240, 243, 189]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -3],
+            "color": [191, 195, 186]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -3],
+            "color": [169, 172, 169]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -3],
+            "color": [96, 73, 90]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -3],
+            "color": [63, 50, 68]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -3],
+            "color": [47, 34, 53]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -4],
+            "color": [10, 17, 40]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -4],
+            "color": [0, 31, 84]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -4],
+            "color": [3, 64, 120]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -4],
+            "color": [18, 130, 162]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -4],
+            "color": [254, 252, 251]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -5],
+            "color": [239, 99, 81]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -5],
+            "color": [243, 131, 117]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -5],
+            "color": [247, 163, 153]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -5],
+            "color": [251, 195, 188]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -5],
+            "color": [255, 227, 224]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -6],
+            "color": [0, 21, 20]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -6],
+            "color": [251, 255, 254]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -6],
+            "color": [107, 5, 4]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -6],
+            "color": [163, 50, 11]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -6],
+            "color": [230, 175, 46]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -7],
+            "color": [224, 226, 219]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -7],
+            "color": [210, 212, 200]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -7],
+            "color": [184, 189, 181]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -7],
+            "color": [136, 150, 150]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -7],
+            "color": [95, 116, 112]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -8],
+            "color": [50, 48, 49]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -8],
+            "color": [61, 59, 60]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -8],
+            "color": [127, 121, 121]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -8],
+            "color": [193, 189, 179]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -8],
+            "color": [95, 91, 107]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -9],
+            "color": [0, 7, 45]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -9],
+            "color": [0, 28, 85]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -9],
+            "color": [10, 36, 114]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -9],
+            "color": [14, 107, 168]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -9],
+            "color": [166, 225, 250]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -10],
+            "color": [146, 151, 126]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -10],
+            "color": [230, 225, 143]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -10],
+            "color": [254, 252, 173]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -10],
+            "color": [234, 221, 166]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -10],
+            "color": [255, 250, 226]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -11],
+            "color": [229, 75, 75]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -11],
+            "color": [255, 169, 135]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -11],
+            "color": [247, 235, 232]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -11],
+            "color": [68, 65, 64]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -11],
+            "color": [30, 30, 36]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -12],
+            "color": [47, 72, 88]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -12],
+            "color": [51, 101, 138]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -12],
+            "color": [134, 187, 216]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -12],
+            "color": [246, 174, 45]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -12],
+            "color": [242, 100, 25]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -13],
+            "color": [249, 160, 63]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -13],
+            "color": [247, 212, 136]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -13],
+            "color": [234, 239, 177]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -13],
+            "color": [233, 247, 202]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -13],
+            "color": [206, 181, 167]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [0, 0.5, -14],
+            "color": [33, 26, 29]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [1, 0.5, -14],
+            "color": [99, 32, 238]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [2, 0.5, -14],
+            "color": [128, 117, 255]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [3, 0.5, -14],
+            "color": [248, 240, 251]
+        },
+        {
+            "type": "sphere",
+            "size": 0.5,
+            "mass": 0.5,
+            "position": [4, 0.5, -14],
+            "color": [202, 213, 202]
+        }
+    ]
 }
 

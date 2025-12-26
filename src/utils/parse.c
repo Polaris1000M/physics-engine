@@ -1,53 +1,45 @@
 #include "parse.h"
 
+#include <cglm/cglm.h>
 #include <string.h>
 
 #include "../physics/object.h"
 #include "../physics/physics.h"
 #include "cJSON.h"
-#include <cglm/cglm.h>
-#include "cglm/io.h"
-#include "cglm/vec3.h"
 #include "utils/quat.h"
 
 // parses a single vec3 based on cJSON array
-unsigned int parseVec3(float* target, const cJSON* vec, const char* message)
+// assumes cJSON array exists
+unsigned int parseVec3(vec3 vec, const cJSON* configVec, const char* message)
 {
-    if (!cJSON_IsArray(vec) || cJSON_GetArraySize(vec) != 3)
+    if (!cJSON_IsArray(configVec) || cJSON_GetArraySize(configVec) != 3)
     {
         printf("%s", message);
         return 1;
     }
+
     for (int i = 0; i < 3; i++)
     {
-        cJSON* coord = cJSON_GetArrayItem(vec, i);
+        cJSON* coord = cJSON_GetArrayItem(configVec, i);
         if (!cJSON_IsNumber(coord))
         {
             printf("%s", message);
             return 1;
         }
-        target[i] = coord->valuedouble;
+        vec[i] = coord->valuedouble;
     }
     return 0;
 }
 
-// parses a single JSON into an object
-// expects type, size, mass, position, color, static (default false), velocity (default 0), spin (default 0), euler (default 0)
-unsigned int parseConfigObject(cJSON* configObject, Object* object)
+// parses a single JSON object into a simulation object
+// expects type, size, mass, position, euler (default 0), color, static (default false), velocity
+// (default 0), spin (default 0)
+unsigned int parseConfigObject(int type, cJSON* configObject, Object* object)
 {
-    // populate type since type already checked
-    const cJSON* configType =
-        cJSON_GetObjectItemCaseSensitive(configObject, "type");
-    for (int i = 0; i < OBJECT_TYPES; i++)
-    {
-        if (!strcmp(configType->valuestring, OBJECT_NAMES[i]))
-        {
-            object->type = i;
-            break;
-        }
-    }
+    /* TYPE */
+    object->type = type;
 
-    // parse size
+    /* SIZE */
     const cJSON* configSize =
         cJSON_GetObjectItemCaseSensitive(configObject, "size");
     if (!cJSON_IsNumber(configSize))
@@ -56,8 +48,9 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
             "ERROR::CONFIG::INVALID_SIZE: expected float for size of object\n");
         return 1;
     }
+    object->size = configSize->valuedouble;
 
-    // populate mass according to type
+    /* MASS */
     if (object->type != FLOOR)
     {
         const cJSON* configMass =
@@ -73,22 +66,23 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
         object->mass = configMass->valuedouble;
     }
 
-    // parse position
+    /* POSITION */
     const cJSON* configPosition =
         cJSON_GetObjectItemCaseSensitive(configObject, "position");
     const char* positionErrorMessage =
         "ERROR::CONFIG::INVALID_POSITION: expected float array for position of "
         "object with format [<x>, <y>, <z>]\n";
-    vec3 position = GLM_VEC3_ZERO;
-    if (parseVec3(position, configPosition, positionErrorMessage))
+    if (parseVec3(object->position, configPosition, positionErrorMessage))
     {
         return 1;
     }
 
-    // parse euler
+    /* ORIENTATION */
     cJSON* configEuler =
         cJSON_GetObjectItemCaseSensitive(configObject, "euler");
     vec3 euler = GLM_VEC3_ZERO;
+
+    // only parse Euler if value provided by user
     if (configEuler)
     {
         const char* orientationErrorMessage =
@@ -106,40 +100,35 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
             euler[i] = glm_rad(euler[i]);
         }
     }
+    eulerToQuat(euler,
+                object->orientation);  // create quaternion from Euler angles
 
-    // create quaternion from Euler angles
-    eulerToQuat(euler, object->orientation);
-
-    // parse color
+    /* COLOR */
     cJSON* configColor =
         cJSON_GetObjectItemCaseSensitive(configObject, "color");
     const char* colorErrorMessage =
         "ERROR::CONFIG::INVALID_COLOR: expected float array for color of "
         "object with format [<red_color>, <blue_color>, <green_color>] with "
         "non-negative values\n";
-    if (!cJSON_IsArray(configColor) || cJSON_GetArraySize(configColor) != 3)
+    if (parseVec3(object->color, configColor, colorErrorMessage))
     {
-        printf("%s", colorErrorMessage);
         return 1;
     }
-    vec3 color;
     for (int i = 0; i < 3; i++)
     {
-        cJSON* curColor = cJSON_GetArrayItem(configColor, i);
-
-        if (!cJSON_IsNumber(curColor) || curColor->valuedouble < 0.0f)
+        if (object->color[i] < 0.0f)
         {
             printf("%s", colorErrorMessage);
             return 1;
         }
-
-        color[i] = curColor->valuedouble;
     }
 
+    // accepts color from 0-1 range or 0-255 range
+    // assumes color is on 0-1 range if all values are between 0 and 1
     unsigned int scale = 0;
     for (int i = 0; i < 3; i++)
     {
-        if (color[i] > 1)
+        if (object->color[i] > 1)
         {
             scale = 1;
             break;
@@ -149,11 +138,11 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     {
         for (int i = 0; i < 3; i++)
         {
-            color[i] /= 255.0f;
+            object->color[i] /= 255.0f;
         }
     }
 
-    // parse static
+    /* STATIC */
     cJSON* configStatic =
         cJSON_GetObjectItemCaseSensitive(configObject, "static");
     const char* staticErrorMessage =
@@ -163,17 +152,9 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
         printf("%s", staticErrorMessage);
         return 1;
     }
-    int staticPhysics;
-    if (configStatic)
-    {
-        staticPhysics = configStatic->valueint;
-    }
-    else
-    {
-        staticPhysics = 0;
-    }
+    object->staticPhysics = configStatic ? configStatic->valueint : 0;
 
-    // parse velocity
+    /* VELOCITY */
     cJSON* configVelocity =
         cJSON_GetObjectItemCaseSensitive(configObject, "velocity");
     const char* velocityErrorMessage =
@@ -184,38 +165,22 @@ unsigned int parseConfigObject(cJSON* configObject, Object* object)
     {
         return 1;
     }
+    glm_vec3_scale(velocity, PHYSICS_DT, velocity);
+    glm_vec3_sub(object->position, velocity, object->lastPosition);
 
-    // parse spin
-    cJSON* configSpin =
-        cJSON_GetObjectItemCaseSensitive(configObject, "spin");
+    /* SPIN */
+    cJSON* configSpin = cJSON_GetObjectItemCaseSensitive(configObject, "spin");
     const char* spinErrorMessage =
         "ERROR::CONFIG::INVALID_SPIN: expected vector of three floats\n";
     vec3 spin = GLM_VEC3_ZERO;
-    if (configSpin &&
-        parseVec3(spin, configSpin, spinErrorMessage))
+    if (configSpin && parseVec3(spin, configSpin, spinErrorMessage))
     {
         return 1;
     }
-
-    // populate size
-    object->size = configSize->valuedouble;
-
-    // populate position
-    glm_vec3_copy(position, object->position);
-
-    // populate color
-    glm_vec3_copy(color, object->color);
-
-    // populate static
-    object->staticPhysics = staticPhysics;
-
-    // populate last position
-    glm_vec3_scale(velocity, PHYSICS_DT, velocity);
-    glm_vec3_sub(position, velocity, object->lastPosition);
-
-    // populate spin
     glm_vec3_copy(spin, object->angularVelocity);
-    glm_vec3_copy(GLM_VEC3_ZERO, object->angularAcceleration);
+    glm_vec3_copy(
+        GLM_VEC3_ZERO,
+        object->angularAcceleration);  // also populate angular acceleration
 
     return 0;
 }
@@ -323,7 +288,7 @@ unsigned int parseConfigObjects(cJSON* configObjects,
         {
             if (!strcmp(configType->valuestring, OBJECT_NAMES[type]))
             {
-                if (parseConfigObject(configObject,
+                if (parseConfigObject(type, configObject,
                                       objects[type] + indices[type]))
                 {
                     return 1;
@@ -437,3 +402,4 @@ char* parseFile(const char* filePath, const char* errorMessage)
 
     return buffer;
 }
+

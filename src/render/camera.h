@@ -69,3 +69,4 @@ void cameraProcessInput(Camera* c, GLFWwindow* window);
 void cameraPrint(Camera* c);
 
 #endif
+
