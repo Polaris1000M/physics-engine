@@ -138,13 +138,20 @@ void buffersInit(Simulation* sim)
 
 unsigned int renderInit(Simulation* sim)
 {
-    // OpenGL boilerplate
+    // OpenGL boilerplate must occur before camera initialization
     if (sim->initialized != 1)
     {
         if (openglInit(sim))
         {
             return 1;
         }
+    }
+
+    // camera initialization must occur before shadow initialization
+    cameraInit(&sim->camera, sim->window);
+
+    if (sim->initialized != 1)
+    {
         shaderInit(&sim->shader, "../src/render/shaders/default-vs.glsl",
                    "../src/render/shaders/default-fs.glsl");
         if (shadowInit(&sim->shadow, &sim->camera, sim->lightDir))
@@ -157,8 +164,6 @@ unsigned int renderInit(Simulation* sim)
             return 1;
         }
     }
-
-    cameraInit(&sim->camera, sim->window);
 
     // initalize object data and bind
     buffersInit(sim);
@@ -213,7 +218,7 @@ void objectsRender(Simulation* sim)
 
 void render(Simulation* sim)
 {
-    // shadow pass
+    /* SHADOW PASS */
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
 
@@ -227,7 +232,7 @@ void render(Simulation* sim)
 
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
 
-    // normal lighting pass
+    /* NORMAL LIGHTING PASS */
     shaderUse(&sim->shader);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -244,7 +249,7 @@ void render(Simulation* sim)
     glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
     objectsRender(sim);
 
-    // render metrics
+    /* METRICS */
     unsigned int lines = OBJECT_TYPES + 6;
     char buffers[lines][20];
     char* text[lines];
